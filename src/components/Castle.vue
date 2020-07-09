@@ -1,5 +1,5 @@
 <template>
-  <svg :x="position.x" :y="position.y">
+  <svg :x="position.x - 32" :y="position.y - 45">
     <svg x="7" y="0" class="flag-wrapper" width="25" height="25" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
 
       <defs>

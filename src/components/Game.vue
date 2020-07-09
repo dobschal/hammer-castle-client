@@ -10,6 +10,8 @@
       >
         <BuildCastle
                 v-if="activeAction === 'BUILD_CASTLE'"
+                :zoom-factor="zoomFactor"
+                :last-mouse-position="lastMousePosition"
                 :mouse-down-timestamp="mouseDownTimestamp"
                 :dragging="dragging"
                 :view-position="viewPosition"
@@ -24,9 +26,9 @@
       <span>Server Version: {{ $store.state.serverVersion }}</span> |
       <button @click="logout">Logout</button>
       |
-      <span>Position: {{ viewPosition.x }}/{{ viewPosition.y }}</span>
+      <span>Position: {{ viewPosition.x.toFixed(2) }}/{{ viewPosition.y.toFixed(2) }}</span>
       |
-      <span>Zoom: {{ zoomFactor }}</span>
+      <span>Zoom: {{ zoomFactor.toFixed(2) }}</span>
     </div>
   </div>
 </template>
@@ -99,11 +101,11 @@
 
       onScroll(event) {
         const delta = event.deltaY * config.SCROLL_SENSITIVITY;
-        this.zoomFactor += delta;
-        this.viewPosition.x -= delta * this.gameHeight / 2;
-        this.viewPosition.y -= delta * this.gameHeight / 2;
-        //  TODO: need change the viewPosition variable too, to have a centered scrolling...
-
+        this.zoomFactor = Math.max(0.2, this.zoomFactor + delta);
+        if(this.zoomFactor > 0.2) {
+          this.viewPosition.x -= delta * this.gameHeight / 2;
+          this.viewPosition.y -= delta * this.gameHeight / 2;
+        }
       },
 
       onKeyUp(event) {
@@ -123,8 +125,8 @@
         this.waitingForAnimationFrame = true;
         window.requestAnimationFrame(() => {
           if (this.dragging) {
-            this.viewPosition.x += this.lastMousePosition.x - event.clientX;
-            this.viewPosition.y += this.lastMousePosition.y - event.clientY;
+            this.viewPosition.x += (this.lastMousePosition.x - event.clientX) * this.zoomFactor;
+            this.viewPosition.y += (this.lastMousePosition.y - event.clientY) * this.zoomFactor;
           }
           this.lastMousePosition.x = event.clientX;
           this.lastMousePosition.y = event.clientY;
@@ -155,6 +157,7 @@
     width: 100%;
     height: 100vh;
     z-index: 1;
+    cursor: grab;
   }
 
   .footer {

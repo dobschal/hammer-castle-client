@@ -1,5 +1,5 @@
 <template>
-  <Castle :position="firstCastlePosition"></Castle>
+  <Castle :position="newCastlePosition"></Castle>
 </template>
 
 <script>
@@ -11,17 +11,26 @@ export default {
   props: {
     mouseDownTimestamp: Number,
     dragging: Boolean,
-    viewPosition: Object
+    viewPosition: Object,
+    zoomFactor: Number,
+    lastMousePosition: Object
   },
   data() {
     return {
-      firstCastlePosition: { x: 200, y: 200 },
+      newCastlePosition: { x: 200, y: 200 },
       waitingForAnimationFrame: false
     };
   },
   computed: {
     castles() {
       return this.$store.state.castles;
+    }
+  },
+  watch: {
+    zoomFactor () {
+      console.log("[BuildCastle] Zoom factor changed: ", this.zoomFactor);
+      this.newCastlePosition.x = this.lastMousePosition.x * this.zoomFactor;
+      this.newCastlePosition.y = this.lastMousePosition.y * this.zoomFactor;
     }
   },
   mounted() {
@@ -37,8 +46,8 @@ export default {
       if (this.waitingForAnimationFrame) return;
       this.waitingForAnimationFrame = true;
       window.requestAnimationFrame(() => {
-        this.firstCastlePosition.x = event.clientX;
-        this.firstCastlePosition.y = event.clientY;
+        this.newCastlePosition.x = event.clientX * this.zoomFactor;
+        this.newCastlePosition.y = event.clientY * this.zoomFactor;
         this.waitingForAnimationFrame = false;
       });
     },
