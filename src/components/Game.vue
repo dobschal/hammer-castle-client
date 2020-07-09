@@ -4,7 +4,7 @@
       <svg
               :width="gameWidth + 'px'"
               :height="gameHeight + 'px'"
-              :viewBox="'0 0 ' + Math.max(0, Math.floor(gameWidth * zoomFactor)) + ' ' + Math.max(0, Math.floor(gameHeight * zoomFactor))"
+              :viewBox="gameViewBox"
               xmlns="http://www.w3.org/2000/svg"
               version="1.1"
       >
@@ -62,11 +62,11 @@
       },
       loading() {
         return this.$store.getters.busy;
-      }
-    },
-    watch: {
-      activeAction() {
-
+      },
+      gameViewBox() {
+        const width = Math.max(0, Math.floor(this.gameWidth * this.zoomFactor));
+        const height = Math.max(0, Math.floor(this.gameHeight * this.zoomFactor));
+        return '0 0 ' + width + ' ' + height;
       }
     },
     created() {
@@ -98,8 +98,12 @@
     methods: {
 
       onScroll(event) {
-        console.log("[Game] Scrolling: ", event);
-        this.zoomFactor += event.deltaY * config.SCROLL_SENSITIVITY;
+        const delta = event.deltaY * config.SCROLL_SENSITIVITY;
+        this.zoomFactor += delta;
+        this.viewPosition.x -= delta * this.gameHeight / 2;
+        this.viewPosition.y -= delta * this.gameHeight / 2;
+        //  TODO: need change the viewPosition variable too, to have a centered scrolling...
+
       },
 
       onKeyUp(event) {
