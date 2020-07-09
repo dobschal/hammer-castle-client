@@ -19,6 +19,11 @@ export default {
       waitingForAnimationFrame: false
     };
   },
+  computed: {
+    castles() {
+      return this.$store.state.castles;
+    }
+  },
   mounted() {
     document.addEventListener("mousemove", this.onMouseMove);
     document.addEventListener("mouseup", this.onMouseUp);
@@ -47,8 +52,12 @@ export default {
         x: this.viewPosition.x + event.clientX,
         y: this.viewPosition.y + event.clientY
       };
-      await this.$store.dispatch("SET_CASTLE", position);
-      await this.$store.dispatch("GET_CASTLES");
+      this.castles.some(c => {
+        const distanceInPixel = this.$util.positionDistance(c, position);
+        console.log("[BuildCastle] Distance to existing castle: ", distanceInPixel);
+        return false;
+      });
+      //await this.$store.dispatch("SET_CASTLE", position);
     }
   }
 };

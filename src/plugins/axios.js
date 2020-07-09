@@ -40,7 +40,7 @@ axios.interceptors.response.use(
 );
 
 export default {
-  install(Vue, options) {
+  install(Vue) {
     Vue.prototype.$axios = axios;
   }
 };

@@ -19,7 +19,7 @@ export const castleActions = {
       commit("PROGRESS", -1);
     }
   },
-  async GET_CASTLES({ commit }, position) {
+  async GET_CASTLES({ commit }) {
     try {
       commit("PROGRESS", 1);
       const response = await axios.get("/castle");

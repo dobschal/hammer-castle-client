@@ -13,7 +13,6 @@ function connect() {
       token: cookie.get("auth-token")
     }
   });
-  socket.emit("WHOOP", { yeah: "yeah" });
   socket.on("HEARTBEAT", data => {
     console.log("[Game] Got heartbeat: ", data);
   });
@@ -21,7 +20,7 @@ function connect() {
 }
 
 export default {
-  install(Vue, options) {
+  install(Vue) {
     Vue.prototype.$websocket = {
       connect
     };

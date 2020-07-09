@@ -6,34 +6,35 @@
 </template>
 
 <script>
-import Game from "./components/Game";
-import Authenticator from "./components/Authenticator";
+  import Game from "./components/Game";
+  import Authenticator from "./components/Authenticator";
 
-export default {
-  name: "App",
-  components: {
-    Game,
-    Authenticator
-  },
-  computed: {
-    authenticated() {
-      return this.$store.state.authToken;
+  export default {
+    name: "App",
+    components: {
+      Game,
+      Authenticator
+    },
+    computed: {
+      authenticated() {
+        return this.$store.state.authToken;
+      }
     }
-  }
 };
 </script>
 
-<style>
-body {
-  margin: 0;
-}
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-}
-* {
-  box-sizing: border-box;
+<style lang="scss">
+  body {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  #app {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    box-sizing: border-box;
 }
 </style>
