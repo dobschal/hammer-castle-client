@@ -1,10 +1,16 @@
-import { axios } from "../plugins/axios";
+import {axios} from "../plugins/axios";
 
 export const castleState = {
   castles: []
 };
 
 export const castleMutations = {
+
+  /**
+   * @define Castle {{ x: number, y: number, user_id: number, timestamp: string }}
+   * @param state
+   * @param {Castle[]} castles
+   */
   SET_CASTLES(state, castles) {
     state.castles = castles;
   }

@@ -24,9 +24,12 @@
 </script>
 
 <style lang="scss">
+  @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
   body {
     margin: 0;
     font-size: 16px;
+    font-family: 'MedievalSharp', cursive;
+    letter-spacing: 1.5px;
   }
 
   #app {
@@ -36,5 +39,18 @@
 
   * {
     box-sizing: border-box;
-}
+    font-size: 16px;
+    font-family: 'MedievalSharp', cursive;
+    letter-spacing: 1.5px;
+  }
+
+  button {
+    padding: 0.5rem 2rem;
+    border: none;
+    border-radius: 0.25rem;
+    background: rgba(11, 90, 102, 0.7);
+    backdrop-filter: blur(5px);
+    color: white;
+    font-weight: bold;
+  }
 </style>

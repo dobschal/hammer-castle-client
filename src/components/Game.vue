@@ -8,20 +8,27 @@
               xmlns="http://www.w3.org/2000/svg"
               version="1.1"
       >
+
+        <path v-for="road in roads" :key="road.id" :d="road.path" stroke-width="5" stroke="#A8937D" fill="transparent"/>
+
         <BuildCastle
                 v-if="activeAction === 'BUILD_CASTLE'"
+                :user="user"
                 :zoom-factor="zoomFactor"
                 :last-mouse-position="lastMousePosition"
                 :mouse-down-timestamp="mouseDownTimestamp"
                 :dragging="dragging"
                 :view-position="viewPosition"
         ></BuildCastle>
+
         <g v-for="castle in castles" :key="castle.x + '' + castle.y">
-          <Castle :position="{ x: castle.x - viewPosition.x, y: castle.y - viewPosition.y }"></Castle>
+          <Castle :position="{ x: castle.x - viewPosition.x, y: castle.y - viewPosition.y }"
+                  :color="castle.color"></Castle>
         </g>
+
       </svg>
     </div>
-    <NavigationBar @build-castle="activeAction = 'BUILD_CASTLE'"></NavigationBar>
+    <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
     <div class="footer">
       <span>Server Version: {{ $store.state.serverVersion }}</span> |
       <button @click="logout">Logout</button>
@@ -29,6 +36,8 @@
       <span>Position: {{ viewPosition.x.toFixed(2) }}/{{ viewPosition.y.toFixed(2) }}</span>
       |
       <span>Zoom: {{ zoomFactor.toFixed(2) }}</span>
+      |
+      <span v-if="user">User: {{ user.id}} / {{ user.color }} </span>
     </div>
   </div>
 </template>
@@ -58,7 +67,33 @@
         activeAction: ""
       };
     },
+
     computed: {
+      roads() {
+        const roads = [];
+        for (let i = 0; i < this.castles.length; i++) {
+          const c1 = this.castles[i];
+          for (let j = i; j < this.castles.length; j++) {
+            const c2 = this.castles[j];
+            const distanceBetweenCastles = this.$util.positionDistance(c1, c2);
+            if (distanceBetweenCastles < config.MAX_CASTLE_DISTANCE) {
+              const path = `
+                M ${c1.x - this.viewPosition.x} ${c1.y - this.viewPosition.y}
+                C ${c1.x - this.viewPosition.x - 17} ${c1.y - this.viewPosition.y + 32},
+                ${c2.x - this.viewPosition.x + 23} ${c2.y - this.viewPosition.y - 34},
+                ${c2.x - this.viewPosition.x} ${c2.y - this.viewPosition.y}
+              `;
+              roads.push({
+                id: c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y,
+                from: {x: c1.x, y: c1.y},
+                to: {x: c2.x, y: c2.y},
+                path
+              });
+            }
+          }
+        }
+        return roads;
+      },
       castles() {
         return this.$store.state.castles;
       },
@@ -69,9 +104,22 @@
         const width = Math.max(0, Math.floor(this.gameWidth * this.zoomFactor));
         const height = Math.max(0, Math.floor(this.gameHeight * this.zoomFactor));
         return '0 0 ' + width + ' ' + height;
+      },
+      user() {
+        return this.$store.state.user;
       }
     },
-    created() {
+
+    watch: {
+      activeAction(val) {
+        if (val === "BUILD_CASTLE") {
+          this.zoomFactor = 1;
+        }
+      }
+    },
+
+    beforeCreate() {
+      this.$store.dispatch("GET_USER");
       this.$store.dispatch("GET_SERVER_VERSION");
       this.$store.dispatch("GET_CASTLES");
     },
@@ -100,6 +148,7 @@
     methods: {
 
       onScroll(event) {
+        if (this.activeAction === "BUILD_CASTLE") return;
         const delta = event.deltaY * config.SCROLL_SENSITIVITY;
         this.zoomFactor = Math.max(0.2, this.zoomFactor + delta);
         if(this.zoomFactor > 0.2) {
@@ -149,7 +198,7 @@
   };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .game-container {
     position: fixed;
     top: 0;
@@ -165,5 +214,15 @@
     bottom: 0;
     left: 0;
     z-index: 2;
+    padding: 0.5rem 1rem;
+
+    button {
+      font-size: 0.8rem;
+    }
+
+    span {
+      color: #3B3B3B;
+      font-size: 0.8rem;
+    }
   }
 </style>

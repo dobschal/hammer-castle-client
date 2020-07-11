@@ -1,7 +1,9 @@
 <template>
     <div class="wrapper">
         <div class="buttons">
-            <button type="button" @click="buildCastle">Build Castle</button>
+            <button v-if="activeAction" type="button" @click="cancel">Cancel</button>
+            <button v-else type="button" @click="buildCastle">Build Castle</button>
+
         </div>
     </div>
 </template>
@@ -9,10 +11,16 @@
 <script>
     export default {
         name: "NavigationBar",
+        props: {
+            activeAction: String
+        },
         methods: {
+            cancel() {
+                this.$emit("update:activeAction", "")
+            },
             buildCastle() {
                 console.log("[NavigationBar] Click build castle: ");
-                this.$emit("build-castle");
+                this.$emit("update:activeAction", "BUILD_CASTLE");
             }
         }
     };
@@ -21,9 +29,11 @@
 <style lang="scss" scoped>
     .wrapper {
         position: fixed;
-        bottom: 2rem;
+        bottom: 4rem;
         left: 50%;
         z-index: 2;
-        background-color: red;
+        width: 320px;
+        margin-left: -160px;
+        text-align: center;
     }
 </style>

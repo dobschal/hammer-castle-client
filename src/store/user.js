@@ -2,17 +2,32 @@ import { axios } from "../plugins/axios";
 import cookie from "js-cookie";
 
 export const userState = {
-  authToken: cookie.get("auth-token")
+  authToken: cookie.get("auth-token"),
+  user: undefined
 };
 
 export const userMutations = {
   SET_AUTH_TOKEN(state, token) {
     cookie.set("auth-token", token);
     state.authToken = token;
+  },
+  SET_USER(state, user) {
+    state.user = user;
   }
 };
 
 export const userActions = {
+  async GET_USER({ commit }) {
+    try {
+      commit("PROGRESS", 1);
+      const {
+        data: user
+      } = await axios.get("/user/current");
+      commit("SET_USER", user);
+    } finally {
+      commit("PROGRESS", -1);
+    }
+  },
   async AUTHENTICATE({ commit }, requestBody) {
     try {
       commit("PROGRESS", 1);

@@ -21,18 +21,12 @@ axios.interceptors.response.use(
     return response;
   },
   function(error) {
-    if (
-      error.response &&
-      error.response.data &&
-      error.response.data.message &&
-      error.response.data.message.includes("expired")
-    ) {
-      try {
-        cookie.remove("auth-token");
-        window.location.reload(true);
-      } catch (e) {
-        console.warn("[Axios] Couldn't remove auth token from local storage.");
-      }
+    if (error.response && error.response.data && (
+        (error.response.data.message && error.response.data.message.includes("expired"))
+        || (typeof error.response.data === "string" && error.response.data.includes("expired")))) {
+      cookie.remove("auth-token");
+      console.log("[axios] Token expired: ", error);
+      window.location.reload(true);
     } else {
       throw error;
     }

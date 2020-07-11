@@ -35,7 +35,9 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {},
+    "rules": {
+      "no-debugger": "warn"
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }
