@@ -5,19 +5,16 @@ export const castleState = {
 };
 
 export const castleMutations = {
-
-  /**
-   * @define Castle {{ x: number, y: number, user_id: number, username: string, color: string }}
-   * @param state
-   * @param {Castle[]} castles
-   */
   SET_CASTLES(state, castles) {
     state.castles = castles;
+  },
+  NEW_CASTLE(state, castle) {
+    state.castles.push(castle);
   }
 };
 
 export const castleActions = {
-  async SET_CASTLE({ commit }, position) {
+  async CREATE_CASTLE({commit}, position) {
     try {
       commit("PROGRESS", 1);
       await axios.post("/castle/create", position);

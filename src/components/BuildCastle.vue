@@ -19,6 +19,7 @@
       lastMousePosition: Object,
       user: Object
     },
+
     data() {
       return {
         newCastlePosition: {x: 200, y: 200},
@@ -26,6 +27,7 @@
         validDistance: false
       };
     },
+
     computed: {
       isFirstCastle() {
         return !this.castles.some(c => c.user_id === this.user.id);
@@ -37,20 +39,24 @@
         return this.validDistance ? "1" : "0.3";
       }
     },
+
     watch: {
       zoomFactor() {
         this.newCastlePosition.x = this.lastMousePosition.x * this.zoomFactor;
         this.newCastlePosition.y = this.lastMousePosition.y * this.zoomFactor;
       }
     },
+
     mounted() {
       document.addEventListener("mousemove", this.onMouseMove);
       document.addEventListener("mouseup", this.onMouseUp);
     },
+
     beforeDestroy() {
       document.removeEventListener("mousemove", this.onMouseMove);
       document.removeEventListener("mouseup", this.onMouseUp);
     },
+
     methods: {
       onMouseMove(event) {
         if (this.waitingForAnimationFrame) return;
@@ -65,7 +71,11 @@
           this.waitingForAnimationFrame = false;
         });
       },
+
       hasCastleValidDistance(position) {
+
+        // TODO: include zoom factor in calculation...
+
         this.validDistance = false;
         if (this.castles.length === 0) {
           this.validDistance = true;
@@ -83,22 +93,20 @@
         }
         return this.validDistance;
       },
+
       onMouseUp(event) {
         if (Date.now() - this.mouseDownTimestamp < 300) {
           this.onClick(event);
         }
       },
+
       async onClick(event) {
         const position = {
           x: this.viewPosition.x + event.clientX,
           y: this.viewPosition.y + event.clientY
         };
         if (this.hasCastleValidDistance(position)) {
-          await this.$store.dispatch("SET_CASTLE", position);
-          await this.$store.dispatch("GET_CASTLES")
-
-          //  TODO: use websocket or direct response instead of fetching all castles again
-
+          await this.$store.dispatch("CREATE_CASTLE", position);
         } else {
           console.log("[BuildCastle] Invalid castle position: ", position);
         }

@@ -73,6 +73,9 @@
 
     computed: {
       roads() {
+
+        //  TODO: move that offthread or to server
+
         const roads = [];
         for (let i = 0; i < this.castles.length; i++) {
           const c1 = this.castles[i];
@@ -117,6 +120,9 @@
 
       activeAction(val) {
         if (val === "BUILD_CASTLE") {
+
+          //  TODO: this is a hotfix, cause the zoomFactor is missing in the distance calculation on build castle
+
           this.zoomFactor = 1;
         }
       }
@@ -140,7 +146,6 @@
 
       this.$refs["game-container"].addEventListener("mousedown", this.onMouseDown);
 
-      this.websocket = this.$websocket.connect();
       this.attachWebsocketListener();
     },
 
@@ -154,9 +159,10 @@
     methods: {
 
       attachWebsocketListener () {
-        this.websocket.on("CASTLE_CONQUER", () => {
-          this.$store.dispatch("GET_CASTLES");
-        });
+        this.websocket = this.$websocket.connect();
+        ["NEW_CASTLE"].forEach(eventName => {
+          this.websocket.on(eventName, data => this.$store.commit(eventName, data));
+        })
       },
 
       onScroll(event) {
