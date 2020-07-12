@@ -13,18 +13,6 @@ export const castleMutations = {
    */
   SET_CASTLES(state, castles) {
     state.castles = castles;
-  },
-
-  CASTLE_USER_CHANGE(state, {x, y, userId, username, color}) {
-    for (let i = 0; i < state.castles.length; i++) {
-      if (state.castles[i].x === x && state.castles[i].y === y) {
-        state.castles[i].user_id = userId;
-        state.castles[i].username = username;
-        state.castles[i].color = color;
-        console.log("[castle] Castle user changed: ", state.castles[i]);
-        break;
-      }
-    }
   }
 };
 

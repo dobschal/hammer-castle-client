@@ -75,7 +75,7 @@
         const roads = [];
         for (let i = 0; i < this.castles.length; i++) {
           const c1 = this.castles[i];
-          for (let j = i; j < this.castles.length; j++) {
+          for (let j = i + 1; j < this.castles.length; j++) {
             const c2 = this.castles[j];
             const distanceBetweenCastles = this.$util.positionDistance(c1, c2);
             if (distanceBetweenCastles < config.MAX_CASTLE_DISTANCE) {
@@ -113,6 +113,7 @@
     },
 
     watch: {
+
       activeAction(val) {
         if (val === "BUILD_CASTLE") {
           this.zoomFactor = 1;
@@ -124,7 +125,8 @@
       this.$store.dispatch("GET_USER");
       this.$store.dispatch("GET_SERVER_VERSION");
       this.$store.dispatch("GET_CASTLES");
-    },
+    }
+    ,
 
     mounted() {
       this.gameHeight = this.$refs["game-container"].offsetHeight;
@@ -151,8 +153,8 @@
     methods: {
 
       attachWebsocketListener () {
-        this.websocket.on("CASTLE_CONQUER", data => {
-          this.$store.commit("CASTLE_USER_CHANGE", data);
+        this.websocket.on("CASTLE_CONQUER", () => {
+          this.$store.dispatch("GET_CASTLES");
         });
       },
 

@@ -76,7 +76,7 @@
             if (distanceInPixel < config.MIN_CASTLE_DISTANCE) {
               this.validDistance = false;
               break;
-            } else if (distanceInPixel < config.MAX_CASTLE_DISTANCE || this.isFirstCastle) {
+            } else if ((distanceInPixel < config.MAX_CASTLE_DISTANCE && castle.user_id === this.user.id) || this.isFirstCastle) {
               this.validDistance = true;
             }
           }
