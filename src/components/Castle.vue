@@ -1,9 +1,7 @@
 <template>
   <svg>
-<!--    <svg :x="position.x - radius" :y="position.y - radius">-->
-<!--      <circle :cx="radius" :cy="radius" :r="radius" :fill="color" opacity="0.3"/>-->
-<!--    </svg>-->
-    <svg :x="position.x - 32" :y="position.y - 75">
+    <svg :x="position.x - 32" :y="position.y - 75" @mouseover="showTooltip" @mouseout="hideTooltip">
+
       <svg x="7" y="0" class="flag-wrapper" width="25" height="25" viewBox="0 0 100 100" fill="none"
            xmlns="http://www.w3.org/2000/svg">
 
@@ -32,6 +30,9 @@
       </svg>
 
     </svg>
+
+    <circle :cx="position.x + 22" :cy="position.y + 7" :r="20" :fill="color" opacity="1"/>
+    <text :x="position.x + 12" :y="position.y + 18" class="points" v-if="castle">{{ points }}</text>
   </svg>
 </template>
 
@@ -42,6 +43,10 @@
     name: "Castle",
     props: {
       color: String,
+      castle: {
+        type: Object,
+        default: undefined
+      },
       position: {
         type: Object,
         validator: value => {
@@ -49,9 +54,24 @@
         }
       }
     },
+    computed: {
+      points() {
+        return this.castle.points[this.castle.user_id];
+      }
+    },
     data() {
       return {
         radius: config.MIN_CASTLE_DISTANCE
+      }
+    },
+    methods: {
+      showTooltip() {
+        if (this.castle) {
+          console.log("[Castle] Hover: ", this.castle);
+        }
+      },
+      hideTooltip() {
+        console.log("Out");
       }
     }
   };
@@ -80,10 +100,15 @@
   }
 }
 
-  .flag {
-    animation: move_flag;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-  }
+.flag {
+  animation: move_flag;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.points {
+  font: 33px 'MedievalSharp';
+  fill: white;
+}
 </style>

@@ -23,6 +23,7 @@
 
         <g v-for="castle in castles" :key="castle.x + '' + castle.y">
           <Castle :position="{ x: castle.x - viewPosition.x, y: castle.y - viewPosition.y }"
+                  :castle="castle"
                   :color="castle.color"></Castle>
         </g>
 
