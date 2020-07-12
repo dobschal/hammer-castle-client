@@ -95,7 +95,10 @@
         };
         if (this.hasCastleValidDistance(position)) {
           await this.$store.dispatch("SET_CASTLE", position);
-          await this.$store.dispatch("GET_CASTLES");
+          await this.$store.dispatch("GET_CASTLES")
+
+          //  TODO: use websocket or direct response instead of fetching all castles again
+
         } else {
           console.log("[BuildCastle] Invalid castle position: ", position);
         }

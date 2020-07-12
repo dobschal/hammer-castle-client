@@ -56,7 +56,7 @@
     },
     computed: {
       points() {
-        return this.castle.points[this.castle.user_id];
+        return this.castle.points ? this.castle.points[this.castle.user_id] : "?";
       }
     },
     data() {
