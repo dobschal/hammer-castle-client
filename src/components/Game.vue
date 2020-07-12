@@ -64,7 +64,9 @@
         viewPosition: {x: 0, y: 0},
         lastMousePosition: {x: 0, y: 0},
 
-        activeAction: ""
+        activeAction: "",
+
+        websocket: undefined
       };
     },
 
@@ -135,7 +137,8 @@
 
       this.$refs["game-container"].addEventListener("mousedown", this.onMouseDown);
 
-      this.$websocket.connect();
+      this.websocket = this.$websocket.connect();
+      this.attachWebsocketListener();
     },
 
     beforeDestroy() {
@@ -146,6 +149,12 @@
     },
 
     methods: {
+
+      attachWebsocketListener () {
+        this.websocket.on("CASTLE_CONQUER", data => {
+          this.$store.commit("CASTLE_USER_CHANGE", data);
+        });
+      },
 
       onScroll(event) {
         if (this.activeAction === "BUILD_CASTLE") return;
