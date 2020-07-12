@@ -207,6 +207,7 @@
     height: 100vh;
     z-index: 1;
     cursor: grab;
+    background-color: #b6e57b;
   }
 
   .footer {

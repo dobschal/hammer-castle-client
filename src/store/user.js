@@ -38,5 +38,14 @@ export const userActions = {
     } finally {
       commit("PROGRESS", -1);
     }
+  },
+
+  async CREATE_USER({ commit }, requestBody) {
+    try {
+      commit("PROGRESS", 1);
+      await axios.post("/user/register", requestBody);
+    } finally {
+      commit("PROGRESS", -1);
+    }
   }
 };

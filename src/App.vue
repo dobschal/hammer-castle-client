@@ -52,5 +52,25 @@
     backdrop-filter: blur(5px);
     color: white;
     font-weight: bold;
+    transition: transform 0.3s ease-out;
+
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      cursor: pointer;
+      transform: scale(0.95);
+    }
+  }
+
+  .link {
+    color: rgb(11, 90, 102);
+
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 </style>

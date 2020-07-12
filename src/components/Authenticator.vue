@@ -2,17 +2,36 @@
   <div v-if="!authenticated" class="authenticator">
     <div class="wrapper">
       <div class="container">
+        <div v-if="showRegistration">
+          <h2>Come in!</h2>
+          <p>Hammer Castle is waiting for you!</p>
+        </div>
+        <div v-else>
+          <h2>Welcome back!</h2>
+          <p>Login with your username and password!</p>
+        </div>
         <div class="error" v-if="error">{{ error }}</div>
         <form @submit.prevent="authenticate" v-if="!loading">
           <p>
             <label for="username">Username</label>
-            <input type="text" v-model="username" id="username">
+            <input type="text" v-model="username" id="username" autofocus>
           </p>
           <p>
             <label for="password">Password</label>
             <input type="password" v-model="password" id="password">
           </p>
-          <button type="submit">Log In</button>
+          <p v-if="showRegistration">
+            <label for="password-verify">Verify Password</label>
+            <input type="password" v-model="passwordVerify" id="password-verify">
+          </p>
+          <div v-if="showRegistration">
+            <button type="submit">Create Account</button>
+            or <span class="link" @click="showRegistration = false">log in</span>
+          </div>
+          <div v-else>
+            <button type="submit">Log In</button>
+            or <span class="link" @click="showRegistration = true">Create Account</span>
+          </div>
         </form>
         <div v-else>Loading...</div>
       </div>
@@ -27,7 +46,9 @@ export default {
     return {
       password: "",
       username: "",
-      error: undefined
+      passwordVerify: "",
+      error: undefined,
+      showRegistration: false
     };
   },
   computed: {
@@ -35,7 +56,7 @@ export default {
       return this.$store.state.authToken;
     },
     inputValid() {
-      return this.password.length > 7 && this.username;
+      return (!this.showRegistration || this.password === this.passwordVerify) && this.password.length > 7 && this.username;
     },
     loading() {
       return this.$store.getters.busy;
@@ -43,9 +64,12 @@ export default {
   },
   methods: {
     async authenticate() {
-      if (!this.inputValid) this.error = "Please fill out the form.";
+      if (!this.inputValid) {
+        this.error = "Please fill out the form. Your password should contain at least 8 characters.";
+        return;
+      }
       try {
-        await this.$store.dispatch("AUTHENTICATE", {
+        await this.$store.dispatch(this.showRegistration ? "CREATE_USER" : "AUTHENTICATE", {
           username: this.username,
           password: this.password
         });
@@ -58,38 +82,47 @@ export default {
 };
 </script>
 
-<style scoped>
-.authenticator {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
-}
-.wrapper {
-  display: flex;
-  width: 100%;
-  height: 100vh;
-}
-.container {
-  background: white;
-  width: 100%;
-  max-width: 240px;
-  margin: auto;
-  padding: 1rem;
-  border-radius: 0.5rem;
-}
-form p label {
-  display: block;
-}
-form p input {
-  display: block;
-  width: 100%;
-}
-.error {
-  color: red;
-}
+<style lang="scss" scoped>
+  .authenticator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url("../assets/bg-image-castle.jpg");
+    background-size: cover;
+
+    .wrapper {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+      background-color: rgba(0,0,0, 0.3);
+      backdrop-filter: blur(3px);
+
+      .container {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(5px);
+        width: 100%;
+        max-width: 480px;
+        margin: auto;
+        padding: 2rem;
+        border-radius: 0.5rem;
+
+        form p label {
+          display: block;
+          font-weight: bold;
+        }
+
+        form p input {
+          display: block;
+          width: 100%;
+        }
+
+        .error {
+          color: red;
+        }
+      }
+    }
+  }
 </style>
 

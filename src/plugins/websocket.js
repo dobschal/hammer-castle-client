@@ -16,6 +16,12 @@ function connect() {
   socket.on("HEARTBEAT", data => {
     console.log("[Game] Got heartbeat: ", data);
   });
+  socket.on("CASTLE_CONQUER", data => {
+    console.log("[Game] Got conquer: ", data);
+
+    // TODO: move that to store...
+
+  });
   return socket;
 }
 

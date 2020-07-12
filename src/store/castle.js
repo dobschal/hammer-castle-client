@@ -7,7 +7,7 @@ export const castleState = {
 export const castleMutations = {
 
   /**
-   * @define Castle {{ x: number, y: number, user_id: number, timestamp: string }}
+   * @define Castle {{ x: number, y: number, user_id: number, username: string, color: string }}
    * @param state
    * @param {Castle[]} castles
    */
