@@ -160,7 +160,7 @@
 
       attachWebsocketListener () {
         this.websocket = this.$websocket.connect();
-        ["NEW_CASTLE"].forEach(eventName => {
+        ["NEW_CASTLE", "UPDATE_CASTLE"].forEach(eventName => {
           this.websocket.on(eventName, data => this.$store.commit(eventName, data));
         })
       },

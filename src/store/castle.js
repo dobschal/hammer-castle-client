@@ -8,8 +8,15 @@ export const castleMutations = {
   SET_CASTLES(state, castles) {
     state.castles = castles;
   },
-  NEW_CASTLE(state, castle) {
+  NEW_CASTLE(state, castle) { // injected from websocket
     state.castles.push(castle);
+  },
+  UPDATE_CASTLE(state, castle) { // injected from websocket
+    console.log("[castle] Update castle from websocket: ", castle);
+    state.castles = [
+      ...state.castles.filter(c => c.x !== castle.x || c.y !== castle.y),
+      castle
+    ]
   }
 };
 

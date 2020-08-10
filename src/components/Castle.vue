@@ -56,7 +56,7 @@
     },
     computed: {
       points() {
-        return this.castle.points ? this.castle.points[this.castle.user_id] : "?";
+        return typeof this.castle.points === "number" ? this.castle.points : "?";
       }
     },
     data() {
