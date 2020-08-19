@@ -22,12 +22,27 @@
 
       </svg>
 
+      <!-- old 2D castle
       <svg x="0" y="7" width="64" height="83" viewBox="0 0 64 83" fill="none" xmlns="http://www.w3.org/2000/svg">
         <line x1="31.5" y1="25" x2="31.5" stroke="#95938F"/>
         <path d="M18.4789 34.9623V83H45.1268V34.9623L53 27.3774V21.6887V16H47.5493V21.6887H41.493V16H34.831V21.6887H28.169V16H21.507V21.6887H15.1479V16H10V27.3774L18.4789 34.9623Z"
               fill="#414B4D"/>
         <line y1="82.5" x2="64" y2="82.5" stroke="#94962E"/>
+      </svg>-->
+
+      <svg x="0" y="7" width="64" height="83" viewBox="0 0 110 169" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M101 49L109.5 52.5V66L55.5 43.5V31L64 35V40L72 43.5V38L79 41V46L86.5 49V43.5L93 46V51.5L101 54.5V49Z" fill="#C4C4C4" stroke="black" stroke-opacity="0.42"/>
+        <path d="M2 66.5L55.5 44C73.3333 51.5 109.1 66.5 109.5 66.5C110 66.5 56.5 88.5 55.5 88.5C54.7 88.5 19.8333 73.8333 2 66.5Z" fill="#959595"/>
+        <path d="M10 49L1.5 52.5V66L55.5 43.5V31L47 35V40L39 43.5V38L32 41V46L24.5 49V43.5L18 46V51.5L10 54.5V49Z" fill="#6C6C6C" stroke="black" stroke-opacity="0.42"/>
+        <path d="M55 86V167.5L13.5 146.5L8.5 75.5L1 66.5V53L8.5 56V62.5L17 66V60L23.5 62.5V68.5L32 72V66L38.5 69V74.5L47.5 78V72.5L55 75.5V86Z" fill="#C4C4C4" stroke="black" stroke-opacity="0.42"/>
+        <path d="M55.5 86V167.5L97 146.5L102 75.5L109.5 66.5V53L102 56V62.5L93.5 66V60L87 62.5V68.5L78.5 72V66L72 69V74.5L63 78V72.5L55.5 75.5V86Z" fill="#6C6C6C" stroke="black" stroke-opacity="0.42"/>
+        <path d="M55.5 75.5V88.5L109.5 66.5V53L102 56V62.5L93.5 66V60L87 62.5V68.5L78.5 72V66L72 69V74.5L63 78V72.5L55.5 75.5Z" fill="#6C6C6C" stroke="black" stroke-opacity="0.42"/>
+        <path d="M55 75.5V88.5L1 66.5V53L8.5 56V62.5L17 66V60L23.5 62.5V68.5L32 72V66L38.5 69V74.5L47.5 78V72.5L55 75.5Z" fill="#C4C4C4" stroke="black" stroke-opacity="0.42"/>
+        <path d="M8.5 75.5L1 67L55 88.5V94.5L8.5 75.5Z" fill="#BABABA" stroke="black" stroke-opacity="0.42"/>
+        <path d="M102 75.5L109.5 67L55.5 88.5V94.5L102 75.5Z" fill="#4F4F4F" stroke="black" stroke-opacity="0.42"/>
+        <path d="M55 0H57L56.5 61H55.5L55 0Z" fill="#494949"/>
       </svg>
+
 
     </svg>
 
