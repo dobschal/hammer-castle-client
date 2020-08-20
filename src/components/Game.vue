@@ -27,6 +27,10 @@
                   :color="castle.color"></Castle>
         </g>
 
+        <g v-for="blockArea in blockAreas" :key="blockArea.x + '' + blockArea.y">
+          <BlockArea :position="{ x: blockArea.x - viewPosition.x, y: blockArea.y - viewPosition.y }"></BlockArea>
+        </g>
+
       </svg>
     </div>
     <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
@@ -48,10 +52,11 @@
   import BuildCastle from "./BuildCastle";
   import NavigationBar from "./NavigationBar";
   import config from "../config";
+  import BlockArea from "./BlockArea";
 
   export default {
     name: "Game",
-    components: {Castle, BuildCastle, NavigationBar},
+    components: {BlockArea, Castle, BuildCastle, NavigationBar},
     data() {
       return {
         dragging: false,
@@ -103,6 +108,9 @@
       castles() {
         return this.$store.state.castles;
       },
+      blockAreas() {
+        return this.$store.state.blockAreas;
+      },
       loading() {
         return this.$store.getters.busy;
       },
@@ -132,6 +140,7 @@
       this.$store.dispatch("GET_USER");
       this.$store.dispatch("GET_SERVER_VERSION");
       this.$store.dispatch("GET_CASTLES");
+      this.$store.dispatch("GET_BLOCK_AREAS");
     }
     ,
 
@@ -160,7 +169,7 @@
 
       attachWebsocketListener () {
         this.websocket = this.$websocket.connect();
-        ["NEW_CASTLE", "UPDATE_CASTLE"].forEach(eventName => {
+        ["NEW_CASTLE", "UPDATE_CASTLE", "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA"].forEach(eventName => {
           this.websocket.on(eventName, data => this.$store.commit(eventName, data));
         })
       },

@@ -1,13 +1,15 @@
-import { axios } from "../plugins/axios";
-import { userActions, userState, userMutations } from "./user";
-import { castleActions, castleState, castleMutations } from "./castle";
+import {axios} from "../plugins/axios";
+import {userActions, userMutations, userState} from "./user";
+import {castleActions, castleMutations, castleState} from "./castle";
+import {blockAreaActions, blockAreaMutations, blockAreaState} from "./blockArea";
 
 export default {
   state: {
     progress: 0,
     serverVersion: undefined,
     ...userState,
-    ...castleState
+    ...castleState,
+    ...blockAreaState
   },
   getters: {
     busy(state) {
@@ -22,14 +24,15 @@ export default {
       state.serverVersion = version;
     },
     ...userMutations,
-    ...castleMutations
+    ...castleMutations,
+    ...blockAreaMutations
   },
   actions: {
     async GET_SERVER_VERSION({ commit }) {
       try {
         commit("PROGRESS", 1);
         const {
-          data: { version }
+          data: {version}
         } = await axios.get("/version");
         commit("SET_SERVER_VERSION", version);
       } finally {
@@ -37,6 +40,7 @@ export default {
       }
     },
     ...userActions,
-    ...castleActions
+    ...castleActions,
+    ...blockAreaActions
   }
 };
