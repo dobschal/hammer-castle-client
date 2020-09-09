@@ -1,6 +1,6 @@
 <template>
   <svg>
-    <svg :x="position.x - 125" :y="position.y - 125" @click="$emit('CLICK', castle)">
+    <svg :x="position.x - 125" :y="position.y - 125" @click="$emit('CLICK', castle)" @mouseover="highlighted = true" @mouseout="highlighted = false">
 
       <svg v-for="flagPos in flagPositions" :key="flagPos.x + '' + flagPos.y" :x="flagPos.x" :y="flagPos.y"
            class="flag-wrapper" width="35" height="35" viewBox="0 0 100 100" fill="none"
@@ -29,14 +29,31 @@
       <CastleLevel4 v-else></CastleLevel4>
 
       <!-- Shield with level number -->
-      <svg :x="170" :y="30" width="36" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg v-if="!highlighted" :x="168" :y="30" width="40" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M1 13.4583C1 32.25 14.8 57 24 57C33.2 57 47 32.25 47 13.4583C47 13.4583 33.2 13.9167 24.92 2C14.8 13.9167 1 13.4583 1 13.4583Z"
               fill="#564942" stroke="#D18227" stroke-width="2"/>
+      </svg>
+      <svg v-else :x="128" :y="-9" width="120" height="120" viewBox="0 0 148 158" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g filter="url(#filter0_d)">
+          <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" fill="#564942"/>
+          <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" stroke="#D18227" stroke-width="2"/>
+        </g>
+        <defs>
+          <filter id="filter0_d" x="0" y="0.361694" width="148" height="157.638" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
+            <feOffset/>
+            <feGaussianBlur stdDeviation="25"/>
+            <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"/>
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+          </filter>
+        </defs>
       </svg>
       <text :x="180" :y="60" class="points" v-if="castle">{{ points }}</text>
 
       <!-- Banner below -->
-      <svg :x="36" :y="150" width="175" height="60" viewBox="0 0 232 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg class="banner" :x="36" :y="150" width="175" height="60" viewBox="0 0 232 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M193.906 64.2131C144.676 68.2131 79.3708 69.7131 35.6666 64.2131C39.2835 58.6131 37.676 42.7131 36.6713 34.7131C106.498 46.7131 179.338 37.2131 193.906 34.7131C191.093 42.3131 192.734 57.7131 193.906 64.2131Z"
               :fill="color"/>
         <path d="M192.901 52.9088C211.79 55.3088 222.54 49.9088 225.554 46.9088L214 44.4088L202.446 38.4088L211.488 34.9088L218.019 29.4088C220.53 25.5755 225.755 17.5088 226.559 15.9088C227.362 14.3088 212.158 22.9088 204.455 27.4088H196.418L171.803 26.4088V27.4088L194.408 34.9088L192.901 52.9088Z"
@@ -81,6 +98,7 @@
         return this.castle && typeof this.castle.points === "number" ? this.castle.points : "?";
       },
       flagPositions() {
+        if(this.points === "?") return [{x: 91, y: 54}];
         switch (this.points) {
           case 0:
           case 1:
@@ -92,12 +110,13 @@
           case 4:
             return [{x: 47, y: -9}, {x: 132, y: 9}];
           default:
-            return [{x: 91, y: 54}];
+            return [{x: 47, y: -9}, {x: 132, y: 9}];
         }
       }
     },
     data() {
       return {
+        highlighted: false,
         radius: config.MIN_CASTLE_DISTANCE
       }
     }

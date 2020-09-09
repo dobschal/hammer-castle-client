@@ -1,5 +1,5 @@
 <template>
-    <svg :x="position.x - size" :y="position.y - size" :width="size * 2" :height="size * 2" viewBox="0 0 400 428" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg :x="position.x - size + padding" :y="position.y - size + padding" :width="size * 2 - padding * 2" :height="size * 2 - padding * 2" viewBox="0 0 400 428" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="190" cy="237.962" r="190" fill="black" fill-opacity="0.05"/>
         <path d="M152.518 83.6638C163.959 83.6638 173.234 81.4798 173.234 78.7857C173.234 76.0915 163.959 73.9075 152.518 73.9075C141.077 73.9075 131.802 76.0915 131.802 78.7857C131.802 81.4798 141.077 83.6638 152.518 83.6638Z"
               fill="black" fill-opacity="0.14"/>
@@ -953,7 +953,8 @@
                     return typeof value.x === "number" && typeof value.y === "number";
                 }
             },
-            size: Number
+            size: Number,
+            padding: Number
         }
     };
 </script>

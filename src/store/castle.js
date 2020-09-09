@@ -20,7 +20,6 @@ export const castleMutations = {
     state.castles.push(castle);
   },
   UPDATE_CASTLE(state, castle) { // injected from websocket
-    console.log("[castle] Update castle from websocket: ", castle);
     state.castles = [
       ...state.castles.filter(c => c.x !== castle.x || c.y !== castle.y),
       castle

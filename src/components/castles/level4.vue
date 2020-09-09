@@ -17,7 +17,8 @@
         <path d="M77.5 114.5L70 105.5L124 127.5V135L77.5 114.5Z" fill="#877267"/>
         <path d="M170.5 114.5L178 105.5L124 127.5V135L170.5 114.5Z" fill="#564942"/>
         <path d="M94.5 175C94.5 170.324 104 165 108 181L109 199L95.5 192L94.5 175Z" fill="#5F473F"/>
-        <path d="M94.5 175C94.5 170.324 104 165 108 181L109 199L95.5 192L94.5 175Z" fill="url(#paint0_linear)"
+        <path d="M94.5 175C94.5 170.324 104 165 108 181L109 199L95.5 192L94.5 175Z"
+              :fill="'url(#' + id + '-paint0_linear)'"
               fill-opacity="0.5"/>
         <path d="M99.5 146.5C99.5 144.386 101.446 140.267 102.825 147.5V154.638L99.8252 153.638L99.5 146.5Z"
               fill="#5F473F"/>
@@ -40,12 +41,15 @@
         <path d="M105.75 80.8824C105.75 79.8564 107.185 77.8573 108.202 81.3676V84.8315L105.99 84.3462L105.75 80.8824Z"
               fill="#5F473F"/>
         <path d="M122 1H124L123.5 62H122.5L122 1Z" fill="#494949"/>
-        <mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="143" y="155" width="81" height="85">
-            <path d="M168.5 174.5V169.5L164 167.5V172.5L159 170V165L155 163.5V168.5L150 166V161L144 156.5V198C170.5 211.667 223.5 238.9 223.5 238.5C223.5 238.1 222.833 206.667 222.5 191L206 188.5V193.5L201 191V186L195 182.5V187.5L190 185V180L184 177.5V182.5L179 180V175L173.5 172V177L168.5 174.5Z"
-                  fill="#C4C4C4" stroke="black"/>
-        </mask>
-        <g mask="url(#mask0)">
-            <path d="M145 158V195.5L227.5 238.5V198L145 158Z" fill="url(#paint1_linear)"/>
+        <g>
+            <mask :id="id + '-mask0'" mask-type="alpha" maskUnits="userSpaceOnUse" x="143" y="155" width="81"
+                  height="85">
+                <path d="M168.5 174.5V169.5L164 167.5V172.5L159 170V165L155 163.5V168.5L150 166V161L144 156.5V198C170.5 211.667 223.5 238.9 223.5 238.5C223.5 238.1 222.833 206.667 222.5 191L206 188.5V193.5L201 191V186L195 182.5V187.5L190 185V180L184 177.5V182.5L179 180V175L173.5 172V177L168.5 174.5Z"
+                      fill="#C4C4C4" stroke="black"/>
+            </mask>
+            <g :mask="'url(#' + id + '-mask0)'">
+                <path d="M145 158V195.5L227.5 238.5V198L145 158Z" :fill="'url(#' + id + '-paint1_linear)'"/>
+            </g>
         </g>
         <path d="M310.364 131.5L320.305 135.593V151.381L257.153 125.068V110.449L267.093 115.127V120.975L276.449 125.068V118.636L284.636 122.144V127.992L293.407 131.5V125.068L301.008 127.992V134.424L310.364 137.932V131.5Z"
               fill="#937C70"/>
@@ -66,7 +70,7 @@
         <path d="M222.653 232.661C222.653 227.192 233.763 220.966 238.441 239.678L239.61 260.729L223.822 252.542L222.653 232.661Z"
               fill="#5F473F"/>
         <path d="M222.653 232.661C222.653 227.192 233.763 220.966 238.441 239.678L239.61 260.729L223.822 252.542L222.653 232.661Z"
-              fill="url(#paint2_linear)" fill-opacity="0.5"/>
+              :fill="'url(#' + id + '-paint2_linear)'" fill-opacity="0.5"/>
         <path d="M228.5 199.331C228.5 196.858 230.776 192.041 232.389 200.5V208.847L228.88 207.678L228.5 199.331Z"
               fill="#5F473F"/>
         <path d="M295.912 88.848L303.129 91.209L303.129 99.339L256.891 84.4437L256.891 77.1186L264.459 79.2709L264.313 82.1049L271.1 84.4437L271.26 81.3263L277.201 83.3374L277.055 86.1713L283.426 88.2046L283.586 85.0872L289.11 86.7926L288.95 89.91L295.751 91.9654L295.912 88.848Z"
@@ -89,18 +93,19 @@
               fill="#5F473F"/>
         <path d="M254.814 29.1695H257.153L256.568 100.508H255.398L254.814 29.1695Z" fill="#494949"/>
         <defs>
-            <linearGradient id="paint0_linear" x1="117" y1="189.5" x2="97.0916" y2="189.874"
+            <linearGradient :id="id + '-paint0_linear'" x1="117" y1="189.5" x2="97.0916" y2="189.874"
                             gradientUnits="userSpaceOnUse">
                 <stop offset="0.0641151" stop-color="#F3F3F3" stop-opacity="0.58"/>
                 <stop offset="1" stop-color="white" stop-opacity="0"/>
             </linearGradient>
-            <linearGradient id="paint1_linear" x1="181" y1="185" x2="117.5" y2="168.5" gradientUnits="userSpaceOnUse">
+            <linearGradient :id="id + '-paint1_linear'" x1="181" y1="185" x2="117.5" y2="168.5"
+                            gradientUnits="userSpaceOnUse">
                 <stop stop-color="#A2887A"/>
                 <stop offset="0.354067" stop-color="#937C70"/>
                 <stop offset="0.375" stop-color="#62534B"/>
                 <stop offset="1" stop-color="#50443D"/>
             </linearGradient>
-            <linearGradient id="paint2_linear" x1="248.966" y1="249.619" x2="225.683" y2="250.056"
+            <linearGradient :id="id + '-paint2_linear'" x1="248.966" y1="249.619" x2="225.683" y2="250.056"
                             gradientUnits="userSpaceOnUse">
                 <stop offset="0.0641151" stop-color="#F3F3F3" stop-opacity="0.58"/>
                 <stop offset="1" stop-color="white" stop-opacity="0"/>
@@ -109,3 +114,14 @@
     </svg>
 
 </template>
+
+<script>
+    export default {
+        name: "CastleLevel4",
+        data() {
+            return {
+                id: this.$util.createRandomId()
+            };
+        }
+    }
+</script>

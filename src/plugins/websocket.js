@@ -13,16 +13,24 @@ function connect() {
       token: cookie.get("auth-token")
     }
   });
-  socket.on("HEARTBEAT", data => {
-    console.log("[Game] Got heartbeat: ", data);
-  });
+
+  // TODO: There is a heartbeat event...
+
   return socket;
+}
+
+function disconnect() {
+  if (socket) {
+    socket.disconnect();
+    socket = undefined;
+  }
 }
 
 export default {
   install(Vue) {
     Vue.prototype.$websocket = {
-      connect
+      connect,
+      disconnect
     };
   }
 };

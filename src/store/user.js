@@ -13,6 +13,9 @@ export const userMutations = {
   },
   SET_USER(state, user) {
     state.user = user;
+  },
+  UPDATE_USER(state, user) {
+    state.user = user;
   }
 };
 

@@ -32,7 +32,7 @@
         <!--                  fill="#295F2F"/>-->
         <!--        </svg>-->
 
-        <Forest :position="position" :size="size"></Forest>
+        <Forest :position="position" :size="size" :padding="padding"></Forest>
 
     </svg>
 </template>
@@ -54,7 +54,8 @@
         },
         data() {
             return {
-                size: config.BLOCK_AREA_SIZE
+                size: config.BLOCK_AREA_SIZE,
+                padding: 40
             };
         }
     };

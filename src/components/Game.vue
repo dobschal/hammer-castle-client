@@ -45,7 +45,7 @@
       |
       <span>Zoom: {{ zoomFactor.toFixed(2) }}</span>
       |
-      <span v-if="user">User: {{ user.id}} / {{ user.color }} </span>
+      <span v-if="user">User: {{ user.id}} / {{ user.color }} / Hammers: {{ user.hammer }} </span>
     </div>
   </div>
 </template>
@@ -81,9 +81,6 @@
 
     computed: {
       roads() {
-
-        //  TODO: move that offthread or to server
-
         const roads = [];
         for (let i = 0; i < this.castles.length; i++) {
           const c1 = this.castles[i];
@@ -156,15 +153,7 @@
 
           this.zoomFactor = 1;
         }
-      }/*,
-
-      castles(to, from) {
-        if (from.length === 0 && to.length > 0) {
-          const firstCastle = to.find(c => c.userId === this.user.id);
-          console.log("[Game] First castle: ", firstCastle, to[0].userId, this.user.id);
-          if (firstCastle) this.moveMapTo(firstCastle);
-        }
-      }*/
+      }
     },
 
     created() {
@@ -217,6 +206,8 @@
       },
 
       castleClick(castle) {
+        console.log("[Game] Castle click: ", this.user.id, castle.userId);
+        if (Date.now() - this.mouseDownTimestamp > 300) return;
         if (castle.userId === this.user.id) {
           this.showDialog = true;
         }
@@ -230,7 +221,7 @@
 
       attachWebsocketListener() {
         this.websocket = this.$websocket.connect();
-        ["NEW_CASTLE", "UPDATE_CASTLE", "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA"].forEach(eventName => {
+        ["UPDATE_USER", "NEW_CASTLE", "UPDATE_CASTLE", "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA"].forEach(eventName => {
           this.websocket.on(eventName, data => this.$store.commit(eventName, data));
         })
       },
@@ -238,8 +229,8 @@
       onScroll(event) {
         if (this.activeAction === "BUILD_CASTLE") return;
         const delta = event.deltaY * config.SCROLL_SENSITIVITY;
-        this.zoomFactor = Math.min(1.5, Math.max(0.5, this.zoomFactor + delta));
-        if (this.zoomFactor > 0.5 && this.zoomFactor < 1.5) {
+        this.zoomFactor = Math.min(1.3, Math.max(0.7, this.zoomFactor + delta));
+        if (this.zoomFactor > 0.7 && this.zoomFactor < 1.3) {
           this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
           this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
           this.loadCastles();
@@ -249,6 +240,7 @@
       onKeyUp(event) {
         if (event.key === "Escape" || event.key === "Esc") {
           this.activeAction = "";
+          this.showDialog = false;
         }
       },
 
@@ -276,24 +268,13 @@
           this.loadCastles();
         }
         this.dragging = false;
-        // if (Date.now() - this.mouseDownTimestamp < 300) {
-        //   this.onClick(event);
-        // }
       },
-      // async onClick() {
-      //   console.log("[Game] Click");
-      // },
       logout() {
-
-        // TODO: disconnect websocket and remove user data
-
+        this.websocket.disconnect();
         this.$store.commit("SET_AUTH_TOKEN", "");
+        this.$store.commit("SET_USER", undefined);
       },
       loadCastles() {
-        console.log("[Game] Load data: ", this.viewPosition.x, this.viewPosition.y);
-
-        // TODO: add zoom factor to calculation...
-
         this.$store.dispatch("GET_CASTLES", {
           fromX: this.viewPosition.x,
           fromY: this.viewPosition.y,
