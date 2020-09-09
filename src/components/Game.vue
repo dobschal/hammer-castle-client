@@ -84,7 +84,6 @@
 
         //  TODO: move that offthread or to server
 
-        const t1 = Date.now();
         const roads = [];
         for (let i = 0; i < this.castles.length; i++) {
           const c1 = this.castles[i];
@@ -107,34 +106,33 @@
             }
           }
         }
-        console.log("[Game] Roads in: ", (Date.now() - t1) + "ms");
         return roads;
       },
       castles() {
-        const filteredCastles = this.$store.state.castles
+        const gameHeightWithZoom = this.gameHeight * this.zoomFactor;
+        const gameWidthWithZoom = this.gameWidth * this.zoomFactor;
+        return this.$store.state.castles
                 .map(c => {
                   c.viewPositionX = c.x - this.viewPosition.x;
                   c.viewPositionY = c.y - this.viewPosition.y;
                   return c;
                 })
                 .filter(c => {
-                  return Boolean(c.viewPositionX > 0 && c.viewPositionX < this.gameWidth && c.viewPositionY > 0 && c.viewPositionY < this.gameHeight);
+                  return Boolean(c.viewPositionX > -200 && c.viewPositionX < gameWidthWithZoom + 200 && c.viewPositionY > -200 && c.viewPositionY < gameHeightWithZoom + 200);
                 });
-        console.log("[Game] Castles loaded vs viewed: ", this.$store.state.castles.length, filteredCastles.length);
-        return filteredCastles;
       },
       blockAreas() {
-        const filteredBlockAreas = this.$store.state.blockAreas
+        const gameHeightWithZoom = this.gameHeight * this.zoomFactor;
+        const gameWidthWithZoom = this.gameWidth * this.zoomFactor;
+        return this.$store.state.blockAreas
                 .map(ba => {
                   ba.viewPositionX = ba.x - this.viewPosition.x;
                   ba.viewPositionY = ba.y - this.viewPosition.y;
                   return ba;
                 })
                 .filter(ba => {
-                  return Boolean(ba.viewPositionX > 0 && ba.viewPositionX < this.gameWidth && ba.viewPositionY > 0 && ba.viewPositionY < this.gameHeight);
+                  return Boolean(ba.viewPositionX > -200 && ba.viewPositionX < gameWidthWithZoom + 200 && ba.viewPositionY > -200 && ba.viewPositionY < gameHeightWithZoom + 200);
                 });
-        console.log("[Game] Block areas loaded vs viewed: ", this.$store.state.blockAreas.length, filteredBlockAreas);
-        return filteredBlockAreas;
       },
       loading() {
         return this.$store.getters.busy;
@@ -171,7 +169,6 @@
 
     created() {
       this.$store.dispatch("GET_USER").then(user => {
-        console.log("[Game] Go user: ", user);
         this.moveMapTo({x: user.startX, y: user.startY});
         this.$store.dispatch("GET_CASTLES", {
           fromX: user.startX - 500,
@@ -185,7 +182,6 @@
     },
 
     mounted() {
-      console.log("[Game] Castles amount: ", this.castles.length);
       this.gameHeight = this.$refs["game-container"].offsetHeight;
       this.gameWidth = this.$refs["game-container"].offsetWidth;
 
@@ -242,8 +238,8 @@
       onScroll(event) {
         if (this.activeAction === "BUILD_CASTLE") return;
         const delta = event.deltaY * config.SCROLL_SENSITIVITY;
-        this.zoomFactor = Math.min(2, Math.max(0.5, this.zoomFactor + delta));
-        if (this.zoomFactor > 0.5 && this.zoomFactor < 2) {
+        this.zoomFactor = Math.min(1.5, Math.max(0.5, this.zoomFactor + delta));
+        if (this.zoomFactor > 0.5 && this.zoomFactor < 1.5) {
           this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
           this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
           this.loadCastles();
@@ -301,8 +297,8 @@
         this.$store.dispatch("GET_CASTLES", {
           fromX: this.viewPosition.x,
           fromY: this.viewPosition.y,
-          toX: Math.floor(this.viewPosition.x + this.gameWidth * this.zoomFactor),
-          toY: Math.floor(this.viewPosition.y + this.gameHeight * this.zoomFactor)
+          toX: Math.floor((this.viewPosition.x + this.gameWidth) * this.zoomFactor),
+          toY: Math.floor((this.viewPosition.y + this.gameHeight) * this.zoomFactor)
         });
       }
     }

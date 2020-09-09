@@ -2,7 +2,8 @@
   <svg>
     <svg :x="position.x - 125" :y="position.y - 125" @click="$emit('CLICK', castle)">
 
-      <svg x="91" y="34" class="flag-wrapper" width="35" height="35" viewBox="0 0 100 100" fill="none"
+      <svg v-for="flagPos in flagPositions" :key="flagPos.x + '' + flagPos.y" :x="flagPos.x" :y="flagPos.y"
+           class="flag-wrapper" width="35" height="35" viewBox="0 0 100 100" fill="none"
            xmlns="http://www.w3.org/2000/svg">
 
         <defs>
@@ -22,37 +23,10 @@
 
       </svg>
 
-      <svg x="0" y="0" width="250" height="250" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M236.5 116.5L245 120V133.5L191 111V98.5L199.5 102.5V107.5L207.5 111V105.5L214.5 108.5V113.5L222 116.5V111L228.5 113.5V119L236.5 122V116.5Z"
-              fill="#937C70"/>
-        <path d="M137 133.5L191 111C208.833 118.5 245.1 133.5 245.5 133.5C246 133.5 192.5 155.5 191.5 155.5C190.7 155.5 154.833 140.833 137 133.5Z"
-              fill="#DCA56E"/>
-        <path d="M145.5 116.5L137 120V133.5L191 111V98.5L182.5 102.5V107.5L174.5 111V105.5L167.5 108.5V113.5L160 116.5V111L153.5 113.5V119L145.5 122V116.5Z"
-              fill="#62534B"/>
-        <path d="M191 153V234.5L149.5 213.5L144.5 142.5L137 133.5V120L144.5 123V129.5L153 133V127L159.5 129.5V135.5L168 139V133L174.5 136V141.5L183.5 145V139.5L191 142.5V153Z"
-              fill="#937C70"/>
-        <path d="M191 153V234.5L232.5 213.5L237.5 142.5L245 133.5V120L237.5 123V129.5L229 133V127L222.5 129.5V135.5L214 139V133L207.5 136V141.5L198.5 145V139.5L191 142.5V153Z"
-              fill="#62534B"/>
-        <path d="M191 142.5V155.5L245 133.5V120L237.5 123V129.5L229 133V127L222.5 129.5V135.5L214 139V133L207.5 136V141.5L198.5 145V139.5L191 142.5Z"
-              fill="#62534B"/>
-        <path d="M191 142.5V155.5L137 133.5V120L144.5 123V129.5L153 133V127L159.5 129.5V135.5L168 139V133L174.5 136V141.5L183.5 145V139.5L191 142.5Z"
-              fill="#937C70"/>
-        <path d="M144.5 142.5L137 133.5L191 155.5V163L144.5 142.5Z" fill="#877267"/>
-        <path d="M237.5 142.5L245 133.5L191 155.5V163L237.5 142.5Z" fill="#564942"/>
-        <path d="M191 67H193L192.5 128H191.5L191 67Z" fill="#494949"/>
-        <path d="M161.5 203C161.5 198.324 171 193 175 209L176 227L162.5 220L161.5 203Z" fill="#5F473F"/>
-        <path d="M161.5 203C161.5 198.324 171 193 175 209L176 227L162.5 220L161.5 203Z" fill="url(#paint0_linear)"
-              fill-opacity="0.5"/>
-        <path d="M166.5 174.5C166.5 172.386 168.446 168.267 169.825 175.5V182.638L166.825 181.638L166.5 174.5Z"
-              fill="#5F473F"/>
-        <defs>
-          <linearGradient id="paint0_linear" x1="184" y1="217.5" x2="164.092" y2="217.874"
-                          gradientUnits="userSpaceOnUse">
-            <stop offset="0.0641151" stop-color="#F3F3F3" stop-opacity="0.58"/>
-            <stop offset="1" stop-color="white" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-      </svg>
+      <CastleLevel1 v-if="!castle || points <= 1"></CastleLevel1>
+      <CastleLevel2 v-else-if="points === 2"></CastleLevel2>
+      <CastleLevel3 v-else-if="points === 3"></CastleLevel3>
+      <CastleLevel4 v-else></CastleLevel4>
 
       <!-- Shield with level number -->
       <svg :x="170" :y="30" width="36" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -62,7 +36,7 @@
       <text :x="180" :y="60" class="points" v-if="castle">{{ points }}</text>
 
       <!-- Banner below -->
-      <svg :x="36" :y="130" width="175" height="60" viewBox="0 0 232 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg :x="36" :y="150" width="175" height="60" viewBox="0 0 232 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M193.906 64.2131C144.676 68.2131 79.3708 69.7131 35.6666 64.2131C39.2835 58.6131 37.676 42.7131 36.6713 34.7131C106.498 46.7131 179.338 37.2131 193.906 34.7131C191.093 42.3131 192.734 57.7131 193.906 64.2131Z"
               :fill="color"/>
         <path d="M192.901 52.9088C211.79 55.3088 222.54 49.9088 225.554 46.9088L214 44.4088L202.446 38.4088L211.488 34.9088L218.019 29.4088C220.53 25.5755 225.755 17.5088 226.559 15.9088C227.362 14.3088 212.158 22.9088 204.455 27.4088H196.418L171.803 26.4088V27.4088L194.408 34.9088L192.901 52.9088Z"
@@ -73,7 +47,7 @@
               d="M34.3459 65.4091C34.3459 62.1675 36.8471 57.2496 36.8471 54.008C22.455 55.272 9.60057 54.0774 0.69978 45.16C8.20369 45.9814 14.4332 45.016 25.8448 38.1147C13.2964 35.8854 6.92664 21.5067 0 11C25.7859 29.6667 37.8941 26.9467 61.5304 24.92C61.5304 28.354 58.8687 32.3563 61.7313 36.6464C77.5657 39.4042 93.3108 38.1169 107 38.1276C122.55 37.6599 155.82 39.3834 169.291 36.6283C171.249 33.4112 169.57 28.3446 169.492 24.9019C193.127 26.9389 205.236 29.6644 231.022 11C224.096 21.4896 217.726 35.8789 205.178 38.1093C216.589 45.0069 222.819 45.9739 230.323 45.1531C221.422 54.0683 208.567 55.2624 194.175 54.0032C194.175 57.2448 196.676 62.1627 196.676 65.4043C168.227 70.6949 128.295 68.8784 107.206 68.7131C75.5017 68.0624 53.1446 70.4625 34.3447 65.4119L34.3459 65.4091ZM190.33 62.5951C187.316 47.9226 189.949 46.0186 192.735 35.5322C168.423 39.0801 165.272 41.7131 107.206 41.7131C60.2816 41.7131 57.8799 39.7629 38.2845 35.5504C41.0704 46.0368 42.6995 54.0215 37.879 62.6134C52.2441 66.7131 107.206 65.4091 107.206 65.4091C107.206 65.4091 180.785 67.7357 190.33 62.5951ZM28.3164 52.2731C33.0515 52.2375 36.0595 51.0658 37.259 51.3357C37.259 44.0792 35.4969 41.0456 35.4969 33.7885C43.3689 31.33 49.209 27.9795 57.4266 27.0382C37.7675 27.3395 30.8066 36.1683 7.63894 19.0819C16.6617 31.8877 24.4369 37.7982 32.9418 37.5267C27.2718 39.9497 23.3813 46.8222 11.798 47.9406C18.6139 51.4492 24.1381 52.3045 28.3164 52.2731ZM202.701 52.2549C206.879 52.2862 212.404 51.4312 219.22 47.9226C207.636 46.8044 203.746 39.9317 198.076 37.5088C206.581 37.7803 214.356 31.8698 223.379 19.064C200.211 36.1504 193.25 27.3216 173.591 27.0202C181.809 27.9617 187.649 31.3123 195.521 33.7706C195.521 41.0272 193.759 44.0608 193.759 51.3178C194.958 51.0479 197.966 52.2192 202.701 52.2549Z"
               :fill="$util.shadeColor(color, 0.5)"/>
       </svg>
-      <text :x="73" :y="175" class="name" v-if="castle">{{ castle.name || "..." }}</text>
+      <text :x="125" :y="195" class="name" v-if="castle" text-anchor="middle">{{ castle.name || "Burg" }}</text>
 
     </svg>
   </svg>
@@ -81,9 +55,14 @@
 
 <script>
   import config from "../config";
+  import CastleLevel1 from "./castles/level1";
+  import CastleLevel2 from "./castles/level2";
+  import CastleLevel3 from "./castles/level3";
+  import CastleLevel4 from "./castles/level4";
 
   export default {
     name: "Castle",
+    components: {CastleLevel1, CastleLevel2, CastleLevel3, CastleLevel4},
     props: {
       color: String,
       castle: {
@@ -99,7 +78,22 @@
     },
     computed: {
       points() {
-        return typeof this.castle.points === "number" ? this.castle.points : "?";
+        return this.castle && typeof this.castle.points === "number" ? this.castle.points : "?";
+      },
+      flagPositions() {
+        switch (this.points) {
+          case 0:
+          case 1:
+            return [{x: 91, y: 54}];
+          case 2:
+            return [{x: 95, y: 39}];
+          case 3:
+            return [{x: 47, y: 8}];
+          case 4:
+            return [{x: 47, y: -9}, {x: 132, y: 9}];
+          default:
+            return [{x: 91, y: 54}];
+        }
       }
     },
     data() {
@@ -143,10 +137,28 @@
 .points {
   font: 25px 'MedievalSharp';
   fill: white;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                   supported by Chrome, Edge, Opera and Firefox */
+
 }
 
 .name {
   font: 16px 'MedievalSharp';
   fill: white;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                   supported by Chrome, Edge, Opera and Firefox */
+
 }
 </style>

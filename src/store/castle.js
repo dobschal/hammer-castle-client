@@ -7,24 +7,20 @@ export const castleState = {
 export const castleMutations = {
   SET_CASTLES(state, castles) {
     if (state.castles.length === 0) {
-      console.log("[castle] Loaded castles: ", state.castles);
       state.castles = castles;
     } else {
-      let count = 0;
       castles.forEach(c1 => {
         if (!state.castles.some(c2 => c1.x === c2.x && c1.y === c2.y)) {
           state.castles.push(c1);
-          count++;
         }
       });
-      console.log("[castle] Added castles: ", count, state.castles);
     }
   },
   NEW_CASTLE(state, castle) { // injected from websocket
     state.castles.push(castle);
   },
   UPDATE_CASTLE(state, castle) { // injected from websocket
-    console.log("[castle] Update castle from websocket: ", castle, state.castles);
+    console.log("[castle] Update castle from websocket: ", castle);
     state.castles = [
       ...state.castles.filter(c => c.x !== castle.x || c.y !== castle.y),
       castle

@@ -4,7 +4,9 @@
             <div class="dialog-content">
                 <img src="../assets/icon-hand-writing.svg" alt="yeah">
                 <h3>Choose a name for your Castle!</h3>
-                <input type="text" v-model="input" placeholder="Burg der Burgen" autofocus/>
+                <input :class="{ error: Boolean(error) }" type="text" v-model="input" placeholder="Burg der Burgen" @keydown="error = ''" @keypress.enter="submit"
+                       autofocus/>
+                <div class="error" v-if="error">{{ error }}</div>
                 <div class="icons">
                     <img src="../assets/icon-cancel.svg" alt="yeah" @click="cancel">
                     <img src="../assets/icon-ok.svg" alt="yeah" @click="submit">
@@ -18,14 +20,17 @@
     export default {
         name: "DialogBox",
         data() {
-            return {input: ""};
+            return {input: "", error: ""};
         },
         methods: {
             cancel() {
                 this.$emit("CLOSE");
             },
             submit() {
-                if (!this.input) return;
+                if (!this.input || this.input.length > 14) {
+                    this.error = "Please insert a valid castle name! Max length is 14 characters.";
+                    return;
+                }
                 this.$emit("SUBMIT", this.input);
             }
         }
@@ -80,6 +85,15 @@
                     color: black;
                     padding: 0 8px;
                     line-height: 40px;
+
+                    &.error {
+                        border: solid 1px red;
+                    }
+                }
+
+                .error {
+                    color: #ff6d69;
+                    margin-top: 1rem;
                 }
 
                 .icons {
