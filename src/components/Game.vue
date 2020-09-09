@@ -19,20 +19,23 @@
                 :mouse-down-timestamp="mouseDownTimestamp"
                 :dragging="dragging"
                 :view-position="viewPosition"
+                @DONE="activeAction = ''"
         ></BuildCastle>
-
-        <g v-for="castle in castles" :key="castle.x + '' + castle.y">
-          <Castle :position="{ x: castle.x - viewPosition.x, y: castle.y - viewPosition.y }"
-                  :castle="castle"
-                  :color="castle.color"></Castle>
-        </g>
 
         <g v-for="blockArea in blockAreas" :key="blockArea.x + '' + blockArea.y">
           <BlockArea :position="{ x: blockArea.x - viewPosition.x, y: blockArea.y - viewPosition.y }"></BlockArea>
         </g>
 
+        <g v-for="castle in castles" :key="castle.x + '' + castle.y">
+          <Castle :position="{ x: castle.x - viewPosition.x, y: castle.y - viewPosition.y }"
+                  :castle="castle"
+                  :color="castle.color"
+                  @CLICK="castleClick($event)"></Castle>
+        </g>
+
       </svg>
     </div>
+    <DialogBox v-if="showDialog" @CLOSE="showDialog = false" @SUBMIT="dialogSubmit"></DialogBox>
     <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
     <div class="footer">
       <span>Server Version: {{ $store.state.serverVersion }}</span> |
@@ -53,26 +56,26 @@
   import NavigationBar from "./NavigationBar";
   import config from "../config";
   import BlockArea from "./BlockArea";
+  import DialogBox from "./DialogBox";
 
   export default {
     name: "Game",
-    components: {BlockArea, Castle, BuildCastle, NavigationBar},
+    components: {BlockArea, Castle, BuildCastle, NavigationBar, DialogBox},
     data() {
       return {
         dragging: false,
         waitingForAnimationFrame: false,
-
         gameHeight: 0,
         gameWidth: 0,
-
         zoomFactor: 1,
         mouseDownTimestamp: 0,
         viewPosition: {x: 0, y: 0},
         lastMousePosition: {x: 0, y: 0},
+        showDialog: false,
+        websocket: undefined,
 
         activeAction: "",
-
-        websocket: undefined
+        latestClickedCastle: undefined
       };
     },
 
@@ -81,6 +84,7 @@
 
         //  TODO: move that offthread or to server
 
+        const t1 = Date.now();
         const roads = [];
         for (let i = 0; i < this.castles.length; i++) {
           const c1 = this.castles[i];
@@ -89,10 +93,10 @@
             const distanceBetweenCastles = this.$util.positionDistance(c1, c2);
             if (distanceBetweenCastles < config.MAX_CASTLE_DISTANCE) {
               const path = `
-                M ${c1.x - this.viewPosition.x} ${c1.y - this.viewPosition.y}
-                C ${c1.x - this.viewPosition.x - 17} ${c1.y - this.viewPosition.y + 32},
-                ${c2.x - this.viewPosition.x + 23} ${c2.y - this.viewPosition.y - 34},
-                ${c2.x - this.viewPosition.x} ${c2.y - this.viewPosition.y}
+                M ${c1.viewPositionX} ${c1.viewPositionY}
+                C ${c1.viewPositionX - 17} ${c1.viewPositionY + 32},
+                ${c2.viewPositionX + 23} ${c2.viewPositionY - 34},
+                ${c2.viewPositionX} ${c2.viewPositionY}
               `;
               roads.push({
                 id: c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y,
@@ -103,13 +107,34 @@
             }
           }
         }
+        console.log("[Game] Roads in: ", (Date.now() - t1) + "ms");
         return roads;
       },
       castles() {
-        return this.$store.state.castles;
+        const filteredCastles = this.$store.state.castles
+                .map(c => {
+                  c.viewPositionX = c.x - this.viewPosition.x;
+                  c.viewPositionY = c.y - this.viewPosition.y;
+                  return c;
+                })
+                .filter(c => {
+                  return Boolean(c.viewPositionX > 0 && c.viewPositionX < this.gameWidth && c.viewPositionY > 0 && c.viewPositionY < this.gameHeight);
+                });
+        console.log("[Game] Castles loaded vs viewed: ", this.$store.state.castles.length, filteredCastles.length);
+        return filteredCastles;
       },
       blockAreas() {
-        return this.$store.state.blockAreas;
+        const filteredBlockAreas = this.$store.state.blockAreas
+                .map(ba => {
+                  ba.viewPositionX = ba.x - this.viewPosition.x;
+                  ba.viewPositionY = ba.y - this.viewPosition.y;
+                  return ba;
+                })
+                .filter(ba => {
+                  return Boolean(ba.viewPositionX > 0 && ba.viewPositionX < this.gameWidth && ba.viewPositionY > 0 && ba.viewPositionY < this.gameHeight);
+                });
+        console.log("[Game] Block areas loaded vs viewed: ", this.$store.state.blockAreas.length, filteredBlockAreas);
+        return filteredBlockAreas;
       },
       loading() {
         return this.$store.getters.busy;
@@ -133,18 +158,34 @@
 
           this.zoomFactor = 1;
         }
-      }
+      }/*,
+
+      castles(to, from) {
+        if (from.length === 0 && to.length > 0) {
+          const firstCastle = to.find(c => c.userId === this.user.id);
+          console.log("[Game] First castle: ", firstCastle, to[0].userId, this.user.id);
+          if (firstCastle) this.moveMapTo(firstCastle);
+        }
+      }*/
     },
 
-    beforeCreate() {
-      this.$store.dispatch("GET_USER");
+    created() {
+      this.$store.dispatch("GET_USER").then(user => {
+        console.log("[Game] Go user: ", user);
+        this.moveMapTo({x: user.startX, y: user.startY});
+        this.$store.dispatch("GET_CASTLES", {
+          fromX: user.startX - 500,
+          fromY: user.startY - 500,
+          toX: user.startX + 500,
+          toY: user.startY + 500
+        });
+      });
       this.$store.dispatch("GET_SERVER_VERSION");
-      this.$store.dispatch("GET_CASTLES");
       this.$store.dispatch("GET_BLOCK_AREAS");
-    }
-    ,
+    },
 
     mounted() {
+      console.log("[Game] Castles amount: ", this.castles.length);
       this.gameHeight = this.$refs["game-container"].offsetHeight;
       this.gameWidth = this.$refs["game-container"].offsetWidth;
 
@@ -167,7 +208,31 @@
 
     methods: {
 
-      attachWebsocketListener () {
+      dialogSubmit(newCastleName) {
+        console.log("[Game] New castle name fro: ", newCastleName, this.latestClickedCastle);
+
+        this.$store.dispatch("CHANGE_CASTLE_NAME", {
+          x: this.latestClickedCastle.x,
+          y: this.latestClickedCastle.y,
+          name: newCastleName
+        });
+
+        this.showDialog = false;
+      },
+
+      castleClick(castle) {
+        if (castle.userId === this.user.id) {
+          this.showDialog = true;
+        }
+        this.latestClickedCastle = castle;
+      },
+
+      moveMapTo(position) {
+        this.viewPosition.x = position.x - window.innerWidth / 2;
+        this.viewPosition.y = position.y - window.innerHeight / 2;
+      },
+
+      attachWebsocketListener() {
         this.websocket = this.$websocket.connect();
         ["NEW_CASTLE", "UPDATE_CASTLE", "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA"].forEach(eventName => {
           this.websocket.on(eventName, data => this.$store.commit(eventName, data));
@@ -177,10 +242,11 @@
       onScroll(event) {
         if (this.activeAction === "BUILD_CASTLE") return;
         const delta = event.deltaY * config.SCROLL_SENSITIVITY;
-        this.zoomFactor = Math.max(0.2, this.zoomFactor + delta);
-        if(this.zoomFactor > 0.2) {
-          this.viewPosition.x -= delta * this.gameHeight / 2;
-          this.viewPosition.y -= delta * this.gameHeight / 2;
+        this.zoomFactor = Math.min(2, Math.max(0.5, this.zoomFactor + delta));
+        if (this.zoomFactor > 0.5 && this.zoomFactor < 2) {
+          this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
+          this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
+          this.loadCastles();
         }
       },
 
@@ -201,25 +267,43 @@
         this.waitingForAnimationFrame = true;
         window.requestAnimationFrame(() => {
           if (this.dragging) {
-            this.viewPosition.x += (this.lastMousePosition.x - event.clientX) * this.zoomFactor;
-            this.viewPosition.y += (this.lastMousePosition.y - event.clientY) * this.zoomFactor;
+            this.viewPosition.x += Math.round((this.lastMousePosition.x - event.clientX) * this.zoomFactor);
+            this.viewPosition.y += Math.round((this.lastMousePosition.y - event.clientY) * this.zoomFactor);
           }
           this.lastMousePosition.x = event.clientX;
           this.lastMousePosition.y = event.clientY;
           this.waitingForAnimationFrame = false;
         });
       },
-      onMouseUp(event) {
-        this.dragging = false;
-        if (Date.now() - this.mouseDownTimestamp < 300) {
-          this.onClick(event);
+      onMouseUp() {
+        if (this.dragging && Date.now() - this.mouseDownTimestamp > 250) {
+          this.loadCastles();
         }
+        this.dragging = false;
+        // if (Date.now() - this.mouseDownTimestamp < 300) {
+        //   this.onClick(event);
+        // }
       },
-      async onClick() {
-        console.log("[Game] Click");
-      },
+      // async onClick() {
+      //   console.log("[Game] Click");
+      // },
       logout() {
+
+        // TODO: disconnect websocket and remove user data
+
         this.$store.commit("SET_AUTH_TOKEN", "");
+      },
+      loadCastles() {
+        console.log("[Game] Load data: ", this.viewPosition.x, this.viewPosition.y);
+
+        // TODO: add zoom factor to calculation...
+
+        this.$store.dispatch("GET_CASTLES", {
+          fromX: this.viewPosition.x,
+          fromY: this.viewPosition.y,
+          toX: Math.floor(this.viewPosition.x + this.gameWidth * this.zoomFactor),
+          toY: Math.floor(this.viewPosition.y + this.gameHeight * this.zoomFactor)
+        });
       }
     }
   };
@@ -235,6 +319,10 @@
     z-index: 1;
     cursor: grab;
     background-color: #b6e57b;
+
+    &:hover {
+      cursor: grab;
+    }
   }
 
   .footer {

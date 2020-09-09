@@ -22,6 +22,9 @@ export const blockAreaMutations = {
 
 export const blockAreaActions = {
     async GET_BLOCK_AREAS({commit}) {
+
+        // TODO: Loaded brick wise...
+
         try {
             commit("PROGRESS", 1);
             const response = await axios.get("/block-area");

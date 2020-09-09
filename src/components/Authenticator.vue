@@ -21,8 +21,13 @@
             <input type="password" v-model="password" id="password">
           </p>
           <p v-if="showRegistration">
-            <label for="password-verify">Verify Password</label>
-            <input type="password" v-model="passwordVerify" id="password-verify">
+          <label for="password-verify">Verify Password</label>
+          <input type="password" v-model="passwordVerify" id="password-verify">
+        </p>
+          <p v-if="showRegistration">
+            <label for="user-color">Your Color</label>
+            <span id="user-color" :style="{ 'background-color': randomColor }"></span>
+            <span class="link generate-color-link" @click="newColor">Change Color</span>
           </p>
           <div v-if="showRegistration">
             <button type="submit">Create Account</button>
@@ -48,7 +53,8 @@ export default {
       username: "",
       passwordVerify: "",
       error: undefined,
-      showRegistration: false
+      showRegistration: false,
+      randomColor:  "#" + Math.floor(Math.random()*16777215).toString(16)
     };
   },
   computed: {
@@ -63,6 +69,9 @@ export default {
     }
   },
   methods: {
+    newColor() {
+      this.randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+    },
     async authenticate() {
       if (!this.inputValid) {
         this.error = "Please fill out the form. Your password should contain at least 8 characters.";
@@ -71,8 +80,12 @@ export default {
       try {
         await this.$store.dispatch(this.showRegistration ? "CREATE_USER" : "AUTHENTICATE", {
           username: this.username,
-          password: this.password
+          password: this.password,
+          color: this.randomColor
         });
+        if(this.showRegistration) {
+          this.showRegistration = false;
+        }
       } catch (e) {
         console.log("[Authenticator] Login error: ", e);
         this.error = "Wrong credentials.";
@@ -116,6 +129,21 @@ export default {
         form p input {
           display: block;
           width: 100%;
+        }
+
+        #user-color {
+          display: inline-block;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          box-shadow: 15px 15px 15px -15px rgba(0,0,0,0.3);
+        }
+
+        .generate-color-link {
+          display: inline-block;
+          line-height: 55px;
+          vertical-align: top;
+          margin-left: 8px;
         }
 
         .error {

@@ -30,10 +30,13 @@
 
     computed: {
       isFirstCastle() {
-        return !this.castles.some(c => c.user_id === this.user.id);
+        return !this.castles.some(c => c.userId === this.user.id);
       },
       castles() {
         return this.$store.state.castles;
+      },
+      blockAreas() {
+        return this.$store.state.blockAreas;
       },
       opacity() {
         return this.validDistance ? "1" : "0.3";
@@ -76,6 +79,17 @@
 
         // TODO: include zoom factor in calculation...
 
+        if (this.blockAreas.length > 0) {
+          for (let i = 0; i < this.blockAreas.length; i++) {
+            const blockArea = this.blockAreas[i];
+            const distanceInPixel = this.$util.positionDistance(blockArea, position);
+            if (distanceInPixel < config.BLOCK_AREA_SIZE) {
+              this.validDistance = false;
+              return false;
+            }
+          }
+        }
+
         this.validDistance = false;
         if (this.castles.length === 0) {
           this.validDistance = true;
@@ -86,7 +100,7 @@
             if (distanceInPixel < config.MIN_CASTLE_DISTANCE) {
               this.validDistance = false;
               break;
-            } else if ((distanceInPixel < config.MAX_CASTLE_DISTANCE && castle.user_id === this.user.id) || this.isFirstCastle) {
+            } else if ((distanceInPixel < config.MAX_CASTLE_DISTANCE && castle.userId === this.user.id) || this.isFirstCastle) {
               this.validDistance = true;
             }
           }
@@ -107,6 +121,7 @@
         };
         if (this.hasCastleValidDistance(position)) {
           await this.$store.dispatch("CREATE_CASTLE", position);
+          this.$emit("DONE");
         } else {
           console.log("[BuildCastle] Invalid castle position: ", position);
         }
