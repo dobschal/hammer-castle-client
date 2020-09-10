@@ -9,7 +9,8 @@
               version="1.1"
       >
 
-        <path v-for="road in roads" :key="road.id" :d="road.path" stroke-width="5" stroke="#A8937D" fill="transparent"/>
+        <path v-for="road in roads" :key="road.id + '1'" :d="road.path" stroke-width="8" stroke="#867350" fill="transparent"/>
+        <path v-for="road in roads" :key="road.id + '2'" :d="road.path" stroke-width="5" stroke="#6F4E37" fill="transparent"/>
 
         <BuildCastle
                 v-if="activeAction === 'BUILD_CASTLE'"
@@ -37,6 +38,7 @@
     </div>
     <DialogBox v-if="showDialog" @CLOSE="showDialog = false" @SUBMIT="dialogSubmit"></DialogBox>
     <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
+    <TopNavigationBar></TopNavigationBar>
     <div class="footer">
       <span>Server Version: {{ $store.state.serverVersion }}</span> |
       <button @click="logout">Logout</button>
@@ -57,10 +59,11 @@
   import config from "../config";
   import BlockArea from "./BlockArea";
   import DialogBox from "./DialogBox";
+  import TopNavigationBar from "./TopNavigationBar";
 
   export default {
     name: "Game",
-    components: {BlockArea, Castle, BuildCastle, NavigationBar, DialogBox},
+    components: {BlockArea, Castle, BuildCastle, NavigationBar, DialogBox, TopNavigationBar},
     data() {
       return {
         dragging: false,
@@ -81,6 +84,9 @@
 
     computed: {
       roads() {
+
+        //  TODO: Add castle door positions. To let the roads start at the castle doors...
+
         const roads = [];
         for (let i = 0; i < this.castles.length; i++) {
           const c1 = this.castles[i];
@@ -90,8 +96,8 @@
             if (distanceBetweenCastles < config.MAX_CASTLE_DISTANCE) {
               const path = `
                 M ${c1.viewPositionX} ${c1.viewPositionY}
-                C ${c1.viewPositionX - 17} ${c1.viewPositionY + 32},
-                ${c2.viewPositionX + 23} ${c2.viewPositionY - 34},
+                C ${c1.viewPositionX - 17} ${c1.viewPositionY + 75},
+                ${c2.viewPositionX + 23} ${c2.viewPositionY - 75},
                 ${c2.viewPositionX} ${c2.viewPositionY}
               `;
               roads.push({
