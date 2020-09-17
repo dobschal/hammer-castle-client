@@ -36,7 +36,7 @@
 
       </svg>
     </div>
-    <DialogBox v-if="showDialog" @CLOSE="showDialog = false" @SUBMIT="dialogSubmit"></DialogBox>
+    <DialogBox v-if="showDialog" @CLOSE="showDialog = false" :latest-clicked-castle="latestClickedCastle"></DialogBox>
     <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
     <TopNavigationBar></TopNavigationBar>
     <div class="footer">
@@ -60,6 +60,19 @@
   import BlockArea from "./BlockArea";
   import DialogBox from "./DialogBox";
   import TopNavigationBar from "./TopNavigationBar";
+
+  // THe position a roads should start. Depending on the castles level asset... Should be the door position
+  const castleDoorPositions = [
+    {x: -5, y: 20},
+    {x: -5, y: 20},
+    {x: -5, y: 20},
+    {x: -37, y: 13},
+    {x: -5, y: 20},
+    {x: -5, y: 20},
+    {x: -5, y: 20},
+    {x: -5, y: 20},
+    {x: -5, y: 20}
+  ];
 
   export default {
     name: "Game",
@@ -95,10 +108,10 @@
             const distanceBetweenCastles = this.$util.positionDistance(c1, c2);
             if (distanceBetweenCastles < config.MAX_CASTLE_DISTANCE) {
               const path = `
-                M ${c1.viewPositionX} ${c1.viewPositionY}
-                C ${c1.viewPositionX - 17} ${c1.viewPositionY + 75},
+                M ${c1.viewPositionX + castleDoorPositions[c1.points].x} ${c1.viewPositionY + castleDoorPositions[c1.points].y}
+                C ${c1.viewPositionX + castleDoorPositions[c1.points].x - 40} ${c1.viewPositionY + castleDoorPositions[c1.points].y + 60},
                 ${c2.viewPositionX + 23} ${c2.viewPositionY - 75},
-                ${c2.viewPositionX} ${c2.viewPositionY}
+                ${c2.viewPositionX + castleDoorPositions[c2.points].x} ${c2.viewPositionY + castleDoorPositions[c2.points].y}
               `;
               roads.push({
                 id: c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y,
@@ -171,21 +184,28 @@
           toX: user.startX + 500,
           toY: user.startY + 500
         });
+        this.$store.dispatch("GET_CASTLE_PRICE");
       });
       this.$store.dispatch("GET_SERVER_VERSION");
       this.$store.dispatch("GET_BLOCK_AREAS");
+      this.$store.dispatch("GET_CONQUERS");
     },
 
     mounted() {
       this.gameHeight = this.$refs["game-container"].offsetHeight;
       this.gameWidth = this.$refs["game-container"].offsetWidth;
 
+      window.addEventListener("resize", this.onWindowResize);
+
       document.addEventListener("mousemove", this.onMouseMove);
+      document.addEventListener("touchmove", this.onMouseMove);
       document.addEventListener("mouseup", this.onMouseUp);
+      document.addEventListener("touchend", this.onMouseUp);
       document.addEventListener("keyup", this.onKeyUp);
       document.addEventListener("mousewheel", this.onScroll);
 
       this.$refs["game-container"].addEventListener("mousedown", this.onMouseDown);
+      this.$refs["game-container"].addEventListener("touchstart", this.onMouseDown, {passive: true});
 
       this.attachWebsocketListener();
     },
@@ -195,20 +215,14 @@
       document.removeEventListener("mouseup", this.onMouseUp);
       document.removeEventListener("mousewheel", this.onScroll);
       this.$refs["game-container"].removeEventListener("mousedown", this.onMouseDown);
+      this.$refs["game-container"].removeEventListener("touchstart", this.onMouseDown);
     },
 
     methods: {
 
-      dialogSubmit(newCastleName) {
-        console.log("[Game] New castle name fro: ", newCastleName, this.latestClickedCastle);
-
-        this.$store.dispatch("CHANGE_CASTLE_NAME", {
-          x: this.latestClickedCastle.x,
-          y: this.latestClickedCastle.y,
-          name: newCastleName
-        });
-
-        this.showDialog = false;
+      onWindowResize() {
+        this.gameHeight = this.$refs["game-container"].offsetHeight;
+        this.gameWidth = this.$refs["game-container"].offsetWidth;
       },
 
       castleClick(castle) {
@@ -227,7 +241,12 @@
 
       attachWebsocketListener() {
         this.websocket = this.$websocket.connect();
-        ["UPDATE_USER", "NEW_CASTLE", "UPDATE_CASTLE", "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA"].forEach(eventName => {
+        [
+          "UPDATE_USER",
+          "NEW_CASTLE", "UPDATE_CASTLE",
+          "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA",
+          "NEW_CONQUER", "UPDATE_CONQUER", "DELETE_CONQUER"
+        ].forEach(eventName => {
           this.websocket.on(eventName, data => this.$store.commit(eventName, data));
         })
       },
@@ -251,21 +270,25 @@
       },
 
       onMouseDown(event) {
+        const x = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
+        const y = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
         this.dragging = true;
-        this.lastMousePosition.x = event.clientX;
-        this.lastMousePosition.y = event.clientY;
+        this.lastMousePosition.x = x;
+        this.lastMousePosition.y = y;
         this.mouseDownTimestamp = Date.now();
       },
       onMouseMove(event) {
         if (this.waitingForAnimationFrame) return;
         this.waitingForAnimationFrame = true;
         window.requestAnimationFrame(() => {
+          const x = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
+          const y = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
           if (this.dragging) {
-            this.viewPosition.x += Math.round((this.lastMousePosition.x - event.clientX) * this.zoomFactor);
-            this.viewPosition.y += Math.round((this.lastMousePosition.y - event.clientY) * this.zoomFactor);
+            this.viewPosition.x += Math.round((this.lastMousePosition.x - x) * this.zoomFactor);
+            this.viewPosition.y += Math.round((this.lastMousePosition.y - y) * this.zoomFactor);
           }
-          this.lastMousePosition.x = event.clientX;
-          this.lastMousePosition.y = event.clientY;
+          this.lastMousePosition.x = x;
+          this.lastMousePosition.y = y;
           this.waitingForAnimationFrame = false;
         });
       },

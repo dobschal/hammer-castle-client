@@ -2,7 +2,7 @@
 const isDev = process.env.NODE_ENV === "development";
 
 export default {
-  API_URL: isDev ? "http://localhost:8082" : "",
+  API_URL: isDev ? "http://192.168.178.20:8082" : "",
   REQUEST_TIMEOUT: 10000,
   SCROLL_SENSITIVITY: 0.003,
   MIN_CASTLE_DISTANCE: 200,

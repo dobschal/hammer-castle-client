@@ -1,7 +1,8 @@
 import {axios} from "../plugins/axios";
 
 export const castleState = {
-  castles: []
+  castles: [],
+  castlePrice: 0
 };
 
 export const castleMutations = {
@@ -16,6 +17,9 @@ export const castleMutations = {
       });
     }
   },
+  SET_CASTLE_PRICE(state, {price}) { // injected from websocket
+    state.castlePrice = price;
+  },
   NEW_CASTLE(state, castle) { // injected from websocket
     state.castles.push(castle);
   },
@@ -24,6 +28,18 @@ export const castleMutations = {
       ...state.castles.filter(c => c.x !== castle.x || c.y !== castle.y),
       castle
     ];
+  },
+  SET_CONQUERS(state, conquers) {
+    console.log("[castle] Got all conquers: ", conquers);
+  },
+  NEW_CONQUER(state, conquer) {
+    console.log("[castle] New conquer: ", conquer);
+  },
+  UPDATE_CONQUER(state, conquer) {
+    console.log("[castle] Update conquer: ", conquer);
+  },
+  DELETE_CONQUER(state, conquer) {
+    console.log("[castle] Delete conquer: ", conquer);
   }
 };
 
@@ -50,6 +66,24 @@ export const castleActions = {
       commit("PROGRESS", 1);
       const response = await axios.get(`/castle?fromX=${fromX}&fromY=${fromY}&toX=${toX}&toY=${toY}`);
       commit("SET_CASTLES", response.data);
+    } finally {
+      commit("PROGRESS", -1);
+    }
+  },
+  async GET_CASTLE_PRICE({commit}) {
+    try {
+      commit("PROGRESS", 1);
+      const response = await axios.get(`/castle/price`);
+      commit("SET_CASTLE_PRICE", response.data);
+    } finally {
+      commit("PROGRESS", -1);
+    }
+  },
+  async GET_CONQUERS({commit}) {
+    try {
+      commit("PROGRESS", 1);
+      const response = await axios.get(`/castle/conquers`);
+      commit("SET_CONQUERS", response.data);
     } finally {
       commit("PROGRESS", -1);
     }

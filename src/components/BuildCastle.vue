@@ -22,9 +22,10 @@
 
     data() {
       return {
-        newCastlePosition: {x: 200, y: 200},
+        newCastlePosition: {x: window.innerWidth / 2, y: window.innerHeight / 2},
         waitingForAnimationFrame: false,
-        validDistance: false
+        validDistance: false,
+        isTouchDevice: false
       };
     },
 
@@ -53,14 +54,26 @@
     mounted() {
       document.addEventListener("mousemove", this.onMouseMove);
       document.addEventListener("mouseup", this.onMouseUp);
+      document.addEventListener("touchmove", this.onTouchMove);
+      document.addEventListener("touchstart", this.onTouchStart);
     },
 
     beforeDestroy() {
       document.removeEventListener("mousemove", this.onMouseMove);
       document.removeEventListener("mouseup", this.onMouseUp);
+      document.removeEventListener("touchmove", this.onTouchMove);
+      document.removeEventListener("touchstart", this.onTouchStart);
     },
 
     methods: {
+      onTouchStart() {
+        this.isTouchDevice = true;
+      },
+      onTouchMove() {
+        const x = (this.viewPosition.x + window.innerWidth / 2) * this.zoomFactor;
+        const y = (this.viewPosition.y + window.innerHeight / 2) * this.zoomFactor;
+        this.hasCastleValidDistance({x, y});
+      },
       onMouseMove(event) {
         if (this.waitingForAnimationFrame) return;
         this.waitingForAnimationFrame = true;
@@ -110,14 +123,21 @@
 
       onMouseUp(event) {
         if (Date.now() - this.mouseDownTimestamp < 300) {
+          console.log("[BuildCastle] Castle build click: ", this.isTouchDevice);
           this.onClick(event);
         }
       },
 
       async onClick(event) {
-        const position = {
+
+        // TODO: Zoom missing here?
+
+        const position = !this.isTouchDevice ? {
           x: this.viewPosition.x + event.clientX,
           y: this.viewPosition.y + event.clientY
+        } : {
+          x: this.viewPosition.x + window.innerWidth / 2,
+          y: this.viewPosition.y + window.innerHeight / 2
         };
         if (this.hasCastleValidDistance(position)) {
           await this.$store.dispatch("CREATE_CASTLE", position);

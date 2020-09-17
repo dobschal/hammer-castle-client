@@ -55,7 +55,7 @@
         data() {
             return {
                 size: config.BLOCK_AREA_SIZE,
-                padding: 40
+                padding: 60
             };
         }
     };

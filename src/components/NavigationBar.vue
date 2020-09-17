@@ -2,7 +2,7 @@
     <div class="wrapper">
         <div class="buttons">
             <button v-if="activeAction" type="button" @click="cancel">Cancel</button>
-            <button v-else type="button" @click="buildCastle">Build Castle</button>
+            <button v-else type="button" @click="buildCastle">Build Castle for {{ $store.state.castlePrice }}</button>
 
         </div>
     </div>
