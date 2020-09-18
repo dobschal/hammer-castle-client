@@ -130,7 +130,7 @@
 
       async onClick(event) {
 
-        // TODO: Zoom missing here?
+        // TODO: Zoom in calclation missing here?
 
         const position = !this.isTouchDevice ? {
           x: this.viewPosition.x + event.clientX,
@@ -140,7 +140,11 @@
           y: this.viewPosition.y + window.innerHeight / 2
         };
         if (this.hasCastleValidDistance(position)) {
-          await this.$store.dispatch("CREATE_CASTLE", position);
+          try {
+            await this.$store.dispatch("CREATE_CASTLE", position);
+          } catch (e) {
+            console.log("[BuildCastle] Cannot build castle: ", e, e.response);
+          }
           this.$emit("DONE");
         } else {
           console.log("[BuildCastle] Invalid castle position: ", position);

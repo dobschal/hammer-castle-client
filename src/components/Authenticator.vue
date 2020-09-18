@@ -1,7 +1,8 @@
 <template>
   <div v-if="!authenticated" class="authenticator">
     <div class="wrapper">
-      <div class="container">
+      <div class="container" v-if="!loading">
+        <div class="logo"><img src="../assets/logo.svg" alt="Hammer Castle Logo"></div>
         <div v-if="showRegistration">
           <h2>Come in!</h2>
           <p>Hammer Castle is waiting for you!</p>
@@ -38,8 +39,21 @@
             or <span class="link" @click="showRegistration = true">Create Account</span>
           </div>
         </form>
-        <div v-else>Loading...</div>
+        <hr>
+        <div>
+          <h2>What is Hammer Castle?</h2>
+          <p>Hammer Castle in a browser game.</p>
+        </div>
+        <div>
+          <h2>Changelog</h2>
+          <p>Here is a list of things changed in the game. Stay always up to date!</p>
+        </div>
+        <div>
+          <h2>Imprint</h2>
+          <p>© 2020, Sascha Dobschal. The game Hammer Castle was created and is an idea of Sascha Dobschal. info@hammercastle.de</p>
+        </div>
       </div>
+      <div v-else>Loading...</div>
     </div>
   </div>
 </template>
@@ -120,6 +134,13 @@ export default {
         margin: auto;
         padding: 2rem;
         border-radius: 0.5rem;
+
+        .logo img {
+          width: 200px;
+          display: block;
+          border-radius: 5px;
+          margin: 0 auto;
+        }
 
         form p label {
           display: block;

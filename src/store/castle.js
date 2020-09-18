@@ -2,7 +2,8 @@ import {axios} from "../plugins/axios";
 
 export const castleState = {
   castles: [],
-  castlePrice: 0
+  castlePrice: 0,
+  conquers: []
 };
 
 export const castleMutations = {
@@ -31,15 +32,25 @@ export const castleMutations = {
   },
   SET_CONQUERS(state, conquers) {
     console.log("[castle] Got all conquers: ", conquers);
+    state.conquers = conquers;
   },
   NEW_CONQUER(state, conquer) {
     console.log("[castle] New conquer: ", conquer);
+    state.conquers.push(conquer);
   },
   UPDATE_CONQUER(state, conquer) {
     console.log("[castle] Update conquer: ", conquer);
+    state.conquers = [
+      ...state.conquers.filter(c => c.castle.x !== conquer.castle.x || c.castle.y !== conquer.castle.y),
+      conquer
+    ];
   },
   DELETE_CONQUER(state, conquer) {
     console.log("[castle] Delete conquer: ", conquer);
+    const index = state.conquers.findIndex(c => c.castle.x !== conquer.castle.x || c.castle.y !== conquer.castle.y);
+    if (index !== -1) {
+      state.conquers.splice(index, 1);
+    }
   }
 };
 

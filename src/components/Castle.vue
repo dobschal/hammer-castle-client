@@ -3,23 +3,6 @@
     <svg :x="position.x - 125" :y="position.y - 125" @click="$emit('CLICK', castle)" @mouseover="highlighted = true"
          @mouseout="highlighted = false">
 
-      <svg class="sword1" x="75" y="40" width="56" height="56" viewBox="0 0 20 56" fill="none"
-           xmlns="http://www.w3.org/2000/svg">
-        <path d="M11.6667 55V46.5H7.66667V55C7.66667 55 9.66667 56.5 11.6667 55Z" fill="#90471F"/>
-        <path d="M5.66667 7V43H13.6667V7L9.66667 0L5.66667 7Z" fill="#C4C4C4"/>
-        <rect x="9.16669" y="8" width="1" height="36" rx="0.5" fill="#A0A0A0"/>
-        <path d="M18.6667 43H13.6667H5.66667H0.666667C-0.833333 44.5 0.666667 46 0.666667 46C0.666667 46 4.66669 45.5 5.66667 46C6.66665 46.5 7.66667 46.5 7.66667 46.5H11.6667C11.6667 46.5 12.6666 46.5 13.6667 46C14.6667 45.5 18.6667 46 18.6667 46C18.6667 46 20.1667 44.5 18.6667 43Z"
-              fill="#515151"/>
-      </svg>
-
-      <svg class="sword2" x="120" y="40" width="56" height="56" viewBox="0 0 20 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M11.6667 55V46.5H7.66667V55C7.66667 55 9.66667 56.5 11.6667 55Z" fill="#90471F"/>
-        <path d="M5.66667 7V43H13.6667V7L9.66667 0L5.66667 7Z" fill="#C4C4C4"/>
-        <rect x="9.16669" y="8" width="1" height="36" rx="0.5" fill="#A0A0A0"/>
-        <path d="M18.6667 43H13.6667H5.66667H0.666667C-0.833333 44.5 0.666667 46 0.666667 46C0.666667 46 4.66669 45.5 5.66667 46C6.66665 46.5 7.66667 46.5 7.66667 46.5H11.6667C11.6667 46.5 12.6666 46.5 13.6667 46C14.6667 45.5 18.6667 46 18.6667 46C18.6667 46 20.1667 44.5 18.6667 43Z"
-              fill="#515151"/>
-      </svg>
-
       <svg v-for="flagPos in flagPositions" :key="flagPos.x + '' + flagPos.y" :x="flagPos.x" :y="flagPos.y"
            class="flag-wrapper" width="35" height="35" viewBox="0 0 100 100" fill="none"
            xmlns="http://www.w3.org/2000/svg">
@@ -83,6 +66,24 @@
               :fill="$util.shadeColor(color, 0.5)"/>
       </svg>
       <text :x="124" :y="195" class="name" v-if="castle" text-anchor="middle">{{ castle.name || "Burg" }}</text>
+
+      <svg v-if="castle && castle.isInConquer" class="sword1" x="55" y="30" width="100" height="56" viewBox="0 0 20 56" fill="none"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d="M11.6667 55V46.5H7.66667V55C7.66667 55 9.66667 56.5 11.6667 55Z" fill="#90471F"/>
+        <path d="M5.66667 7V43H13.6667V7L9.66667 0L5.66667 7Z" fill="#C4C4C4"/>
+        <rect x="9.16669" y="8" width="1" height="36" rx="0.5" fill="#A0A0A0"/>
+        <path d="M18.6667 43H13.6667H5.66667H0.666667C-0.833333 44.5 0.666667 46 0.666667 46C0.666667 46 4.66669 45.5 5.66667 46C6.66665 46.5 7.66667 46.5 7.66667 46.5H11.6667C11.6667 46.5 12.6666 46.5 13.6667 46C14.6667 45.5 18.6667 46 18.6667 46C18.6667 46 20.1667 44.5 18.6667 43Z"
+              fill="#515151"/>
+      </svg>
+
+      <svg v-if="castle && castle.isInConquer" class="sword2" x="95" y="30" width="100" height="56" viewBox="0 0 20 56" fill="none"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d="M11.6667 55V46.5H7.66667V55C7.66667 55 9.66667 56.5 11.6667 55Z" fill="#90471F"/>
+        <path d="M5.66667 7V43H13.6667V7L9.66667 0L5.66667 7Z" fill="#C4C4C4"/>
+        <rect x="9.16669" y="8" width="1" height="36" rx="0.5" fill="#A0A0A0"/>
+        <path d="M18.6667 43H13.6667H5.66667H0.666667C-0.833333 44.5 0.666667 46 0.666667 46C0.666667 46 4.66669 45.5 5.66667 46C6.66665 46.5 7.66667 46.5 7.66667 46.5H11.6667C11.6667 46.5 12.6666 46.5 13.6667 46C14.6667 45.5 18.6667 46 18.6667 46C18.6667 46 20.1667 44.5 18.6667 43Z"
+              fill="#515151"/>
+      </svg>
 
     </svg>
   </svg>
@@ -202,32 +203,32 @@
 
   @keyframes rotate_sword {
     0% {
-      transform: rotate(0deg);;
+      transform: rotate(0deg);
     }
     50% {
-      transform: rotate(90deg);;
+      transform: rotate(45deg);
     }
     100% {
-      transform: rotate(0deg);;
+      transform: rotate(0deg);
     }
   }
 
   @keyframes rotate_sword2 {
     0% {
-      transform: rotate(0deg);;
+      transform: rotate(0deg);
     }
     50% {
-      transform: rotate(-90deg);;
+      transform: rotate(-45deg);
     }
     100% {
-      transform: rotate(0deg);;
+      transform: rotate(0deg);
     }
   }
 
   .sword1 {
     * {
-      transform: rotate(90deg);
-      transform-origin: 50% 50%;
+      transform: rotate(45deg);
+      transform-origin: 50% 90%;
       animation: rotate_sword;
       animation-iteration-count: infinite;
       animation-duration: 1s;
@@ -236,8 +237,8 @@
 
   .sword2 {
     * {
-      transform: rotate(90deg);
-      transform-origin: 50% 50%;
+      transform: rotate(-45deg);
+      transform-origin: 50% 90%;
       animation: rotate_sword2;
       animation-iteration-count: infinite;
       animation-duration: 1s;

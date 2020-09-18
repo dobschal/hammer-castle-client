@@ -131,6 +131,7 @@
                 .map(c => {
                   c.viewPositionX = c.x - this.viewPosition.x;
                   c.viewPositionY = c.y - this.viewPosition.y;
+                  c.isInConquer = this.$store.state.conquers.some(co => co.castle.x === c.x && co.castle.y === c.y);
                   return c;
                 })
                 .filter(c => {
