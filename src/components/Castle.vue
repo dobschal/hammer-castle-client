@@ -66,24 +66,27 @@
               :fill="$util.shadeColor(color, 0.5)"/>
       </svg>
       <text :x="124" :y="195" class="name" v-if="castle" text-anchor="middle">{{ castle.name || "Burg" }}</text>
+      <text :x="124" :y="175" class="username-bg" v-if="castle" text-anchor="middle">{{ castle.username || "Unknown" }}</text>
+      <text :x="125" :y="176" class="username" v-if="castle" text-anchor="middle">{{ castle.username || "Unknown" }}</text>
 
-      <svg v-if="castle && castle.isInConquer" class="sword1" x="55" y="30" width="100" height="56" viewBox="0 0 20 56" fill="none"
-           xmlns="http://www.w3.org/2000/svg">
-        <path d="M11.6667 55V46.5H7.66667V55C7.66667 55 9.66667 56.5 11.6667 55Z" fill="#90471F"/>
-        <path d="M5.66667 7V43H13.6667V7L9.66667 0L5.66667 7Z" fill="#C4C4C4"/>
-        <rect x="9.16669" y="8" width="1" height="36" rx="0.5" fill="#A0A0A0"/>
-        <path d="M18.6667 43H13.6667H5.66667H0.666667C-0.833333 44.5 0.666667 46 0.666667 46C0.666667 46 4.66669 45.5 5.66667 46C6.66665 46.5 7.66667 46.5 7.66667 46.5H11.6667C11.6667 46.5 12.6666 46.5 13.6667 46C14.6667 45.5 18.6667 46 18.6667 46C18.6667 46 20.1667 44.5 18.6667 43Z"
-              fill="#515151"/>
-      </svg>
+        <svg v-if="castle && castle.isInConquer" class="sword1" x="55" y="30" width="100" height="56"
+             viewBox="0 0 20 56" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.6667 55V46.5H7.66667V55C7.66667 55 9.66667 56.5 11.6667 55Z" fill="#90471F"/>
+          <path d="M5.66667 7V43H13.6667V7L9.66667 0L5.66667 7Z" fill="#C4C4C4"/>
+          <rect x="9.16669" y="8" width="1" height="36" rx="0.5" fill="#A0A0A0"/>
+          <path d="M18.6667 43H13.6667H5.66667H0.666667C-0.833333 44.5 0.666667 46 0.666667 46C0.666667 46 4.66669 45.5 5.66667 46C6.66665 46.5 7.66667 46.5 7.66667 46.5H11.6667C11.6667 46.5 12.6666 46.5 13.6667 46C14.6667 45.5 18.6667 46 18.6667 46C18.6667 46 20.1667 44.5 18.6667 43Z"
+                fill="#515151"/>
+        </svg>
 
-      <svg v-if="castle && castle.isInConquer" class="sword2" x="95" y="30" width="100" height="56" viewBox="0 0 20 56" fill="none"
-           xmlns="http://www.w3.org/2000/svg">
-        <path d="M11.6667 55V46.5H7.66667V55C7.66667 55 9.66667 56.5 11.6667 55Z" fill="#90471F"/>
-        <path d="M5.66667 7V43H13.6667V7L9.66667 0L5.66667 7Z" fill="#C4C4C4"/>
-        <rect x="9.16669" y="8" width="1" height="36" rx="0.5" fill="#A0A0A0"/>
-        <path d="M18.6667 43H13.6667H5.66667H0.666667C-0.833333 44.5 0.666667 46 0.666667 46C0.666667 46 4.66669 45.5 5.66667 46C6.66665 46.5 7.66667 46.5 7.66667 46.5H11.6667C11.6667 46.5 12.6666 46.5 13.6667 46C14.6667 45.5 18.6667 46 18.6667 46C18.6667 46 20.1667 44.5 18.6667 43Z"
-              fill="#515151"/>
-      </svg>
+        <svg v-if="castle && castle.isInConquer" class="sword2" x="95" y="30" width="100" height="56" viewBox="0 0 20 56" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.6667 55V46.5H7.66667V55C7.66667 55 9.66667 56.5 11.6667 55Z" fill="#90471F"/>
+          <path d="M5.66667 7V43H13.6667V7L9.66667 0L5.66667 7Z" fill="#C4C4C4"/>
+          <rect x="9.16669" y="8" width="1" height="36" rx="0.5" fill="#A0A0A0"/>
+          <path d="M18.6667 43H13.6667H5.66667H0.666667C-0.833333 44.5 0.666667 46 0.666667 46C0.666667 46 4.66669 45.5 5.66667 46C6.66665 46.5 7.66667 46.5 7.66667 46.5H11.6667C11.6667 46.5 12.6666 46.5 13.6667 46C14.6667 45.5 18.6667 46 18.6667 46C18.6667 46 20.1667 44.5 18.6667 43Z"
+                fill="#515151"/>
+        </svg>
 
     </svg>
   </svg>
@@ -196,10 +199,32 @@
   -moz-user-select: none; /* Old versions of Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none;
-  /* Non-prefixed version, currently
-                                   supported by Chrome, Edge, Opera and Firefox */
-
+  /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
+
+  .username {
+    font: 12px 'MedievalSharp';
+    letter-spacing: 0;
+    fill: white;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+  }
+
+  .username-bg {
+    font: 12px 'MedievalSharp';
+    letter-spacing: 0;
+    fill: black;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+  }
 
   @keyframes rotate_sword {
     0% {

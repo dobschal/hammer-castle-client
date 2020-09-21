@@ -117,18 +117,7 @@
             const c2 = this.castles[j];
             const distanceBetweenCastles = this.$util.positionDistance(c1, c2);
             if (distanceBetweenCastles < config.MAX_CASTLE_DISTANCE) {
-
-              // TODO: calculate the angle to rotate the street image
-
-              const angle = Math.floor(Math.atan2(c2.viewPositionY - c1.viewPositionY, c2.viewPositionX - c1.viewPositionX) * 180 / Math.PI) - 90;
-              console.log("[Game] Angle of street: ", angle);
-
-              // const path = `
-              //   M ${c1.viewPositionX + castleDoorPositions[c1.points].x} ${c1.viewPositionY + castleDoorPositions[c1.points].y}
-              //   C ${c1.viewPositionX + castleDoorPositions[c1.points].x - 50} ${c1.viewPositionY + castleDoorPositions[c1.points].y + 50},
-              //   ${c2.viewPositionX + 50} ${c2.viewPositionY - 50},
-              //   ${c2.viewPositionX + castleDoorPositions[c2.points].x} ${c2.viewPositionY + castleDoorPositions[c2.points].y}
-              // `;
+              const angle = Math.floor(Math.atan2(c2.viewPositionY - c1.viewPositionY, c2.viewPositionX - c1.viewPositionX) * 180 / Math.PI) - 82;
               roads.push({
                 id: c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y,
                 middleBetweenCastles: {
@@ -137,9 +126,6 @@
                 },
                 angle,
                 distanceBetweenCastles
-                // from: {x: c1.viewPositionX, y: c1.viewPositionY},
-                // to: {x: c2.viewPositionX, y: c2.viewPositionY}/*,
-                // path*/
               });
             }
           }
