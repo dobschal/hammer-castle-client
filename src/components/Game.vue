@@ -54,13 +54,13 @@
     <TopNavigationBar></TopNavigationBar>
     <div class="footer">
       <span>Server Version: {{ $store.state.serverVersion }}</span> |
-      <button @click="logout">Logout</button>
-      |
+      <!--<button @click="logout">Logout</button>
+      |-->
       <span>Position: {{ viewPosition.x.toFixed(2) }}/{{ viewPosition.y.toFixed(2) }}</span>
-      |
+      <!--|
       <span>Zoom: {{ zoomFactor.toFixed(2) }}</span>
       |
-      <span v-if="user">User: {{ user.id}} / {{ user.color }} / Hammers: {{ user.hammer }} </span>
+      <span v-if="user">User: {{ user.id}} / {{ user.color }} / Hammers: {{ user.hammer }} </span>-->
     </div>
   </div>
 </template>
@@ -356,7 +356,7 @@
 
     span {
       color: #3B3B3B;
-      font-size: 0.8rem;
+      font-size: 0.66rem;
     }
   }
 </style>

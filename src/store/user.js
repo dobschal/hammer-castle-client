@@ -15,7 +15,9 @@ export const userMutations = {
     state.user = user;
   },
   UPDATE_USER(state, user) {
-    state.user = user;
+    for (const key in user) {
+      state.user[key] = user[key];
+    }
   }
 };
 
