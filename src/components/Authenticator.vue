@@ -15,15 +15,15 @@
         <form @submit.prevent="authenticate" v-if="!loading">
           <p>
             <label for="username">Username</label>
-            <input type="text" v-model="username" id="username" autofocus>
+            <input type="text" v-model="username" id="username" autofocus autocomplete="username">
           </p>
           <p>
             <label for="password">Password</label>
-            <input type="password" v-model="password" id="password">
+            <input type="password" v-model="password" id="password" :autocomplete="showRegistration ? 'new-password' : 'current-password'">
           </p>
           <p v-if="showRegistration">
           <label for="password-verify">Verify Password</label>
-          <input type="password" v-model="passwordVerify" id="password-verify">
+          <input type="password" v-model="passwordVerify" id="password-verify" autocomplete="new-password">
         </p>
           <p v-if="showRegistration">
             <label for="user-color">Your Color</label>
