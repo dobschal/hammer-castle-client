@@ -30,11 +30,11 @@
       <CastleLevel4 v-else></CastleLevel4>
 
       <!-- Shield with level number -->
-      <svg v-if="!highlighted" :x="168" :y="30" width="40" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg v-if="!highlighted" :x="163" :y="35" width="40" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M1 13.4583C1 32.25 14.8 57 24 57C33.2 57 47 32.25 47 13.4583C47 13.4583 33.2 13.9167 24.92 2C14.8 13.9167 1 13.4583 1 13.4583Z"
               fill="#564942" stroke="#D18227" stroke-width="2"/>
       </svg>
-      <svg v-else :x="128" :y="-9" width="120" height="120" viewBox="0 0 148 158" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg v-else :x="123" :y="-4" width="120" height="120" viewBox="0 0 148 158" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g filter="url(#filter0_d)">
           <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" fill="#564942"/>
           <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" stroke="#D18227" stroke-width="2"/>
@@ -51,7 +51,7 @@
           </filter>
         </defs>
       </svg>
-      <text :x="180" :y="60" class="points" v-if="castle">{{ points }}</text>
+      <text :x="175" :y="65" class="points" v-if="castle">{{ points }}</text>
 
       <!-- Banner below -->
       <svg class="banner" :x="36" :y="150" width="175" height="60" viewBox="0 0 232 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -66,8 +66,8 @@
               :fill="$util.shadeColor(color, 0.5)"/>
       </svg>
       <text :x="124" :y="195" class="name" v-if="castle" text-anchor="middle">{{ castle.name || "Burg" }}</text>
-      <text :x="124" :y="175" class="username-bg" v-if="castle" text-anchor="middle">{{ castle.username || "Unknown" }}</text>
-      <text :x="125" :y="176" class="username" v-if="castle" text-anchor="middle">{{ castle.username || "Unknown" }}</text>
+<!--      <text :x="124" :y="175" class="username-bg" v-if="castle" text-anchor="middle">{{ castle.username || "Unknown" }}</text>-->
+<!--      <text :x="125" :y="176" class="username" v-if="castle" text-anchor="middle">{{ castle.username || "Unknown" }}</text>-->
 
         <svg v-if="castle && castle.isInConquer" class="sword1" x="55" y="30" width="100" height="56"
              viewBox="0 0 20 56" fill="none"
@@ -141,6 +141,15 @@
         highlighted: false,
         radius: config.MIN_CASTLE_DISTANCE
       }
+    },
+    watch: {
+      highlighted(val) {
+        if(val) {
+          this.$emit("HIGHLIGHT-ON", this.castle);
+        } else {
+          this.$emit("HIGHLIGHT-OFF", this.castle);
+        }
+      }
     }
   };
 </script>
@@ -202,29 +211,29 @@
   /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
-  .username {
-    font: 12px 'MedievalSharp';
-    letter-spacing: 0;
-    fill: white;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Old versions of Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none;
-  }
+  /*.username {*/
+  /*  font: 12px 'MedievalSharp';*/
+  /*  letter-spacing: 0;*/
+  /*  fill: white;*/
+  /*  -webkit-touch-callout: none; !* iOS Safari *!*/
+  /*  -webkit-user-select: none; !* Safari *!*/
+  /*  -khtml-user-select: none; !* Konqueror HTML *!*/
+  /*  -moz-user-select: none; !* Old versions of Firefox *!*/
+  /*  -ms-user-select: none; !* Internet Explorer/Edge *!*/
+  /*  user-select: none;*/
+  /*}*/
 
-  .username-bg {
-    font: 12px 'MedievalSharp';
-    letter-spacing: 0;
-    fill: black;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Old versions of Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none;
-  }
+  /*.username-bg {*/
+  /*  font: 12px 'MedievalSharp';*/
+  /*  letter-spacing: 0;*/
+  /*  fill: black;*/
+  /*  -webkit-touch-callout: none; !* iOS Safari *!*/
+  /*  -webkit-user-select: none; !* Safari *!*/
+  /*  -khtml-user-select: none; !* Konqueror HTML *!*/
+  /*  -moz-user-select: none; !* Old versions of Firefox *!*/
+  /*  -ms-user-select: none; !* Internet Explorer/Edge *!*/
+  /*  user-select: none;*/
+  /*}*/
 
   @keyframes rotate_sword {
     0% {

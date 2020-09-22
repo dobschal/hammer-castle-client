@@ -44,7 +44,9 @@
           <Castle :position="{ x: castle.x - viewPosition.x, y: castle.y - viewPosition.y }"
                   :castle="castle"
                   :color="castle.color"
-                  @CLICK="castleClick($event)"></Castle>
+                  @CLICK="castleClick($event)"
+                  @HIGHLIGHT-ON="highlightedCastle = castle"
+                  @HIGHLIGHT-OFF="highlightedCastle = undefined"></Castle>
         </g>
 
       </svg>
@@ -52,18 +54,12 @@
     <DialogBox v-if="showDialog" @CLOSE="showDialog = false" :latest-clicked-castle="latestClickedCastle"></DialogBox>
     <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
     <TopNavigationBar @OPEN-MENU="menuOpen = true"></TopNavigationBar>
-    <transition name="fade-in" mode="out-in">
-      <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false"></Menu>
-    </transition>
+    <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false"></Menu>
+    <MouseToolTip v-if="toolTipContent"><span v-html="toolTipContent"></span></MouseToolTip>
     <div class="footer">
       <span>Server Version: {{ $store.state.serverVersion }}</span> |
-      <!--<button @click="logout">Logout</button>
-      |-->
-      <span>Position: {{ viewPosition.x.toFixed(2) }}/{{ viewPosition.y.toFixed(2) }}</span>
-      <!--|
+      <span>Position: {{ viewPosition.x.toFixed(2) }}/{{ viewPosition.y.toFixed(2) }}</span> |
       <span>Zoom: {{ zoomFactor.toFixed(2) }}</span>
-      |
-      <span v-if="user">User: {{ user.id}} / {{ user.color }} / Hammers: {{ user.hammer }} </span>-->
     </div>
   </div>
 </template>
@@ -77,10 +73,11 @@
   import DialogBox from "./DialogBox";
   import TopNavigationBar from "./TopNavigationBar";
   import Menu from "./Menu";
+  import MouseToolTip from "./MouseToolTip";
 
   export default {
     name: "Game",
-    components: {BlockArea, Castle, BuildCastle, NavigationBar, DialogBox, TopNavigationBar, Menu},
+    components: {BlockArea, Castle, BuildCastle, NavigationBar, DialogBox, TopNavigationBar, Menu, MouseToolTip},
     data() {
       return {
         dragging: false,
@@ -95,7 +92,9 @@
         websocket: undefined,
         activeAction: "",
         latestClickedCastle: undefined,
-        menuOpen: false
+        menuOpen: false,
+        highlightedCastle: undefined,
+        toolTipContent: ""
       };
     },
 
@@ -174,6 +173,25 @@
           //  TODO: this is a hotfix, cause the zoomFactor is missing in the distance calculation on build castle
 
           this.zoomFactor = 1;
+        }
+      },
+
+      highlightedCastle(castle) {
+        if (castle) {
+          if (castle.userId === this.user.id) {
+            this.toolTipContent = `
+              This is your castle. <br>Click to open the options menu.
+            `;
+          } else {
+            this.toolTipContent = `
+              This is a castle of <i><b>${castle.username}</b></i> called <i>${castle.name || 'Burg'}</i>.
+            `;
+          }
+          if (castle.isInConquer) {
+            this.toolTipContent += "The castle is getting conquered at the moment!";
+          }
+        } else {
+          this.toolTipContent = "";
         }
       }
     },

@@ -2,7 +2,8 @@
     <div class="wrapper">
         <div class="buttons">
             <button v-if="activeAction" type="button" @click="cancel">Cancel</button>
-            <button v-else type="button" @click="buildCastle">Build Castle for {{ $store.state.castlePrice }}</button>
+            <button v-else type="button" @click="buildCastle">Build Castle for {{ $store.state.castlePrice }} <img
+                    src="../assets/icon-hammer.svg" class="hammer-icon" alt="Hammer"></button>
 
         </div>
     </div>
@@ -35,5 +36,15 @@
         width: 320px;
         margin-left: -160px;
         text-align: center;
+    }
+    button {
+        padding: 0 1.5rem;
+        line-height: 40px;
+    }
+    .hammer-icon {
+        display: inline-block;
+        margin-bottom: -9px;
+        margin-right: -10px;
+        width: 32px;
     }
 </style>
