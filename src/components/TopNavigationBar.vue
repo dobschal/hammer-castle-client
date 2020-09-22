@@ -14,7 +14,7 @@
                 <span class="value">{{ level }}</span>
             </div>
             <div class="icon-value-pair" @click="openMenu">
-                <span class="icon"><img src="../assets/icon-burger.svg" alt="Menu"></span>
+                <span class="icon burger-button"><img src="../assets/icon-burger.svg" alt="Menu"></span>
             </div>
         </div>
     </div>
@@ -109,6 +109,15 @@
 
                     .small {
                         font-size: 66%;
+                    }
+                }
+
+                .burger-button {
+                    transition: transform 0.3s ease-out;
+
+                    &:hover {
+                        transform: rotate(23deg) scale(1.2);
+                        cursor: pointer;
                     }
                 }
             }

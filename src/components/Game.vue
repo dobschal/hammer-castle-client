@@ -51,7 +51,10 @@
     </div>
     <DialogBox v-if="showDialog" @CLOSE="showDialog = false" :latest-clicked-castle="latestClickedCastle"></DialogBox>
     <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
-    <TopNavigationBar></TopNavigationBar>
+    <TopNavigationBar @OPEN-MENU="menuOpen = true"></TopNavigationBar>
+    <transition name="fade-in" mode="out-in">
+      <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false"></Menu>
+    </transition>
     <div class="footer">
       <span>Server Version: {{ $store.state.serverVersion }}</span> |
       <!--<button @click="logout">Logout</button>
@@ -73,23 +76,11 @@
   import BlockArea from "./BlockArea";
   import DialogBox from "./DialogBox";
   import TopNavigationBar from "./TopNavigationBar";
-
-  // THe position a roads should start. Depending on the castles level asset... Should be the door position
-  // const castleDoorPositions = [
-  //   {x: -5, y: 20},
-  //   {x: -5, y: 20},
-  //   {x: -5, y: 40},
-  //   {x: -37, y: 13},
-  //   {x: 18, y: 24},
-  //   {x: -5, y: 20},
-  //   {x: -5, y: 20},
-  //   {x: -5, y: 20},
-  //   {x: -5, y: 20}
-  // ];
+  import Menu from "./Menu";
 
   export default {
     name: "Game",
-    components: {BlockArea, Castle, BuildCastle, NavigationBar, DialogBox, TopNavigationBar},
+    components: {BlockArea, Castle, BuildCastle, NavigationBar, DialogBox, TopNavigationBar, Menu},
     data() {
       return {
         dragging: false,
@@ -102,9 +93,9 @@
         lastMousePosition: {x: 0, y: 0},
         showDialog: false,
         websocket: undefined,
-
         activeAction: "",
-        latestClickedCastle: undefined
+        latestClickedCastle: undefined,
+        menuOpen: false
       };
     },
 
