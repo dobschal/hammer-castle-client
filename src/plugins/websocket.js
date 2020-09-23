@@ -9,7 +9,7 @@ function connect() {
     return socket;
   }
   socket = io(config.API_URL, {
-    path: config.API_PATH,
+    path: config.WS_PATH,
     query: {
       token: cookie.get("auth-token")
     }
