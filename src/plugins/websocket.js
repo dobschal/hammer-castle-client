@@ -8,7 +8,8 @@ function connect() {
   if (socket) {
     return socket;
   }
-  socket = io(config.API_URL + config.API_PATH, {
+  socket = io(config.API_URL, {
+    path: config.API_PATH,
     query: {
       token: cookie.get("auth-token")
     }
