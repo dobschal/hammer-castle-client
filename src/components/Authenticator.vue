@@ -59,6 +59,15 @@
 </template>
 
 <script>
+
+  function randomColor() {
+    let color = "#" + Math.floor(Math.random()*16777215).toString(16);
+    if(color.length < 6) {
+      color += "f";
+    }
+    return color;
+  }
+
 export default {
   name: "Authenticator",
   data() {
@@ -68,7 +77,7 @@ export default {
       passwordVerify: "",
       error: undefined,
       showRegistration: false,
-      randomColor:  "#" + Math.floor(Math.random()*16777215).toString(16)
+      randomColor:  randomColor()
     };
   },
   computed: {
@@ -84,7 +93,7 @@ export default {
   },
   methods: {
     newColor() {
-      this.randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+      this.randomColor = randomColor();
     },
     async authenticate() {
       if (!this.inputValid) {
