@@ -33,7 +33,7 @@ export default {
         commit("PROGRESS", 1);
         const {
           data: {version}
-        } = await axios.get("/version");
+        } = await axios.get("/public/version");
         commit("SET_SERVER_VERSION", version);
       } finally {
         commit("PROGRESS", -1);
