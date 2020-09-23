@@ -1,4 +1,7 @@
 <template>
+
+    <!-- TODO: make this more beautiful -->
+
     <div class="tooltip-wrapper" :style="{ left: mousePositionX + 'px', top: mousePositionY + 'px' }">
         <div class="content">
             <slot></slot>

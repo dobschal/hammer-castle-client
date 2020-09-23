@@ -1,4 +1,7 @@
 <template>
+
+    <!-- TODO: Hide that and show only the list of buttons when clicked a little plus button at the bottom -->
+
     <div class="wrapper">
         <div class="buttons">
             <button v-if="activeAction" type="button" @click="cancel">Cancel</button>

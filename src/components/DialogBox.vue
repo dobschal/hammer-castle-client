@@ -1,4 +1,7 @@
 <template>
+
+    <!-- TODO: this should be the castle menu only --->
+
     <div class="dialog-container">
         <div class="dialog-wrapper">
             <div class="dialog-content">
