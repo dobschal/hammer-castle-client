@@ -22,6 +22,7 @@ export const castleMutations = {
     state.castlePrice = price;
   },
   NEW_CASTLE(state, castle) { // injected from websocket
+    console.log("[castle] Got new castle: ", castle);
     state.castles.push(castle);
   },
   UPDATE_CASTLE(state, castle) { // injected from websocket

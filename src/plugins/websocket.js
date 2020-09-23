@@ -15,7 +15,9 @@ function connect() {
     }
   });
 
-  // TODO: There is a heartbeat event...
+  socket.on("HEARTBEAT", data => {
+    console.log("[websocket] Got heartbeat: ", data);
+  });
 
   return socket;
 }
