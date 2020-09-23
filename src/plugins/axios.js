@@ -3,7 +3,7 @@ import config from "../config";
 import cookie from "js-cookie";
 
 const axiosConfig = {
-  baseURL: config.API_URL,
+  baseURL: config.API_URL + config.API_PATH,
   timeout: config.REQUEST_TIMEOUT
 };
 

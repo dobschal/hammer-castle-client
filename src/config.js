@@ -1,8 +1,11 @@
 // eslint-disable-next-line
 const isDev = process.env.NODE_ENV === "development";
 
+console.log("[config] Running in dev mode?: ", isDev);
+
 export default {
-  API_URL: isDev ? "http://192.168.178.20:8082" : "http://hammercastle.de/api",
+  API_URL: isDev ? "http://192.168.178.20:8082" : "http://hammercastle.de",
+  API_PATH: "/api",
   REQUEST_TIMEOUT: 10000,
   SCROLL_SENSITIVITY: 0.003,
   MIN_CASTLE_DISTANCE: 200,
