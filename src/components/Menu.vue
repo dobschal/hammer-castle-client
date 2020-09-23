@@ -3,17 +3,36 @@
         <div class="menu-container">
             <div class="menu-content" @click.stop>
                 <div class="items">
+                    <div class="item">Help & Info</div>
+                    <div class="item">Ranking</div>
+                    <div class="item">Profile</div>
+                    <div class="item">Forum</div>
                     <div class="item" @click="$emit('LOGOUT')">Logout</div>
                     <div class="item" @click="$emit('CLOSE-MENU')">Close Menu</div>
                 </div>
+                <div class="footer">{{ version }} | {{ clientCommitHash }}</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+
+    import {version} from "../../package";
+
     export default {
-        name: "Menu"
+        name: "Menu",
+        data() {
+            return {
+                clientCommitHash: "",
+                version
+            }
+        },
+        mounted() {
+            fetch("/commit-hash.txt").then(r => r.text()).then(r => {
+                this.clientCommitHash = r;
+            });
+        }
     };
 </script>
 
@@ -42,12 +61,12 @@
                 margin: auto;
 
                 .items {
-                    padding: 3rem;
+                    padding: 2rem 3rem;
                     text-align: center;
 
                     .item {
-                        font-size: 1.3rem;
-                        padding: 1rem;
+                        font-size: 1.2rem;
+                        padding: 0.77rem 1rem;
                         border-bottom: dashed 2px rgba(0, 0, 0, 0.19);
 
                         &:last-child {
@@ -59,6 +78,15 @@
                             cursor: pointer;
                         }
                     }
+                }
+
+                // end .items
+
+                .footer {
+                    text-align: center;
+                    font-weight: bold;
+                    font-size: 66%;
+                    color: rgba(0, 0, 0, 0.66);
                 }
             }
         }

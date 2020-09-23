@@ -33,7 +33,7 @@
 <style lang="scss" scoped>
     .wrapper {
         position: fixed;
-        bottom: 4rem;
+        bottom: 2rem;
         left: 50%;
         z-index: 2;
         width: 320px;

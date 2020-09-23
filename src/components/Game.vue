@@ -34,6 +34,7 @@
                 :dragging="dragging"
                 :view-position="viewPosition"
                 @DONE="activeAction = ''"
+                @ERROR="error = $event"
         ></BuildCastle>
 
         <g v-for="blockArea in blockAreas" :key="blockArea.x + '' + blockArea.y">
@@ -56,11 +57,12 @@
     <TopNavigationBar @OPEN-MENU="menuOpen = true"></TopNavigationBar>
     <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false"></Menu>
     <MouseToolTip v-if="toolTipContent"><span v-html="toolTipContent"></span></MouseToolTip>
-    <div class="footer">
+    <ErrorToast v-if="error">{{ error }}</ErrorToast>
+    <!--<div class="footer">
       <span>Server Version: {{ $store.state.serverVersion }}</span> |
       <span>Position: {{ viewPosition.x.toFixed(2) }}/{{ viewPosition.y.toFixed(2) }}</span> |
       <span>Zoom: {{ zoomFactor.toFixed(2) }}</span>
-    </div>
+    </div>-->
   </div>
 </template>
 
@@ -74,10 +76,21 @@
   import TopNavigationBar from "./TopNavigationBar";
   import Menu from "./Menu";
   import MouseToolTip from "./MouseToolTip";
+  import ErrorToast from "./ErrorToast";
 
   export default {
     name: "Game",
-    components: {BlockArea, Castle, BuildCastle, NavigationBar, DialogBox, TopNavigationBar, Menu, MouseToolTip},
+    components: {
+      BlockArea,
+      Castle,
+      BuildCastle,
+      NavigationBar,
+      DialogBox,
+      TopNavigationBar,
+      Menu,
+      MouseToolTip,
+      ErrorToast
+    },
     data() {
       return {
         dragging: false,
@@ -94,7 +107,8 @@
         latestClickedCastle: undefined,
         menuOpen: false,
         highlightedCastle: undefined,
-        toolTipContent: ""
+        toolTipContent: "",
+        error: ""
       };
     },
 
@@ -166,6 +180,16 @@
     },
 
     watch: {
+
+      error(val) {
+        if (val) {
+          setTimeout(() => {
+              if(this.error === val) {
+                this.error = "";
+              }
+          }, 3000);
+        }
+      },
 
       activeAction(val) {
         if (val === "BUILD_CASTLE") {
