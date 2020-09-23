@@ -3,6 +3,8 @@
     <svg :x="position.x - 125" :y="position.y - 125" @click="$emit('CLICK', castle)" @mouseover="highlighted = true"
          @mouseout="highlighted = false">
 
+      <circle cx="125" cy="125" r="125" fill="none" stroke-width="2" :stroke="color" stroke-opacity=".1"/>
+
       <svg v-for="flagPos in flagPositions" :key="flagPos.x + '' + flagPos.y" :x="flagPos.x" :y="flagPos.y"
            class="flag-wrapper" width="35" height="35" viewBox="0 0 100 100" fill="none"
            xmlns="http://www.w3.org/2000/svg">

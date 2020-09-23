@@ -28,7 +28,7 @@
                 return this.$store.state.user ? this.$store.state.user.hammer : 0;
             },
             hammerPerMinute() {
-                return this.$store.state.user ? this.$store.state.user.hammerPerMinute : 0;
+                return this.$store.state.user ? this.$store.state.user.hammer_per_minute : 0;
             },
             level() {
                 return this.$store.state.user ? this.$store.state.user.level : 0;

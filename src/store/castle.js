@@ -48,7 +48,7 @@ export const castleMutations = {
   },
   DELETE_CONQUER(state, conquer) {
     console.log("[castle] Delete conquer: ", conquer);
-    const index = state.conquers.findIndex(c => c.castle.x !== conquer.castle.x || c.castle.y !== conquer.castle.y);
+    const index = state.conquers.findIndex(c => c.castle.x === conquer.castle.x && c.castle.y === conquer.castle.y);
     if (index !== -1) {
       state.conquers.splice(index, 1);
     }
