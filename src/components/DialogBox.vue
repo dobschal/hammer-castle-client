@@ -60,8 +60,8 @@
                 this.$emit("CLOSE");
             },
             changeName() {
-                if (!this.input || this.input.length > 12) {
-                    this.error = "Please insert a valid castle name! Max length is 12 characters.";
+                if (!this.input || this.input.length > 11) {
+                    this.error = "Please insert a valid castle name! Max length is 11 characters.";
                     return;
                 }
                 console.log("[Game] New castle name fro: ", this.input, this.latestClickedCastle);
