@@ -3,7 +3,13 @@
     <svg :x="position.x - 125" :y="position.y - 125" @click="$emit('CLICK', castle)" @mouseover="highlighted = true"
          @mouseout="highlighted = false">
 
-      <circle cx="125" cy="125" r="35" fill="rgb(181,230,123)" stroke-opacity="0.5" :stroke="highlighted ? color : 'none'" stroke-width="5"/>
+      <circle cx="125" cy="125" r="35" fill="rgb(181,230,123)" stroke="none"/>
+
+      <CastleLevel1 v-if="!castle || points <= 1"></CastleLevel1>
+      <CastleLevel2 v-else-if="points === 2"></CastleLevel2>
+      <CastleLevel3 v-else-if="points === 3"></CastleLevel3>
+      <CastleLevel4 v-else-if="points === 4"></CastleLevel4>
+      <CastleLevel5 v-else></CastleLevel5>
 
       <svg v-for="flagPos in flagPositions" :key="flagPos.x + '' + flagPos.y" :x="flagPos.x" :y="flagPos.y"
            class="flag-wrapper" width="35" height="35" viewBox="0 0 100 100" fill="none"
@@ -25,11 +31,6 @@
         </g>
 
       </svg>
-
-      <CastleLevel1 v-if="!castle || points <= 1"></CastleLevel1>
-      <CastleLevel2 v-else-if="points === 2"></CastleLevel2>
-      <CastleLevel3 v-else-if="points === 3"></CastleLevel3>
-      <CastleLevel4 v-else></CastleLevel4>
 
       <!-- Shield with level number -->
       <svg :x="163" :y="35" width="40" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -100,10 +101,11 @@
   import CastleLevel2 from "./castles/level2";
   import CastleLevel3 from "./castles/level3";
   import CastleLevel4 from "./castles/level4";
+  import CastleLevel5 from "./castles/level5";
 
   export default {
     name: "Castle",
-    components: {CastleLevel1, CastleLevel2, CastleLevel3, CastleLevel4},
+    components: {CastleLevel1, CastleLevel2, CastleLevel3, CastleLevel4, CastleLevel5},
     props: {
       color: String,
       castle: {
@@ -133,6 +135,8 @@
             return [{x: 60, y: 50}];
           case 4:
             return [{x: 64, y: 39}, {x: 116, y: 50}];
+          case 5:
+            return [{x: 45, y: 59}, {x: 90, y: 69}, {x: 91, y: 53}, {x: 132, y: 62}];
           default:
             return [{x: 64, y: 39}, {x: 116, y: 50}];
         }
