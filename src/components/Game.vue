@@ -9,21 +9,7 @@
               version="1.1"
       >
 
-        <!--        <path v-for="road in roads" :key="road.id + '1'" :d="road.path" stroke-width="8" stroke="#867350" fill="transparent"/>-->
-        <!--        <path v-for="road in roads" :key="road.id + '2'" :d="road.path" stroke-width="5" stroke="#6F4E37" fill="transparent"/>-->
-        <svg v-for="road in roads"
-             :key="road.id"
-             :x="road.middleBetweenCastles.x - road.distanceBetweenCastles * 0.4"
-             :y="road.middleBetweenCastles.y - road.distanceBetweenCastles * 0.4"
-             :width="road.distanceBetweenCastles * 0.8"
-             :height="road.distanceBetweenCastles * 0.8"
-             viewBox="0 0 403 403"
-             fill="none"
-             xmlns="http://www.w3.org/2000/svg">
-          <path :style="{transform: 'rotate(' + road.angle + 'deg)', 'transform-origin': '50% 50%' }"
-                d="M222.195 504.255L223.33 504.232L223.617 503.135C228.888 482.983 234.822 446.034 234.976 406.023C235.13 366.043 229.515 322.786 211.509 290.172C205.231 278.8 199.772 269.673 195.225 262.07C193.31 258.87 191.557 255.94 189.973 253.226C184.595 244.013 181.191 237.342 179.761 230.88C178.347 224.491 178.84 218.187 181.54 209.694C184.257 201.15 189.172 190.496 196.53 175.425C199.445 169.455 202.086 164.384 204.431 159.88C204.671 159.419 204.908 158.964 205.142 158.515C207.655 153.685 209.819 149.479 211.569 145.512C215.095 137.522 216.958 130.462 216.773 120.962C216.59 111.537 214.393 99.7574 209.929 82.3212C205.702 65.8103 199.414 44.1202 190.803 14.417C190.313 12.726 189.815 11.009 189.309 9.26554L188.632 6.92665L186.848 8.58431L174.535 20.0257L173.878 20.6369L174.106 21.5054C177.23 33.4069 181.697 44.8679 186.08 56.0521L186.293 56.5967C190.613 67.6199 194.825 78.3675 197.661 89.1468C203.4 110.963 203.478 132.793 187.102 156.725C166.164 187.323 160.443 206.064 163.087 225.416C164.398 235.01 167.755 244.67 172.151 255.88C173.344 258.921 174.613 262.077 175.943 265.383C179.53 274.302 183.553 284.305 187.68 296.059C192.048 308.503 196.618 319.17 200.902 329.171C202.104 331.976 203.283 334.729 204.429 337.453C209.668 349.909 214.231 361.82 217.203 375.688C223.141 403.396 222.77 439.134 208.26 502.668L207.833 504.539L209.752 504.501L222.195 504.255Z"
-                fill="#6F4E37" stroke="#867350" stroke-width="3"/>
-        </svg>
+        <Roads :roads="roads" @CLICK="roadClicked"></Roads>
 
         <BuildCastle
                 v-if="activeAction === 'BUILD_CASTLE'"
@@ -40,6 +26,8 @@
         <g v-for="blockArea in blockAreas" :key="blockArea.x + '' + blockArea.y">
           <BlockArea :position="{ x: blockArea.x - viewPosition.x, y: blockArea.y - viewPosition.y }"></BlockArea>
         </g>
+
+        <Catapult :position="{ x: 300 - viewPosition.x, y: 150 - viewPosition.y }"></Catapult>
 
         <g v-for="castle in castles" :key="castle.x + '' + castle.y">
           <Castle :position="{ x: castle.x - viewPosition.x, y: castle.y - viewPosition.y }"
@@ -58,11 +46,7 @@
     <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false"></Menu>
     <MouseToolTip v-if="toolTipContent"><span v-html="toolTipContent"></span></MouseToolTip>
     <ErrorToast v-if="error">{{ error }}</ErrorToast>
-    <!--<div class="footer">
-      <span>Server Version: {{ $store.state.serverVersion }}</span> |
-      <span>Position: {{ viewPosition.x.toFixed(2) }}/{{ viewPosition.y.toFixed(2) }}</span> |
-      <span>Zoom: {{ zoomFactor.toFixed(2) }}</span>
-    </div>-->
+    <Popup :zoomFactor="zoomFactor" v-if="popupType && popupPosition" :type="popupType" :item="popupItem" :position="popupPosition"></Popup>
   </div>
 </template>
 
@@ -72,11 +56,16 @@
   import NavigationBar from "./NavigationBar";
   import config from "../config";
   import BlockArea from "./BlockArea";
+  //  TODO: Remove dialog box...
   import DialogBox from "./DialogBox";
   import TopNavigationBar from "./TopNavigationBar";
   import Menu from "./Menu";
+  // TODO: Remove mouse tool tip...
   import MouseToolTip from "./MouseToolTip";
   import ErrorToast from "./ErrorToast";
+  import Catapult from "./Catapult";
+  import Roads from "./Roads";
+  import Popup from "./Popup";
 
   export default {
     name: "Game",
@@ -89,7 +78,10 @@
       TopNavigationBar,
       Menu,
       MouseToolTip,
-      ErrorToast
+      ErrorToast,
+      Catapult,
+      Roads,
+      Popup
     },
     data() {
       return {
@@ -108,7 +100,10 @@
         menuOpen: false,
         highlightedCastle: undefined,
         toolTipContent: "",
-        error: ""
+        error: "",
+        popupType: "",
+        popupItem: undefined,
+        popupPosition: undefined
       };
     },
 
@@ -122,8 +117,10 @@
             const distanceBetweenCastles = this.$util.positionDistance(c1, c2);
             if (distanceBetweenCastles < config.MAX_CASTLE_DISTANCE) {
               const angle = Math.floor(Math.atan2(c2.viewPositionY - c1.viewPositionY, c2.viewPositionX - c1.viewPositionX) * 180 / Math.PI) - 82;
+              const isMyRoad = c1.userId === this.user.id || c2.userId === this.user.id;
               roads.push({
                 id: c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y,
+                isMyRoad,
                 middleBetweenCastles: {
                   x: (c1.viewPositionX + c2.viewPositionX) / 2,
                   y: (c1.viewPositionY + c2.viewPositionY) / 2
@@ -180,6 +177,12 @@
     },
 
     watch: {
+
+      "viewPosition.x"() {
+        this.popupPosition = undefined;
+        this.popupType = "";
+        this.popupItem = undefined;
+      },
 
       error(val) {
         if (val) {
@@ -270,9 +273,19 @@
         this.gameWidth = this.$refs["game-container"].offsetWidth;
       },
 
+      roadClicked(road) {
+        if (!road.isMyRoad || Date.now() - this.mouseDownTimestamp > 300) return;
+        console.log("[Game] Clicked road: ", road.middleBetweenCastles);
+        this.$nextTick(() => {
+          this.popupType = "road";
+          this.popupItem = road;
+          this.popupPosition = road.middleBetweenCastles;
+        });
+      },
+
       castleClick(castle) {
-        console.log("[Game] Castle click: ", this.user.id, castle.userId);
         if (Date.now() - this.mouseDownTimestamp > 300) return;
+        console.log("[Game] Castle click: ", this.user.id, castle.userId);
         if (castle.userId === this.user.id) {
           this.showDialog = true;
         }

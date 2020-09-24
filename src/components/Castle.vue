@@ -3,19 +3,19 @@
     <svg :x="position.x - 125" :y="position.y - 125" @click="$emit('CLICK', castle)" @mouseover="highlighted = true"
          @mouseout="highlighted = false">
 
-      <circle cx="125" cy="125" r="125" fill="none" stroke-width="2" :stroke="color" stroke-opacity=".1"/>
+      <circle cx="125" cy="125" r="35" fill="rgb(181,230,123)" stroke="none"/>
 
       <svg v-for="flagPos in flagPositions" :key="flagPos.x + '' + flagPos.y" :x="flagPos.x" :y="flagPos.y"
            class="flag-wrapper" width="35" height="35" viewBox="0 0 100 100" fill="none"
            xmlns="http://www.w3.org/2000/svg">
 
         <defs>
-          <clipPath id="flagMask">
-            <polygon id="mask" points="100,31 33.032,31 49.467,49.826 32.684,69 100,69 	"/>
+          <clipPath id="flagMaskCastle">
+            <polygon id="maskCastle" points="100,31 33.032,31 49.467,49.826 32.684,69 100,69 	"/>
           </clipPath>
         </defs>
 
-        <g clip-path="url(#flagMask)">
+        <g clip-path="url(#flagMaskCastle)">
           <path class="flag" :fill="color" d="M100,31c-8.118,0-8.364,4.504-16.471,4.504
 		c-7.657,0-8.026-4.504-16.47-4.504c-8.675,0-8.675,4.504-16.471,4.504c-8.091,0-8.091-4.504-16.471-4.504
 		c-8.492,0-8.739,4.504-16.47,4.504C9.027,35.504,9.37,31,1.178,31c-8.734,0-8.589,4.504-16.471,4.504S-24.251,31-31.763,31v34.438
@@ -37,12 +37,12 @@
               fill="#564942" stroke="#D18227" stroke-width="2"/>
       </svg>
       <svg v-else :x="123" :y="-4" width="120" height="120" viewBox="0 0 148 158" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g filter="url(#filter0_d)">
+        <g filter="url(#catapultFilter0_d)">
           <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" fill="#564942"/>
           <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" stroke="#D18227" stroke-width="2"/>
         </g>
         <defs>
-          <filter id="filter0_d" x="0" y="0.361694" width="148" height="157.638" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+          <filter id="catapultFilter0_d" x="0" y="0.361694" width="148" height="157.638" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
             <feFlood flood-opacity="0" result="BackgroundImageFix"/>
             <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
             <feOffset/>
@@ -53,7 +53,7 @@
           </filter>
         </defs>
       </svg>
-      <text :x="175" :y="65" class="points" v-if="castle">{{ points }}</text>
+      <text :x="183" :y="65" class="points" v-if="castle" text-anchor="middle">{{ points }}</text>
 
       <!-- Banner below -->
       <svg class="banner" :x="36" :y="150" width="175" height="60" viewBox="0 0 232 80" fill="none" xmlns="http://www.w3.org/2000/svg">
