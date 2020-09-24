@@ -8,7 +8,7 @@
                 <template v-if="type === DialogType.MAIN_MENU">
                     <div class="navigation">
                         <div class="item" @click="type = DialogType.CHANGE_NAME">Change Castle Name</div>
-                        <div class="item">Destroy</div>
+                        <div class="item" @click="deleteCastle">Destroy</div>
                         <div class="item" @click="cancel">Close</div>
                     </div>
                 </template>
@@ -73,6 +73,17 @@
                     y: this.latestClickedCastle.y,
                     name: this.input
                 });
+                this.$emit("CLOSE");
+            },
+            deleteCastle() {
+
+                // TODO: Error handling and dialog?
+
+                this.$store.dispatch("DELETE_CASTLE", {
+                    x: this.latestClickedCastle.x,
+                    y: this.latestClickedCastle.y
+                });
+                this.$store.dispatch("GET_CASTLE_PRICE");
                 this.$emit("CLOSE");
             }
         }

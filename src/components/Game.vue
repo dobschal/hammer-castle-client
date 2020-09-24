@@ -44,7 +44,7 @@
     <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
     <TopNavigationBar @OPEN-MENU="menuOpen = true"></TopNavigationBar>
     <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false"></Menu>
-    <MouseToolTip v-if="toolTipContent"><span v-html="toolTipContent"></span></MouseToolTip>
+<!--    <MouseToolTip v-if="toolTipContent"><span v-html="toolTipContent"></span></MouseToolTip>-->
     <ErrorToast v-if="error">{{ error }}</ErrorToast>
     <Popup :zoomFactor="zoomFactor" v-if="popupType && popupPosition" :type="popupType" :item="popupItem" :position="popupPosition"></Popup>
   </div>
@@ -61,7 +61,7 @@
   import TopNavigationBar from "./TopNavigationBar";
   import Menu from "./Menu";
   // TODO: Remove mouse tool tip...
-  import MouseToolTip from "./MouseToolTip";
+  // import MouseToolTip from "./MouseToolTip";
   import ErrorToast from "./ErrorToast";
   import Catapult from "./Catapult";
   import Roads from "./Roads";
@@ -77,7 +77,7 @@
       DialogBox,
       TopNavigationBar,
       Menu,
-      MouseToolTip,
+      // MouseToolTip,
       ErrorToast,
       Catapult,
       Roads,
@@ -301,7 +301,7 @@
         this.websocket = this.$websocket.connect();
         [
           "UPDATE_USER",
-          "NEW_CASTLE", "UPDATE_CASTLE",
+          "DELETE_CASTLE", "NEW_CASTLE", "UPDATE_CASTLE",
           "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA",
           "NEW_CONQUER", "UPDATE_CONQUER", "DELETE_CONQUER"
         ].forEach(eventName => {

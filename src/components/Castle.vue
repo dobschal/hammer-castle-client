@@ -3,7 +3,7 @@
     <svg :x="position.x - 125" :y="position.y - 125" @click="$emit('CLICK', castle)" @mouseover="highlighted = true"
          @mouseout="highlighted = false">
 
-      <circle cx="125" cy="125" r="35" fill="rgb(181,230,123)" stroke="none"/>
+      <circle cx="125" cy="125" r="35" fill="rgb(181,230,123)" stroke-opacity="0.5" :stroke="highlighted ? color : 'none'" stroke-width="5"/>
 
       <svg v-for="flagPos in flagPositions" :key="flagPos.x + '' + flagPos.y" :x="flagPos.x" :y="flagPos.y"
            class="flag-wrapper" width="35" height="35" viewBox="0 0 100 100" fill="none"
@@ -32,28 +32,28 @@
       <CastleLevel4 v-else></CastleLevel4>
 
       <!-- Shield with level number -->
-      <svg v-if="!highlighted" :x="163" :y="35" width="40" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg :x="163" :y="35" width="40" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M1 13.4583C1 32.25 14.8 57 24 57C33.2 57 47 32.25 47 13.4583C47 13.4583 33.2 13.9167 24.92 2C14.8 13.9167 1 13.4583 1 13.4583Z"
-              fill="#564942" stroke="#D18227" stroke-width="2"/>
+              fill="#564942" stroke-opacity="0.5" :stroke="highlighted ? color : '#C0C0C0'" stroke-width="3"/>
       </svg>
-      <svg v-else :x="123" :y="-4" width="120" height="120" viewBox="0 0 148 158" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g filter="url(#catapultFilter0_d)">
-          <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" fill="#564942"/>
-          <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" stroke="#D18227" stroke-width="2"/>
-        </g>
-        <defs>
-          <filter id="catapultFilter0_d" x="0" y="0.361694" width="148" height="157.638" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
-            <feOffset/>
-            <feGaussianBlur stdDeviation="25"/>
-            <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"/>
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
-            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
-          </filter>
-        </defs>
-      </svg>
-      <text :x="183" :y="65" class="points" v-if="castle" text-anchor="middle">{{ points }}</text>
+<!--      <svg v-else :x="123" :y="-4" width="120" height="120" viewBox="0 0 148 158" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--        <g filter="url(#catapultFilter0_d)">-->
+<!--          <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" fill="#564942"/>-->
+<!--          <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" stroke="#D18227" stroke-width="2"/>-->
+<!--        </g>-->
+<!--        <defs>-->
+<!--          <filter id="catapultFilter0_d" x="0" y="0.361694" width="148" height="157.638" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">-->
+<!--            <feFlood flood-opacity="0" result="BackgroundImageFix"/>-->
+<!--            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>-->
+<!--            <feOffset/>-->
+<!--            <feGaussianBlur stdDeviation="25"/>-->
+<!--            <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"/>-->
+<!--            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>-->
+<!--            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>-->
+<!--          </filter>-->
+<!--        </defs>-->
+<!--      </svg>-->
+      <text :x="183" :y="65" class="points" :fill="highlighted ? 'white' : '#E0E0E0'" v-if="castle" text-anchor="middle">{{ points }}</text>
 
       <!-- Banner below -->
       <svg class="banner" :x="36" :y="150" width="175" height="60" viewBox="0 0 232 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -126,7 +126,7 @@
         switch (this.points) {
           case 0:
           case 1:
-            return [{x: 91, y: 85}];
+            return [{x: 91, y: 66}];
           case 2:
             return [{x: 93, y: 79}];
           case 3:
@@ -188,7 +188,6 @@
 
 .points {
   font: 25px 'MedievalSharp';
-  fill: white;
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */

@@ -25,6 +25,10 @@ export const castleMutations = {
     console.log("[castle] Got new castle: ", castle);
     state.castles.push(castle);
   },
+  DELETE_CASTLE(state, castle) {
+    console.log("[castle] Delete castle: ", castle);
+    state.castles = state.castles.filter(c => c.x !== castle.x || c.y !== castle.y);
+  },
   UPDATE_CASTLE(state, castle) { // injected from websocket
     state.castles = [
       ...state.castles.filter(c => c.x !== castle.x || c.y !== castle.y),
@@ -48,10 +52,7 @@ export const castleMutations = {
   },
   DELETE_CONQUER(state, conquer) {
     console.log("[castle] Delete conquer: ", conquer);
-    const index = state.conquers.findIndex(c => c.castle.x === conquer.castle.x && c.castle.y === conquer.castle.y);
-    if (index !== -1) {
-      state.conquers.splice(index, 1);
-    }
+    state.conquers = state.conquers.filter(c => c.castle.x !== conquer.castle.x || c.castle.y !== conquer.castle.y);
   }
 };
 
@@ -60,6 +61,14 @@ export const castleActions = {
     try {
       commit("PROGRESS", 1);
       await axios.post("/castle/create", position);
+    } finally {
+      commit("PROGRESS", -1);
+    }
+  },
+  async DELETE_CASTLE({commit}, position) {
+    try {
+      commit("PROGRESS", 1);
+      await axios.delete("/castle?x=" + position.x + "&y=" + position.y);
     } finally {
       commit("PROGRESS", -1);
     }
