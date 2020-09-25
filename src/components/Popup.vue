@@ -1,5 +1,5 @@
 <template>
-    <div class="popup" :style="{ left: (position.x / zoomFactor) + 'px', top: (position.y / zoomFactor) + 'px' }">
+    <div class="popup" @mouseup.stop :style="{ left: (position.x / zoomFactor) + 'px', top: (position.y / zoomFactor) + 'px' }">
         <div class="items" v-if="type === 'road'">
             <div v-if="canBuildCatapult" class="item" @click="buildCatapult">Build a Catapult</div>
             <div v-else class="item inactive">Catapults need to be on a road next to an opponents Castle.</div>
@@ -32,7 +32,8 @@
         },
         methods: {
             async buildCatapult() {
-                if (!this.canBuildCatapult) return;
+                console.log("[Popup] Yeah!!!: ");
+                if (!this.canBuildCatapult) return this.$emit("ERROR", "Wrong position for a catapult...");
                 try {
                     const userCastle = this.item.c1.userId === this.user.id ? this.item.c1 : this.item.c2;
                     const opponentCastle = this.item.c1.userId === this.user.id ? this.item.c2 : this.item.c1;
@@ -47,6 +48,7 @@
                 } catch (e) {
                     this.$emit("ERROR", e.response.data.message);
                 }
+                this.$emit("CLOSE");
             }
         }
     }

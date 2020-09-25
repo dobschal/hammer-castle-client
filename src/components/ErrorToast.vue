@@ -10,14 +10,14 @@
         z-index: 9;
         left: 50%;
         top: 50%;
-        margin-left: -90px;
+        margin-left: -120px;
         margin-top: -20px;
         background-color: #ff6d69;
-        padding: 0.5rem 1rem;
+        padding: 1rem 2rem;
         border-radius: 0.5rem;
         border: solid 1px rgba(255, 255, 255, 0.3);
         box-shadow: 0 15px 15px -10px rgba(0, 0, 0, 0.8);
-        width: 180px;
+        width: 240px;
         text-align: center;
     }
 </style>

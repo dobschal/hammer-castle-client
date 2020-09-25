@@ -23,11 +23,11 @@
                 @ERROR="error = $event"
         ></BuildCastle>
 
-        <g v-for="blockArea in blockAreas" :key="blockArea.x + '' + blockArea.y">
+        <g v-for="blockArea in blockAreas" :key="'block-area-' + blockArea.x + '' + blockArea.y">
           <BlockArea :position="{ x: blockArea.x - viewPosition.x, y: blockArea.y - viewPosition.y }"></BlockArea>
         </g>
 
-        <g v-for="castle in castles" :key="castle.x + '' + castle.y">
+        <g v-for="castle in castles" :key="'castle-' + castle.x + '' + castle.y">
           <svg v-if="activeAction === 'BUILD_CASTLE'" :x="castle.x - viewPosition.x - minCastleDistance"
                :y="castle.y - viewPosition.y - minCastleDistance" :width="minCastleDistance * 2"
                :height="minCastleDistance * 2">
@@ -42,14 +42,15 @@
                   @HIGHLIGHT-OFF="highlightedCastle = undefined"></Castle>
         </g>
 
-        <g v-for="catapult in catapults" :key="catapult.x + '' + catapult.y + '' + catapult.user_id">
+        <g v-for="catapult in catapults" :key="'catapult-' + catapult.x + '' + catapult.y + '' + catapult.user_id">
           <svg :x="catapult.x - viewPosition.x - minCastleDistance"
                :y="catapult.y - viewPosition.y - minCastleDistance" :width="minCastleDistance * 2"
                :height="minCastleDistance * 2">
             <circle :cx="minCastleDistance" :cy="minCastleDistance" r="30" fill="transparent" stroke-width="3"
                     :stroke="catapult.color" class="catapult-ring"/>
           </svg>
-          <Catapult :position="{ x: catapult.x - viewPosition.x, y: catapult.y - viewPosition.y }"
+          <Catapult :catapult="catapult"
+                    :position="{ x: catapult.x - viewPosition.x, y: catapult.y - viewPosition.y }"
                     :color="catapult.color"></Catapult>
         </g>
 
@@ -66,7 +67,8 @@
            :item="popupItem"
            :viewPosition="viewPosition"
            :position="popupPosition"
-           @ERROR="error = $event"></Popup>
+           @ERROR="error = $event"
+           @CLOSE="closePopup"></Popup>
   </div>
 </template>
 
@@ -214,9 +216,7 @@
     watch: {
 
       "viewPosition.x"() {
-        this.popupPosition = undefined;
-        this.popupType = "";
-        this.popupItem = undefined;
+        this.closePopup();
       },
 
       error(val) {
@@ -291,6 +291,12 @@
 
     methods: {
 
+      closePopup() {
+        this.popupPosition = undefined;
+        this.popupType = "";
+        this.popupItem = undefined;
+      },
+
       onWindowResize() {
         this.gameHeight = this.$refs["game-container"].offsetHeight;
         this.gameWidth = this.$refs["game-container"].offsetWidth;
@@ -348,9 +354,7 @@
         if (event.key === "Escape" || event.key === "Esc") {
           this.activeAction = "";
           this.showDialog = false;
-          this.popupPosition = undefined;
-          this.popupType = "";
-          this.popupItem = undefined;
+          this.closePopup();
         }
       },
 
@@ -381,6 +385,8 @@
         if (this.dragging && Date.now() - this.mouseDownTimestamp > 250) {
           this.loadCastles();
           this.loadCatapults();
+        } else if (this.popupType) {
+          this.closePopup();
         }
         this.dragging = false;
       },
