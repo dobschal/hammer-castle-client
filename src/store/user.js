@@ -3,7 +3,8 @@ import cookie from "js-cookie";
 
 export const userState = {
   authToken: cookie.get("auth-token"),
-  user: undefined
+  user: undefined,
+  ranking: []
 };
 
 export const userMutations = {
@@ -18,6 +19,9 @@ export const userMutations = {
     for (const key in user) {
       state.user[key] = user[key];
     }
+  },
+  SET_RANKING(state, ranking) {
+    state.ranking = ranking;
   }
 };
 
@@ -36,11 +40,21 @@ export const userActions = {
     }
   },
 
-  async AUTHENTICATE({ commit }, requestBody) {
+  async GET_RANKING({commit}) {
+    try {
+      commit("PROGRESS", 1);
+      const response = await axios.get("/user/ranking");
+      commit("SET_RANKING", response.data);
+    } finally {
+      commit("PROGRESS", -1);
+    }
+  },
+
+  async AUTHENTICATE({commit}, requestBody) {
     try {
       commit("PROGRESS", 1);
       const {
-        data: { token }
+        data: {token}
       } = await axios.post("/user/authenticate", requestBody);
       commit("SET_AUTH_TOKEN", token);
     } finally {

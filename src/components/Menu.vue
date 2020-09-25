@@ -2,13 +2,23 @@
     <div class="menu-wrapper" @click="$emit('CLOSE-MENU')">
         <div class="menu-container">
             <div class="menu-content" @click.stop>
-                <div class="items">
-                    <div class="item">Help & Info</div>
-                    <div class="item">Ranking</div>
-                    <div class="item">Profile</div>
-                    <div class="item">Forum</div>
-                    <div class="item" @click="$emit('LOGOUT')">Logout</div>
-                    <div class="item" @click="$emit('CLOSE-MENU')">Close Menu</div>
+                <div class="content">
+                    <div class="items" v-if="type === 'menu'">
+                        <div class="item">Help & Info</div>
+                        <div class="item" @click="type = 'ranking'">Ranking</div>
+                        <div class="item">Profile</div>
+                        <div class="item">Forum</div>
+                        <div class="item" @click="$emit('LOGOUT')">Logout</div>
+                        <div class="item" @click="$emit('CLOSE-MENU')">Close Menu</div>
+                    </div>
+                    <div v-else-if="type === 'ranking'" class="ranking items" @click.stop>
+                        <div class="item" @click="type = 'menu'">Back</div>
+                        <div v-for="(rank, index) in ranking" class="item" :key="rank.username">
+                            <span class="rank">{{ index + 1 }}.</span>
+                            <span class="level">{{ rank.level }}</span>
+                            <span class="username">{{ rank.username }}</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="footer">{{ version }} | {{ clientCommitHash }}</div>
             </div>
@@ -25,7 +35,20 @@
         data() {
             return {
                 clientCommitHash: "",
-                version
+                version,
+                type: "menu"
+            }
+        },
+        computed: {
+            ranking() {
+                return this.$store.state.ranking;
+            }
+        },
+        watch: {
+            type(val) {
+                if (val === "ranking") {
+                    this.$store.dispatch("GET_RANKING");
+                }
             }
         },
         mounted() {
@@ -60,22 +83,55 @@
                 height: 394px;
                 margin: auto;
 
-                .items {
-                    padding: 2rem 3rem;
-                    text-align: center;
+                .content {
+                    height: 330px;
+                    margin-bottom: 20px;
+                    overflow-y: auto;
+                    -ms-overflow-style: none; /* IE and Edge */
+                    scrollbar-width: none;
 
-                    .item {
-                        font-size: 1.2rem;
-                        padding: 0.77rem 1rem;
-                        border-bottom: dashed 2px rgba(0, 0, 0, 0.19);
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
 
-                        &:last-child {
-                            border-bottom: none;
-                        }
+                    .items {
+                        padding: 2rem 3rem;
+                        text-align: center;
 
-                        &:hover {
-                            color: red;
-                            cursor: pointer;
+                        .item {
+                            font-size: 1.2rem;
+                            padding: 0.77rem 1rem;
+                            border-bottom: dashed 2px rgba(0, 0, 0, 0.19);
+                            white-space: nowrap;
+
+                            &:last-child {
+                                border-bottom: none;
+                            }
+
+                            &:hover {
+                                color: red;
+                                cursor: pointer;
+                            }
+
+                            .rank {
+                                display: inline-block;
+                                width: 40px;
+                                opacity: 0.8;
+                                letter-spacing: 0;
+                            }
+
+                            .level {
+                                display: inline-block;
+                                width: 50px;
+                                font-weight: bold;
+                                letter-spacing: 0;
+                            }
+
+                            .username {
+                                display: inline-block;
+                                width: 100px;
+                                letter-spacing: 1px;
+                            }
                         }
                     }
                 }
