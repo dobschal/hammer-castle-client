@@ -98,6 +98,12 @@
                         padding: 2rem 3rem;
                         text-align: center;
 
+                        &.ranking {
+                            .item {
+                                padding: 0.5rem 0;
+                            }
+                        }
+
                         .item {
                             font-size: 1.2rem;
                             padding: 0.77rem 1rem;
@@ -129,8 +135,8 @@
 
                             .username {
                                 display: inline-block;
-                                width: 100px;
-                                letter-spacing: 1px;
+                                width: 120px;
+                                letter-spacing: 0;
                             }
                         }
                     }
