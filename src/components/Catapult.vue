@@ -182,8 +182,8 @@
         },
         created() {
             setInterval(() => {
-                let seconds = Math.floor(((Date.parse(this.catapult.timestamp.replace(" ", "T") + ".000Z") + config.CATAPULT_LIFETIME) - Date.now()) / 1000);
-                const minutes = Math.floor(seconds / 60);
+                let seconds = Math.max(0, Math.floor(((Date.parse(this.catapult.timestamp.replace(" ", "T") + ".000Z") + config.CATAPULT_LIFETIME) - Date.now()) / 1000));
+                const minutes = Math.floor(seconds / 60) || 0;
                 seconds = seconds % 60;
                 this.countDown = `${minutes < 10 ? ('0' + minutes) : minutes}:${seconds < 10 ? ('0' + seconds) : seconds}`;
             }, 1000);
