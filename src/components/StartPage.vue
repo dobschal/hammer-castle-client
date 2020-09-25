@@ -1,11 +1,12 @@
 <template>
-  <div v-if="!authenticated" class="authenticator">
+  <div v-if="!authenticated" class="start-page">
     <div class="wrapper">
       <div class="container" v-if="!loading">
         <div class="logo"><img src="../assets/logo.svg" alt="Hammer Castle Logo"></div>
         <div v-if="showRegistration">
           <h2>Come in!</h2>
           <p>Hammer Castle is waiting for you!</p>
+          <p>Create an account with username, password and your favorite color and join the game.</p>
         </div>
         <div v-else>
           <h2>Welcome back!</h2>
@@ -76,8 +77,8 @@ export default {
       username: "",
       passwordVerify: "",
       error: undefined,
-      showRegistration: false,
-      randomColor:  randomColor()
+      showRegistration: Boolean(window.localStorage.getItem("was-here-before") !== "yes"),
+      randomColor: randomColor()
     };
   },
   computed: {
@@ -90,6 +91,9 @@ export default {
     loading() {
       return this.$store.getters.busy;
     }
+  },
+  created() {
+    window.localStorage.setItem("was-here-before", "yes");
   },
   methods: {
     newColor() {
@@ -119,7 +123,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .authenticator {
+  .start-page {
     position: fixed;
     top: 0;
     left: 0;
@@ -132,11 +136,13 @@ export default {
       display: flex;
       width: 100%;
       height: 100vh;
-      background-color: rgba(0,0,0, 0.3);
+      background-color: rgba(255, 255, 255, 0.3);
       backdrop-filter: blur(3px);
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
 
       .container {
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(5px);
         width: 100%;
         max-width: 480px;

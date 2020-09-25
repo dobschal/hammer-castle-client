@@ -1,19 +1,19 @@
 <template>
   <div id="app">
     <Game v-if="authenticated"/>
-    <Authenticator/>
+    <StartPage/>
   </div>
 </template>
 
 <script>
   import Game from "./components/Game";
-  import Authenticator from "./components/Authenticator";
+  import StartPage from "./components/StartPage";
 
   export default {
     name: "App",
     components: {
       Game,
-      Authenticator
+      StartPage
     },
     computed: {
       authenticated() {

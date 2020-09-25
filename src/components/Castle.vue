@@ -4,6 +4,7 @@
          @mouseout="highlighted = false">
 
       <circle cx="125" cy="125" r="35" fill="rgb(181,230,123)" stroke="none"/>
+<!--      <circle cx="125" cy="125" r="200" fill="rgba(181,230,123, 0.5)"  stroke-width="3" :stroke="color"/>-->
 
       <CastleLevel1 v-if="!castle || points <= 1"></CastleLevel1>
       <CastleLevel2 v-else-if="points === 2"></CastleLevel2>
@@ -17,7 +18,7 @@
 
         <defs>
           <clipPath id="flagMaskCastle">
-            <polygon id="maskCastle" points="100,31 33.032,31 49.467,49.826 32.684,69 100,69 	"/>
+            <polygon id="maskCastle" points="100,31 33.032,31 49.467,49.826 32.684,69 100,69"/>
           </clipPath>
         </defs>
 
@@ -35,25 +36,8 @@
       <!-- Shield with level number -->
       <svg :x="163" :y="35" width="40" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M1 13.4583C1 32.25 14.8 57 24 57C33.2 57 47 32.25 47 13.4583C47 13.4583 33.2 13.9167 24.92 2C14.8 13.9167 1 13.4583 1 13.4583Z"
-              fill="#564942" stroke-opacity="0.5" :stroke="highlighted ? color : '#C0C0C0'" stroke-width="3"/>
+              fill="#564942" stroke-opacity="0.5" :stroke="highlighted ? color : '#C0C0C0'" :stroke-width="highlighted ? 5 : 3"/>
       </svg>
-<!--      <svg v-else :x="123" :y="-4" width="120" height="120" viewBox="0 0 148 158" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-<!--        <g filter="url(#catapultFilter0_d)">-->
-<!--          <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" fill="#564942"/>-->
-<!--          <path d="M51 63.4583C51 82.25 64.8 107 74 107C83.2 107 97 82.25 97 63.4583C97 63.4583 83.2 63.9167 74.92 52C64.8 63.9167 51 63.4583 51 63.4583Z" stroke="#D18227" stroke-width="2"/>-->
-<!--        </g>-->
-<!--        <defs>-->
-<!--          <filter id="catapultFilter0_d" x="0" y="0.361694" width="148" height="157.638" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">-->
-<!--            <feFlood flood-opacity="0" result="BackgroundImageFix"/>-->
-<!--            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>-->
-<!--            <feOffset/>-->
-<!--            <feGaussianBlur stdDeviation="25"/>-->
-<!--            <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"/>-->
-<!--            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>-->
-<!--            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>-->
-<!--          </filter>-->
-<!--        </defs>-->
-<!--      </svg>-->
       <text :x="183" :y="65" class="points" :fill="highlighted ? 'white' : '#E0E0E0'" v-if="castle" text-anchor="middle">{{ points }}</text>
 
       <!-- Banner below -->
@@ -69,8 +53,6 @@
               :fill="$util.shadeColor(color, 0.5)"/>
       </svg>
       <text :x="124" :y="195" class="name" v-if="castle" text-anchor="middle">{{ castle.name || "Burg" }}</text>
-<!--      <text :x="124" :y="175" class="username-bg" v-if="castle" text-anchor="middle">{{ castle.username || "Unknown" }}</text>-->
-<!--      <text :x="125" :y="176" class="username" v-if="castle" text-anchor="middle">{{ castle.username || "Unknown" }}</text>-->
 
         <svg v-if="castle && castle.isInConquer" class="sword1" x="55" y="30" width="100" height="56"
              viewBox="0 0 20 56" fill="none"
@@ -130,11 +112,11 @@
           case 1:
             return [{x: 91, y: 66}];
           case 2:
-            return [{x: 93, y: 79}];
+            return [{x: 90, y: 55}];
           case 3:
-            return [{x: 60, y: 50}];
+            return [{x: 70, y: 49}];
           case 4:
-            return [{x: 64, y: 39}, {x: 116, y: 50}];
+            return [{x: 66, y: 50}, {x: 110, y: 60}];
           case 5:
             return [{x: 45, y: 59}, {x: 90, y: 69}, {x: 91, y: 53}, {x: 132, y: 62}];
           default:

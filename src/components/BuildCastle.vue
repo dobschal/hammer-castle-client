@@ -130,7 +130,7 @@
 
       async onClick(event) {
 
-        // TODO: Zoom in calclation missing here?
+        // TODO: Zoom in calculation missing here!
 
         const position = !this.isTouchDevice ? {
           x: this.viewPosition.x + event.clientX,

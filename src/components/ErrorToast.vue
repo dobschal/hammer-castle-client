@@ -7,7 +7,7 @@
 <style lang="scss" scoped>
     .error-toast {
         position: fixed;
-        z-index: 3;
+        z-index: 9;
         left: 50%;
         top: 50%;
         margin-left: -90px;

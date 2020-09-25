@@ -27,9 +27,13 @@
           <BlockArea :position="{ x: blockArea.x - viewPosition.x, y: blockArea.y - viewPosition.y }"></BlockArea>
         </g>
 
-        <Catapult :position="{ x: 300 - viewPosition.x, y: 150 - viewPosition.y }"></Catapult>
-
         <g v-for="castle in castles" :key="castle.x + '' + castle.y">
+          <svg v-if="activeAction === 'BUILD_CASTLE'" :x="castle.x - viewPosition.x - minCastleDistance"
+               :y="castle.y - viewPosition.y - minCastleDistance" :width="minCastleDistance * 2"
+               :height="minCastleDistance * 2">
+            <circle :cx="minCastleDistance" :cy="minCastleDistance" r="200" fill="transparent" stroke-width="3"
+                    :stroke="castle.color"/>
+          </svg>
           <Castle :position="{ x: castle.x - viewPosition.x, y: castle.y - viewPosition.y }"
                   :castle="castle"
                   :color="castle.color"
@@ -38,15 +42,31 @@
                   @HIGHLIGHT-OFF="highlightedCastle = undefined"></Castle>
         </g>
 
+        <g v-for="catapult in catapults" :key="catapult.x + '' + catapult.y + '' + catapult.user_id">
+          <svg :x="catapult.x - viewPosition.x - minCastleDistance"
+               :y="catapult.y - viewPosition.y - minCastleDistance" :width="minCastleDistance * 2"
+               :height="minCastleDistance * 2">
+            <circle :cx="minCastleDistance" :cy="minCastleDistance" r="30" fill="transparent" stroke-width="3"
+                    :stroke="catapult.color" class="catapult-ring"/>
+          </svg>
+          <Catapult :position="{ x: catapult.x - viewPosition.x, y: catapult.y - viewPosition.y }"
+                    :color="catapult.color"></Catapult>
+        </g>
+
       </svg>
     </div>
     <DialogBox v-if="showDialog" @CLOSE="showDialog = false" :latest-clicked-castle="latestClickedCastle"></DialogBox>
     <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
     <TopNavigationBar @OPEN-MENU="menuOpen = true"></TopNavigationBar>
     <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false"></Menu>
-<!--    <MouseToolTip v-if="toolTipContent"><span v-html="toolTipContent"></span></MouseToolTip>-->
     <ErrorToast v-if="error">{{ error }}</ErrorToast>
-    <Popup :zoomFactor="zoomFactor" v-if="popupType && popupPosition" :type="popupType" :item="popupItem" :position="popupPosition"></Popup>
+    <Popup :zoomFactor="zoomFactor"
+           v-if="popupType && popupPosition"
+           :type="popupType"
+           :item="popupItem"
+           :viewPosition="viewPosition"
+           :position="popupPosition"
+           @ERROR="error = $event"></Popup>
   </div>
 </template>
 
@@ -60,8 +80,6 @@
   import DialogBox from "./DialogBox";
   import TopNavigationBar from "./TopNavigationBar";
   import Menu from "./Menu";
-  // TODO: Remove mouse tool tip...
-  // import MouseToolTip from "./MouseToolTip";
   import ErrorToast from "./ErrorToast";
   import Catapult from "./Catapult";
   import Roads from "./Roads";
@@ -77,7 +95,6 @@
       DialogBox,
       TopNavigationBar,
       Menu,
-      // MouseToolTip,
       ErrorToast,
       Catapult,
       Roads,
@@ -99,11 +116,11 @@
         latestClickedCastle: undefined,
         menuOpen: false,
         highlightedCastle: undefined,
-        toolTipContent: "",
         error: "",
         popupType: "",
         popupItem: undefined,
-        popupPosition: undefined
+        popupPosition: undefined,
+        minCastleDistance: config.MIN_CASTLE_DISTANCE
       };
     },
 
@@ -120,6 +137,8 @@
               const isMyRoad = c1.userId === this.user.id || c2.userId === this.user.id;
               roads.push({
                 id: c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y,
+                c1,
+                c2,
                 isMyRoad,
                 middleBetweenCastles: {
                   x: (c1.viewPositionX + c2.viewPositionX) / 2,
@@ -133,12 +152,30 @@
         }
         return roads;
       },
+      gameHeightWithZoom() {
+        return this.gameHeight * this.zoomFactor;
+      },
+      gameWidthWithZoom() {
+        return this.gameWidth * this.zoomFactor;
+      },
+      catapults() {
+
+        console.log("[Game] Catapults: ", this.$store.state.catapults.length);
+
+        return this.$store.state.catapults
+                .map(c => {
+                  c.viewPositionX = c.x - this.viewPosition.x;
+                  c.viewPositionY = c.y - this.viewPosition.y;
+                  return c;
+                })
+                .filter(c => {
+                  return Boolean(c.viewPositionX > -200 && c.viewPositionX < this.gameWidthWithZoom + 200 && c.viewPositionY > -200 && c.viewPositionY < this.gameHeightWithZoom + 200);
+                });
+      },
       castles() {
 
         // TODO: Add clean up of not shown castles... remove them from store... and maybe cache somewhere else.
 
-        const gameHeightWithZoom = this.gameHeight * this.zoomFactor;
-        const gameWidthWithZoom = this.gameWidth * this.zoomFactor;
         return this.$store.state.castles
                 .map(c => {
                   c.viewPositionX = c.x - this.viewPosition.x;
@@ -147,12 +184,10 @@
                   return c;
                 })
                 .filter(c => {
-                  return Boolean(c.viewPositionX > -200 && c.viewPositionX < gameWidthWithZoom + 200 && c.viewPositionY > -200 && c.viewPositionY < gameHeightWithZoom + 200);
+                  return Boolean(c.viewPositionX > -200 && c.viewPositionX < this.gameWidthWithZoom + 200 && c.viewPositionY > -200 && c.viewPositionY < this.gameHeightWithZoom + 200);
                 });
       },
       blockAreas() {
-        const gameHeightWithZoom = this.gameHeight * this.zoomFactor;
-        const gameWidthWithZoom = this.gameWidth * this.zoomFactor;
         return this.$store.state.blockAreas
                 .map(ba => {
                   ba.viewPositionX = ba.x - this.viewPosition.x;
@@ -160,7 +195,7 @@
                   return ba;
                 })
                 .filter(ba => {
-                  return Boolean(ba.viewPositionX > -200 && ba.viewPositionX < gameWidthWithZoom + 200 && ba.viewPositionY > -200 && ba.viewPositionY < gameHeightWithZoom + 200);
+                  return Boolean(ba.viewPositionX > -200 && ba.viewPositionX < this.gameWidthWithZoom + 200 && ba.viewPositionY > -200 && ba.viewPositionY < this.gameHeightWithZoom + 200);
                 });
       },
       loading() {
@@ -187,9 +222,9 @@
       error(val) {
         if (val) {
           setTimeout(() => {
-              if(this.error === val) {
-                this.error = "";
-              }
+            if (this.error === val) {
+              this.error = "";
+            }
           }, 3000);
         }
       },
@@ -201,37 +236,20 @@
 
           this.zoomFactor = 1;
         }
-      },
-
-      highlightedCastle(castle) {
-        if (castle) {
-          if (castle.userId === this.user.id) {
-            this.toolTipContent = `
-              This is your castle. <br>Click to open the options menu.
-            `;
-          } else {
-            this.toolTipContent = `
-              This is a castle of <i><b>${castle.username}</b></i> called <i>${castle.name || 'Burg'}</i>.
-            `;
-          }
-          if (castle.isInConquer) {
-            this.toolTipContent += "The castle is getting conquered at the moment!";
-          }
-        } else {
-          this.toolTipContent = "";
-        }
       }
     },
 
     created() {
       this.$store.dispatch("GET_USER").then(user => {
         this.moveMapTo({x: user.startX, y: user.startY});
-        this.$store.dispatch("GET_CASTLES", {
+        const loadRange = {
           fromX: user.startX - 500,
           fromY: user.startY - 500,
           toX: user.startX + 500,
           toY: user.startY + 500
-        });
+        };
+        this.$store.dispatch("GET_CASTLES", loadRange);
+        this.$store.dispatch("GET_CATAPULTS", loadRange);
         this.$store.dispatch("GET_CASTLE_PRICE");
       });
       this.$store.dispatch("GET_SERVER_VERSION");
@@ -260,8 +278,13 @@
 
     beforeDestroy() {
       document.removeEventListener("mousemove", this.onMouseMove);
+      document.removeEventListener("touchmove", this.onMouseMove);
       document.removeEventListener("mouseup", this.onMouseUp);
+      document.removeEventListener("touchend", this.onMouseUp);
       document.removeEventListener("mousewheel", this.onScroll);
+      document.removeEventListener("keyup", this.onKeyUp);
+      document.removeEventListener("mousewheel", this.onScroll);
+      window.removeEventListener("resize", this.onWindowResize);
       this.$refs["game-container"].removeEventListener("mousedown", this.onMouseDown);
       this.$refs["game-container"].removeEventListener("touchstart", this.onMouseDown);
     },
@@ -302,6 +325,7 @@
         [
           "UPDATE_USER",
           "DELETE_CASTLE", "NEW_CASTLE", "UPDATE_CASTLE",
+          "DELETE_CATAPULT", "NEW_CATAPULT", "UPDATE_CATAPULT",
           "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA",
           "NEW_CONQUER", "UPDATE_CONQUER", "DELETE_CONQUER"
         ].forEach(eventName => {
@@ -324,6 +348,9 @@
         if (event.key === "Escape" || event.key === "Esc") {
           this.activeAction = "";
           this.showDialog = false;
+          this.popupPosition = undefined;
+          this.popupType = "";
+          this.popupItem = undefined;
         }
       },
 
@@ -353,6 +380,7 @@
       onMouseUp() {
         if (this.dragging && Date.now() - this.mouseDownTimestamp > 250) {
           this.loadCastles();
+          this.loadCatapults();
         }
         this.dragging = false;
       },
@@ -363,6 +391,14 @@
       },
       loadCastles() {
         this.$store.dispatch("GET_CASTLES", {
+          fromX: this.viewPosition.x,
+          fromY: this.viewPosition.y,
+          toX: Math.floor((this.viewPosition.x + this.gameWidth) * this.zoomFactor),
+          toY: Math.floor((this.viewPosition.y + this.gameHeight) * this.zoomFactor)
+        });
+      },
+      loadCatapults() {
+        this.$store.dispatch("GET_CATAPULTS", {
           fromX: this.viewPosition.x,
           fromY: this.viewPosition.y,
           toX: Math.floor((this.viewPosition.x + this.gameWidth) * this.zoomFactor),
@@ -404,5 +440,27 @@
       color: #3B3B3B;
       font-size: 0.66rem;
     }
+  }
+
+  @keyframes pulsate_catapult_ring {
+    0% {
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 0.7;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .catapult-ring {
+    opacity: 1;
+    animation: pulsate_catapult_ring;
+    animation-iteration-count: infinite;
+    animation-duration: 3.2s;
+    animation-timing-function: ease-out;
   }
 </style>

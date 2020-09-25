@@ -1,7 +1,8 @@
 <template>
     <div class="popup" :style="{ left: (position.x / zoomFactor) + 'px', top: (position.y / zoomFactor) + 'px' }">
         <div class="items" v-if="type === 'road'">
-            <div class="item" @click="buildCatapult">Build a Catapult</div>
+            <div v-if="canBuildCatapult" class="item" @click="buildCatapult">Build a Catapult</div>
+            <div v-else class="item inactive">Catapults need to be on a road next to an opponents Castle.</div>
         </div>
     </div>
 </template>
@@ -13,14 +14,39 @@
             type: String,
             item: Object, // depending on type ... might be a road or castle
             zoomFactor: Number,
+            viewPosition: Object,
             position: Object // x, y
         },
+        computed: {
+            user() {
+                return this.$store.state.user;
+            },
+
+            //  the user can build a catapult on a road between an owned castle and an opponents castle...
+            canBuildCatapult() {
+                if (this.type !== "road") return false;
+
+                // one of two castles is mine?
+                return [this.item.c1, this.item.c2].filter(castle => castle.userId === this.user.id).length === 1;
+            }
+        },
         methods: {
-            buildCatapult() {
-                console.log("[Popup] Build it: ");
-
-                // TODO: Build a catapult!
-
+            async buildCatapult() {
+                if (!this.canBuildCatapult) return;
+                try {
+                    const userCastle = this.item.c1.userId === this.user.id ? this.item.c1 : this.item.c2;
+                    const opponentCastle = this.item.c1.userId === this.user.id ? this.item.c2 : this.item.c1;
+                    await this.$store.dispatch("CREATE_CATAPULT", {
+                        opponentCastleX: opponentCastle.x,
+                        opponentCastleY: opponentCastle.y,
+                        userCastleX: userCastle.x,
+                        userCastleY: userCastle.y,
+                        x: this.item.middleBetweenCastles.x + this.viewPosition.x,
+                        y: this.item.middleBetweenCastles.y + this.viewPosition.y
+                    });
+                } catch (e) {
+                    this.$emit("ERROR", e.response.data.message);
+                }
             }
         }
     }
@@ -39,6 +65,12 @@
         background-size: 100%;
         background-position: center 30px;
         background-repeat: no-repeat;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
 
         .items {
             padding-top: 3rem;
@@ -48,10 +80,20 @@
                 color: white;
                 font-size: 1rem;
                 font-weight: bold;
-                letter-spacing: 1.5px;
+                letter-spacing: 1.4px;
                 border-bottom: dashed 2px rgba(255, 255, 255, 0.5);
                 margin: 0 2.75rem;
                 padding-bottom: .25rem;
+
+                &.inactive {
+                    border: none;
+                    font-size: 0.9rem;
+
+                    &:hover {
+                        color: white;
+                        cursor: initial;
+                    }
+                }
 
                 &:hover {
                     color: red;
