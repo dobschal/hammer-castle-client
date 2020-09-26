@@ -1,9 +1,14 @@
 <template>
-    <div class="popup" @mouseup.stop :style="{ left: (position.x / zoomFactor) + 'px', top: (position.y / zoomFactor) + 'px' }">
+    <div class="popup" @mouseup.stop
+         :style="{ left: (position.x / zoomFactor) + 'px', top: (position.y / zoomFactor) + 'px' }">
         <div class="items" v-if="type === 'road'">
             <div v-if="canBuildCatapult" class="item" @click="buildCatapult">Build a Catapult</div>
             <div v-else-if="canBuildWarehouse" class="item" @click="buildWarehouse">Build a Warehouse</div>
             <div v-else class="item inactive">Catapults need to be on a road next to an opponents Castle.</div>
+        </div>
+        <div class="items" v-else-if="type === 'castle'">
+            <div class="item">{{ item.username }}</div>
+            <div class="item">{{ item.x }} / {{ item.y }}</div>
         </div>
     </div>
 </template>
@@ -34,6 +39,9 @@
                 if (this.type !== "road") return false;
                 return [this.item.c1, this.item.c2].filter(castle => castle.userId === this.user.id).length === 2;
             }
+        },
+        mounted() {
+            console.log("[Popup] mounted yeah: ");
         },
         methods: {
             async buildCatapult() {

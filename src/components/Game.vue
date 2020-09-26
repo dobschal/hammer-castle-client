@@ -342,6 +342,10 @@
         console.log("[Game] Castle click: ", this.user.id, castle.userId);
         if (castle.userId === this.user.id) {
           this.showDialog = true;
+        } else {
+          this.popupType = "castle";
+          this.popupItem = castle;
+          this.popupPosition = {x: castle.viewPositionX, y: castle.viewPositionY - 50};
         }
         this.latestClickedCastle = castle;
       },
