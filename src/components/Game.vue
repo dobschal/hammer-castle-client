@@ -54,7 +54,17 @@
                     :color="catapult.color"></Catapult>
         </g>
 
-        <Warehouse :position="{ x: 550 - viewPosition.x, y: 630 - viewPosition.y }"></Warehouse>
+        <g v-for="warehouse in warehouses"
+           :key="'warehouse-' + warehouse.x + '' + warehouse.y + '' + warehouse.user_id">
+          <svg :x="warehouse.x - viewPosition.x - minCastleDistance"
+               :y="warehouse.y - viewPosition.y - minCastleDistance" :width="minCastleDistance * 2"
+               :height="minCastleDistance * 2">
+            <circle :cx="minCastleDistance" :cy="minCastleDistance" r="25" fill="transparent" stroke-width="3"
+                    :stroke="warehouse.color" class="warehouse-ring"/>
+          </svg>
+          <Warehouse :position="{ x: warehouse.x - viewPosition.x, y: warehouse.y - viewPosition.y }"
+                     :color="warehouse.color"></Warehouse>
+        </g>
 
       </svg>
     </div>
@@ -164,10 +174,20 @@
       gameWidthWithZoom() {
         return this.gameWidth * this.zoomFactor;
       },
+
+      warehouses() {
+        return this.$store.state.warehouses
+                .map(c => {
+                  c.viewPositionX = c.x - this.viewPosition.x;
+                  c.viewPositionY = c.y - this.viewPosition.y;
+                  return c;
+                })
+                .filter(c => {
+                  return Boolean(c.viewPositionX > -200 && c.viewPositionX < this.gameWidthWithZoom + 200 && c.viewPositionY > -200 && c.viewPositionY < this.gameHeightWithZoom + 200);
+                });
+      },
+
       catapults() {
-
-        console.log("[Game] Catapults: ", this.$store.state.catapults.length);
-
         return this.$store.state.catapults
                 .map(c => {
                   c.viewPositionX = c.x - this.viewPosition.x;
@@ -254,6 +274,7 @@
         };
         this.$store.dispatch("GET_CASTLES", loadRange);
         this.$store.dispatch("GET_CATAPULTS", loadRange);
+        this.$store.dispatch("GET_WAREHOUSES", loadRange);
         this.$store.dispatch("GET_CASTLE_PRICE");
       });
       this.$store.dispatch("GET_SERVER_VERSION");
@@ -336,6 +357,7 @@
           "UPDATE_USER",
           "DELETE_CASTLE", "NEW_CASTLE", "UPDATE_CASTLE",
           "DELETE_CATAPULT", "NEW_CATAPULT", "UPDATE_CATAPULT",
+          "DELETE_WAREHOUSE", "NEW_WAREHOUSE", "UPDATE_WAREHOUSE",
           "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA",
           "NEW_CONQUER", "UPDATE_CONQUER", "DELETE_CONQUER"
         ].forEach(eventName => {
@@ -389,6 +411,7 @@
         if (this.dragging && Date.now() - this.mouseDownTimestamp > 250) {
           this.loadCastles();
           this.loadCatapults();
+          this.loadWarehouses();
         } else if (this.popupType) {
           this.closePopup();
         }
@@ -409,6 +432,14 @@
       },
       loadCatapults() {
         this.$store.dispatch("GET_CATAPULTS", {
+          fromX: this.viewPosition.x,
+          fromY: this.viewPosition.y,
+          toX: Math.floor((this.viewPosition.x + this.gameWidth) * this.zoomFactor),
+          toY: Math.floor((this.viewPosition.y + this.gameHeight) * this.zoomFactor)
+        });
+      },
+      loadWarehouses() {
+        this.$store.dispatch("GET_WAREHOUSES", {
           fromX: this.viewPosition.x,
           fromY: this.viewPosition.y,
           toX: Math.floor((this.viewPosition.x + this.gameWidth) * this.zoomFactor),
