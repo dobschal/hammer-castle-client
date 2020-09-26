@@ -34,11 +34,11 @@
       </svg>
 
       <!-- Shield with level number -->
-      <svg :x="163" :y="35" width="40" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg :x="148" :y="30" width="40" height="40" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M1 13.4583C1 32.25 14.8 57 24 57C33.2 57 47 32.25 47 13.4583C47 13.4583 33.2 13.9167 24.92 2C14.8 13.9167 1 13.4583 1 13.4583Z"
               fill="#564942" stroke-opacity="0.5" :stroke="highlighted ? color : '#C0C0C0'" :stroke-width="highlighted ? 5 : 3"/>
       </svg>
-      <text :x="183" :y="65" class="points" :fill="highlighted ? 'white' : '#E0E0E0'" v-if="castle" text-anchor="middle">{{ points }}</text>
+      <text :x="168" :y="60" class="points" :fill="highlighted ? 'white' : '#E0E0E0'" v-if="castle" text-anchor="middle">{{ points }}</text>
 
       <!-- Banner below -->
       <svg class="banner" :x="36" :y="150" width="175" height="60" viewBox="0 0 232 80" fill="none" xmlns="http://www.w3.org/2000/svg">
