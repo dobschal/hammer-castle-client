@@ -54,6 +54,8 @@
                     :color="catapult.color"></Catapult>
         </g>
 
+        <Warehouse :position="{ x: 550 - viewPosition.x, y: 630 - viewPosition.y }"></Warehouse>
+
       </svg>
     </div>
     <DialogBox v-if="showDialog" @CLOSE="showDialog = false" :latest-clicked-castle="latestClickedCastle"></DialogBox>
@@ -86,6 +88,7 @@
   import Catapult from "./Catapult";
   import Roads from "./Roads";
   import Popup from "./Popup";
+  import Warehouse from "./Warehouse";
 
   export default {
     name: "Game",
@@ -100,7 +103,8 @@
       ErrorToast,
       Catapult,
       Roads,
-      Popup
+      Popup,
+      Warehouse
     },
     data() {
       return {
