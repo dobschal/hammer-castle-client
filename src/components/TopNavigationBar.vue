@@ -3,7 +3,7 @@
         <div class="buttons">
             <div class="icon-value-pair">
                 <span class="icon"><img src="../assets/icon-hammer.svg" alt="Hammer"></span>
-                <span class="value">{{ hammer }}</span>
+                <span class="value">{{ hammer }} <span class="small">/ {{ maxHammers }}</span></span>
             </div>
             <div class="icon-value-pair">
                 <span class="icon"><img src="../assets/icon-hammer-plus.svg" alt="Hammer Per Minute"></span>
@@ -26,6 +26,9 @@
         computed: {
             hammer() {
                 return this.$store.state.user ? this.$store.state.user.hammer : 0;
+            },
+            maxHammers() {
+                return this.$store.state.user ? this.$store.state.user.max_hammers : 0;
             },
             hammerPerMinute() {
                 return this.$store.state.user ? this.$store.state.user.hammer_per_minute : 0;
@@ -109,6 +112,7 @@
 
                     .small {
                         font-size: 66%;
+                        letter-spacing: 1px;
                     }
                 }
 
