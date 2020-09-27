@@ -56,12 +56,12 @@
 
         <g v-for="warehouse in warehouses"
            :key="'warehouse-' + warehouse.x + '' + warehouse.y + '' + warehouse.user_id">
-          <svg :x="warehouse.x - viewPosition.x - minCastleDistance"
-               :y="warehouse.y - viewPosition.y - minCastleDistance" :width="minCastleDistance * 2"
-               :height="minCastleDistance * 2">
-            <circle :cx="minCastleDistance" :cy="minCastleDistance" r="25" fill="transparent" stroke-width="3"
-                    :stroke="warehouse.color" class="warehouse-ring"/>
-          </svg>
+<!--          <svg :x="warehouse.x - viewPosition.x - minCastleDistance"-->
+<!--               :y="warehouse.y - viewPosition.y - minCastleDistance" :width="minCastleDistance * 2"-->
+<!--               :height="minCastleDistance * 2">-->
+<!--            <circle :cx="minCastleDistance" :cy="minCastleDistance" r="25" fill="transparent" stroke-width="3"-->
+<!--                    :stroke="warehouse.color" class="warehouse-ring"/>-->
+<!--          </svg>-->
           <Warehouse :position="{ x: warehouse.x - viewPosition.x, y: warehouse.y - viewPosition.y }"
                      :color="warehouse.color"></Warehouse>
         </g>
