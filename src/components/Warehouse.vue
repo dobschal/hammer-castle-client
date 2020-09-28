@@ -4,13 +4,14 @@
     <!--        -->
     <!--    </svg>-->
     <svg :x="position.x - 25" :y="position.y - 41" width="50" height="60" viewBox="0 0 199 248" fill="none"
-         xmlns="http://www.w3.org/2000/svg">
+         xmlns="http://www.w3.org/2000/svg" v-tooltip="'This is a warehouse, that stores your hammers. Defend the castles next to it!'">
         <ellipse cx="99.4627"
                  cy="176.465"
                  rx="89.2065"
                  ry="50.5694"
                  transform="rotate(-14.6334 99.4627 176.465)"
                  fill="#6E4E37"
+                 opacity="0.1"
                  stroke="#6E4E37"
                  stroke-width="30"/>
         <path d="M37.3463 67.5L41.3463 192.5L85.8463 215.5L95.8463 90.5L37.3463 67.5Z" fill="#DCA56E"/>

@@ -84,6 +84,7 @@
       border-radius: 16px;
       padding: 1rem;
       max-width: 240px;
+      font-size: 0.9rem;
     }
 
     .tooltip-arrow {

@@ -85,42 +85,42 @@
 </template>
 
 <script>
-  import Castle from "./Castle";
-  import BuildCastle from "./BuildCastle";
-  import NavigationBar from "./NavigationBar";
-  import config from "../config";
-  import BlockArea from "./BlockArea";
-  //  TODO: Remove dialog box...
-  import DialogBox from "./DialogBox";
-  import TopNavigationBar from "./TopNavigationBar";
-  import Menu from "./Menu";
-  import ErrorToast from "./ErrorToast";
-  import Catapult from "./Catapult";
-  import Roads from "./Roads";
-  import Popup from "./Popup";
-  import Warehouse from "./Warehouse";
+    import Castle from "./Castle";
+    import BuildCastle from "./BuildCastle";
+    import NavigationBar from "./NavigationBar";
+    import config from "../config";
+    import BlockArea from "./BlockArea";
+    //  TODO: Remove dialog box...
+    import DialogBox from "./DialogBox";
+    import TopNavigationBar from "./TopNavigationBar";
+    import Menu from "./Menu";
+    import ErrorToast from "./ErrorToast";
+    import Catapult from "./Catapult";
+    import Roads from "./Roads";
+    import Popup from "./Popup";
+    import Warehouse from "./Warehouse";
 
-  export default {
-    name: "Game",
-    components: {
-      BlockArea,
-      Castle,
-      BuildCastle,
-      NavigationBar,
-      DialogBox,
-      TopNavigationBar,
-      Menu,
-      ErrorToast,
-      Catapult,
-      Roads,
-      Popup,
-      Warehouse
-    },
-    data() {
-      return {
-        dragging: false,
-        waitingForAnimationFrame: false,
-        gameHeight: 0,
+    export default {
+        name: "Game",
+        components: {
+            BlockArea,
+            Castle,
+            BuildCastle,
+            NavigationBar,
+            DialogBox,
+            TopNavigationBar,
+            Menu,
+            ErrorToast,
+            Catapult,
+            Roads,
+            Popup,
+            Warehouse
+        },
+        data() {
+            return {
+                dragging: false,
+                waitingForAnimationFrame: false,
+                gameHeight: 0,
         gameWidth: 0,
         zoomFactor: 1,
         mouseDownTimestamp: 0,
@@ -265,17 +265,18 @@
 
     created() {
       this.$store.dispatch("GET_USER").then(user => {
-        this.moveMapTo({x: user.startX, y: user.startY});
-        const loadRange = {
-          fromX: user.startX - 500,
-          fromY: user.startY - 500,
-          toX: user.startX + 500,
-          toY: user.startY + 500
-        };
-        this.$store.dispatch("GET_CASTLES", loadRange);
-        this.$store.dispatch("GET_CATAPULTS", loadRange);
-        this.$store.dispatch("GET_WAREHOUSES", loadRange);
-        this.$store.dispatch("GET_CASTLE_PRICE");
+          this.moveMapTo({x: user.startX, y: user.startY});
+          const loadRange = {
+              fromX: user.startX - 500,
+              fromY: user.startY - 500,
+              toX: user.startX + 500,
+              toY: user.startY + 500
+          };
+          this.$store.dispatch("GET_CASTLES", loadRange);
+          this.$store.dispatch("GET_CATAPULTS", loadRange);
+          this.$store.dispatch("GET_WAREHOUSES", loadRange);
+          this.$store.dispatch("GET_CASTLE_PRICE");
+          this.$store.dispatch("GET_WAREHOUSE_PRICE");
       });
       this.$store.dispatch("GET_SERVER_VERSION");
       this.$store.dispatch("GET_BLOCK_AREAS");

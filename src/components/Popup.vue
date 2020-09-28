@@ -2,8 +2,17 @@
     <div class="popup" @mouseup.stop
          :style="{ left: (position.x / zoomFactor) + 'px', top: (position.y / zoomFactor) + 'px' }">
         <div class="items" v-if="type === 'road'">
-            <div v-if="canBuildCatapult" class="item" @click="buildCatapult" v-tooltip="'A catapult is going to attack the opponents castle. There is a possibility that the opponents castle gets destroyed or the catapult remains unaffected.'">Build a Catapult</div>
-            <div v-else-if="canBuildWarehouse" class="item" @click="buildWarehouse" v-tooltip="'A warehouse will increase the amount of hammers you can store.'">Build a Warehouse</div>
+            <div v-if="canBuildCatapult" class="item" @click="buildCatapult"
+                 v-tooltip="'A catapult is going to attack the opponents castle. There is a possibility that the opponents castle gets destroyed or the catapult remains unaffected.'">
+                Build a Catapult
+            </div>
+            <div v-else-if="canBuildWarehouse"
+                 class="item"
+                 @click="buildWarehouse"
+                 v-tooltip="{ content: '<i>A warehouse will increase the amount of hammers you can store.</i>', html: true }">
+                Build Warehouse for {{ warehousePrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
+                                                              alt="Hammer">
+            </div>
             <div v-else class="item inactive">Catapults need to be on a road next to an opponents Castle.</div>
         </div>
         <div class="items" v-else-if="type === 'castle'">
@@ -24,6 +33,9 @@
             position: Object // x, y
         },
         computed: {
+            warehousePrice() {
+                return this.$store.state.warehousePrice;
+            },
             user() {
                 return this.$store.state.user;
             },
@@ -73,6 +85,7 @@
                         x: this.item.middleBetweenCastles.x + this.viewPosition.x,
                         y: this.item.middleBetweenCastles.y + this.viewPosition.y
                     });
+                    await this.$store.dispatch("GET_WAREHOUSE_PRICE");
                 } catch (e) {
                     this.$emit("ERROR", e.response.data.message);
                 }
@@ -83,6 +96,16 @@
 </script>
 
 <style lang="scss" scoped>
+
+    .hammer-icon {
+        display: inline-block;
+        margin-bottom: -9px;
+        margin-right: -10px;
+        width: 24px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+    }
+
     .popup {
         position: fixed;
         left: 50%;
@@ -113,7 +136,7 @@
                 letter-spacing: 1.4px;
                 border-bottom: dashed 2px rgba(255, 255, 255, 0.5);
                 margin: 0 2.75rem;
-                padding-bottom: .25rem;
+                padding-bottom: .5rem;
 
                 &.inactive {
                     border: none;

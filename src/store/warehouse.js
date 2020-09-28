@@ -1,7 +1,8 @@
 import {axios} from "../plugins/axios";
 
 export const warehouseState = {
-    warehouses: []
+    warehouses: [],
+    warehousePrice: undefined
 };
 
 export const warehouseMutations = {
@@ -16,6 +17,9 @@ export const warehouseMutations = {
                 }
             });
         }
+    },
+    SET_WAREHOUSE_PRICE(state, {price}) { // injected from websocket
+        state.warehousePrice = price;
     },
     NEW_WAREHOUSE(state, warehouse) { // injected from websocket
         console.log("[warehouse] Got new warehouse: ", warehouse);
@@ -47,6 +51,15 @@ export const warehouseActions = {
             commit("PROGRESS", 1);
             const response = await axios.get(`/warehouse?fromX=${fromX}&fromY=${fromY}&toX=${toX}&toY=${toY}`);
             commit("SET_WAREHOUSES", response.data);
+        } finally {
+            commit("PROGRESS", -1);
+        }
+    },
+    async GET_WAREHOUSE_PRICE({commit}) {
+        try {
+            commit("PROGRESS", 1);
+            const response = await axios.get(`/warehouse/price`);
+            commit("SET_WAREHOUSE_PRICE", response.data);
         } finally {
             commit("PROGRESS", -1);
         }
