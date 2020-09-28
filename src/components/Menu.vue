@@ -84,8 +84,9 @@
                 margin: auto;
 
                 .content {
-                    height: 330px;
+                    height: 298px;
                     margin-bottom: 20px;
+                    margin-top: 2rem;
                     overflow-y: auto;
                     -ms-overflow-style: none; /* IE and Edge */
                     scrollbar-width: none;
@@ -95,7 +96,7 @@
                     }
 
                     .items {
-                        padding: 2rem 3rem;
+                        padding: 0rem 3rem 2rem 3rem;
                         text-align: center;
 
                         &.ranking {

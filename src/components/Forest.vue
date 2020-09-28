@@ -2,10 +2,8 @@
 
     <svg :x="position.x - size" :y="position.y - size" xmlns="http://www.w3.org/2000/svg"
          :width="size * 2" :height="size * 2" fill="none">
-        <g class="K">
-            <circle cx="150" cy="150" r="150" fill-opacity=".05"/>
-        </g>
-        <image href="../assets/trees.png" height="200" width="200" x="50" y="50"/>
+        <circle :cx="size" :cy="size" :r="size" stroke="none" fill="black" opacity="0.05"/>
+        <image href="../assets/trees.png" :height="size * 1.2" :width="size * 1.2" :x="size * 0.4" :y="size * 0.4"/>
 
     </svg>
 
@@ -28,5 +26,5 @@
 </script>
 
 <style scoped>
-   
+
 </style>

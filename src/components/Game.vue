@@ -370,7 +370,7 @@
       },
 
       onScroll(event) {
-        if (this.activeAction === "BUILD_CASTLE") return;
+        if (this.activeAction === "BUILD_CASTLE" || this.menuOpen) return;
         const delta = event.deltaY * config.SCROLL_SENSITIVITY;
         this.zoomFactor = Math.min(1.3, Math.max(0.7, this.zoomFactor + delta));
         if (this.zoomFactor > 0.7 && this.zoomFactor < 1.3) {

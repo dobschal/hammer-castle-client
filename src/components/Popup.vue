@@ -2,8 +2,8 @@
     <div class="popup" @mouseup.stop
          :style="{ left: (position.x / zoomFactor) + 'px', top: (position.y / zoomFactor) + 'px' }">
         <div class="items" v-if="type === 'road'">
-            <div v-if="canBuildCatapult" class="item" @click="buildCatapult">Build a Catapult</div>
-            <div v-else-if="canBuildWarehouse" class="item" @click="buildWarehouse">Build a Warehouse</div>
+            <div v-if="canBuildCatapult" class="item" @click="buildCatapult" v-tooltip="'A catapult is going to attack the opponents castle. There is a possibility that the opponents castle gets destroyed or the catapult remains unaffected.'">Build a Catapult</div>
+            <div v-else-if="canBuildWarehouse" class="item" @click="buildWarehouse" v-tooltip="'A warehouse will increase the amount of hammers you can store.'">Build a Warehouse</div>
             <div v-else class="item inactive">Catapults need to be on a road next to an opponents Castle.</div>
         </div>
         <div class="items" v-else-if="type === 'castle'">
