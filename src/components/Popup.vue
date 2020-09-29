@@ -1,5 +1,5 @@
 <template>
-    <div class="popup" @mouseup.stop
+    <div class="popup" @mouseup.stop @touchend.stop
          :style="{ left: (position.x / zoomFactor) + 'px', top: (position.y / zoomFactor) + 'px' }">
         <div class="items" v-if="type === 'road'">
             <div v-if="canBuildCatapult" class="item" @click="buildCatapult"
@@ -18,6 +18,9 @@
         <div class="items" v-else-if="type === 'castle'">
             <div class="item">{{ item.username }}</div>
             <div class="item">{{ item.x }} / {{ item.y }}</div>
+            <div class="item" :class="{ positive: item.isOnline }">{{ item.isOnline ? 'User is online' : 'Not online'
+                }}
+            </div>
         </div>
     </div>
 </template>
@@ -53,7 +56,11 @@
             }
         },
         mounted() {
-            console.log("[Popup] mounted yeah: ");
+            if (this.type === "castle") {
+                this.$store.dispatch("IS_ONLINE", this.item.username).then(isOnline => {
+                    this.item.isOnline = isOnline;
+                });
+            }
         },
         methods: {
             async buildCatapult() {
@@ -75,6 +82,7 @@
                 this.$emit("CLOSE");
             },
             async buildWarehouse() {
+                console.log("[Popup] click: ");
                 if (!this.canBuildWarehouse) return this.$emit("ERROR", "Wrong position for a warehouse...");
                 try {
                     await this.$store.dispatch("CREATE_WAREHOUSE", {
@@ -136,7 +144,15 @@
                 letter-spacing: 1.4px;
                 border-bottom: dashed 2px rgba(255, 255, 255, 0.5);
                 margin: 0 2.75rem;
-                padding-bottom: .5rem;
+                padding: .25rem 0;
+
+                &.positive {
+                    color: #b6e57b;
+                }
+
+                &:last-child {
+                    border: none;
+                }
 
                 &.inactive {
                     border: none;

@@ -40,6 +40,16 @@ export const userActions = {
     }
   },
 
+  async IS_ONLINE({commit}, username) {
+    try {
+      commit("PROGRESS", 1);
+      const response = await axios.get("/user/is-online?username=" + encodeURIComponent(username));
+      return response.data.isOnline;
+    } finally {
+      commit("PROGRESS", -1);
+    }
+  },
+
   async GET_RANKING({commit}) {
     try {
       commit("PROGRESS", 1);

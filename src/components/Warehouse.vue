@@ -3,8 +3,13 @@
     <!--&lt;!&ndash;        <image href="../assets/warehouse.png" height="577" width="826" x="0" y="0"/>&ndash;&gt;-->
     <!--        -->
     <!--    </svg>-->
-    <svg :x="position.x - 25" :y="position.y - 41" width="50" height="60" viewBox="0 0 199 248" fill="none"
-         xmlns="http://www.w3.org/2000/svg" v-tooltip="'This is a warehouse, that stores your hammers. Defend the castles next to it!'">
+    <svg :x="position.x - 25" :y="position.y - 41"
+         width="50"
+         height="60"
+         viewBox="0 0 199 248"
+         fill="none"
+         xmlns="http://www.w3.org/2000/svg"
+         v-tooltip="'This is a warehouse, that stores your hammers.'">
         <ellipse cx="99.4627"
                  cy="176.465"
                  rx="89.2065"
