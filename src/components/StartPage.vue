@@ -104,6 +104,7 @@ export default {
         this.error = "Please fill out the form. Your password should contain at least 8 characters.";
         return;
       }
+      this.error = undefined;
       try {
         await this.$store.dispatch(this.showRegistration ? "CREATE_USER" : "AUTHENTICATE", {
           username: this.username,
@@ -115,7 +116,7 @@ export default {
         }
       } catch (e) {
         console.log("[Authenticator] Login error: ", e);
-        this.error = "Wrong credentials.";
+        this.error = e.response.data.message;
       }
     }
   }
