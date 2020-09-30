@@ -4,6 +4,7 @@ import {castleActions, castleMutations, castleState} from "./castle";
 import {catapultActions, catapultMutations, catapultState} from "./catapult";
 import {warehouseActions, warehouseMutations, warehouseState} from "./warehouse";
 import {blockAreaActions, blockAreaMutations, blockAreaState} from "./blockArea";
+import {actionLogActions, actionLogMutations, actionLogState} from "./actionLog";
 
 export default {
   state: {
@@ -13,7 +14,8 @@ export default {
     ...castleState,
     ...blockAreaState,
     ...catapultState,
-    ...warehouseState
+    ...warehouseState,
+    ...actionLogState
   },
   getters: {
     busy(state) {
@@ -31,7 +33,8 @@ export default {
     ...castleMutations,
     ...blockAreaMutations,
     ...catapultMutations,
-    ...warehouseMutations
+    ...warehouseMutations,
+    ...actionLogMutations
   },
   actions: {
     async GET_SERVER_VERSION({ commit }) {
@@ -49,6 +52,7 @@ export default {
     ...castleActions,
     ...blockAreaActions,
     ...catapultActions,
-    ...warehouseActions
+    ...warehouseActions,
+    ...actionLogActions
   }
 };

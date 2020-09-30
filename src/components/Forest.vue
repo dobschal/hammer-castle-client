@@ -2,7 +2,7 @@
 
     <svg :x="position.x - size" :y="position.y - size" xmlns="http://www.w3.org/2000/svg"
          :width="size * 2" :height="size * 2" fill="none">
-        <circle :cx="size" :cy="size" :r="size" stroke="none" fill="#a5d070" fill-opacity="0.5"/>
+<!--        <circle :cx="size" :cy="size" :r="size" stroke="none" fill="#a5d070" fill-opacity="0.5"/>-->
         <image href="../assets/trees.png" :height="size * 1.4" :width="size * 1.4" :x="size * 0.3" :y="size * 0.3"/>
 
     </svg>

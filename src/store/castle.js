@@ -22,8 +22,10 @@ export const castleMutations = {
     state.castlePrice = price;
   },
   NEW_CASTLE(state, castle) { // injected from websocket
-    console.log("[castle] Got new castle: ", castle);
-    state.castles.push(castle);
+    state.castles = [
+      ...state.castles.filter(c => c.x !== castle.x || c.y !== castle.y),
+      castle
+    ];
   },
   DELETE_CASTLE(state, castle) {
     console.log("[castle] Delete castle: ", castle);

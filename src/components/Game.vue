@@ -22,6 +22,19 @@
                 ></BuildCastle>
 
                 <g v-for="blockArea in blockAreas" :key="'block-area-' + blockArea.x + '' + blockArea.y">
+                    <svg v-if="activeAction === 'BUILD_CASTLE'"
+                         :x="blockArea.x - viewPosition.x - blockAreaSize"
+                         :y="blockArea.y - viewPosition.y - blockAreaSize"
+                         :width="blockAreaSize * 2"
+                         :height="blockAreaSize * 2">
+                        <circle :cx="blockAreaSize"
+                                :cy="blockAreaSize"
+                                :r="blockAreaSize"
+                                fill="transparent"
+                                stroke-width="3"
+                                stroke-opacity="0.5"
+                                stroke="green"/>
+                    </svg>
                     <BlockArea
                             :position="{ x: blockArea.x - viewPosition.x, y: blockArea.y - viewPosition.y }"></BlockArea>
                 </g>
@@ -37,9 +50,10 @@
                          :height="minCastleDistance * 2">
                         <circle :cx="minCastleDistance"
                                 :cy="minCastleDistance"
-                                r="200"
+                                :r="minCastleDistance"
                                 fill="transparent"
                                 stroke-width="3"
+                                stroke-opacity="0.5"
                                 :stroke="castle.color"/>
                     </svg>
                     <Castle :position="{ x: castle.x - viewPosition.x, y: castle.y - viewPosition.y }"
@@ -71,12 +85,6 @@
 
                 <g v-for="warehouse in warehouses"
                    :key="'warehouse-' + warehouse.x + '' + warehouse.y + '' + warehouse.user_id">
-                    <!--          <svg :x="warehouse.x - viewPosition.x - minCastleDistance"-->
-                    <!--               :y="warehouse.y - viewPosition.y - minCastleDistance" :width="minCastleDistance * 2"-->
-                    <!--               :height="minCastleDistance * 2">-->
-                    <!--            <circle :cx="minCastleDistance" :cy="minCastleDistance" r="25" fill="transparent" stroke-width="3"-->
-                    <!--                    :stroke="warehouse.color" class="warehouse-ring"/>-->
-                    <!--          </svg>-->
                     <Warehouse :position="{ x: warehouse.x - viewPosition.x, y: warehouse.y - viewPosition.y }"
                                :color="warehouse.color"></Warehouse>
                 </g>
@@ -97,6 +105,7 @@
                :position="popupPosition"
                @ERROR="error = $event"
                @CLOSE="closePopup"></Popup>
+        <ActionLog></ActionLog>
     </div>
 </template>
 
@@ -115,6 +124,7 @@
     import Roads from "./Roads";
     import Popup from "./Popup";
     import Warehouse from "./Warehouse";
+    import ActionLog from "./ActionLog";
 
     export default {
         name: "Game",
@@ -130,7 +140,8 @@
             Catapult,
             Roads,
             Popup,
-            Warehouse
+            Warehouse,
+            ActionLog
         },
         data() {
             return {
@@ -152,7 +163,8 @@
                 popupType: "",
                 popupItem: undefined,
                 popupPosition: undefined,
-                minCastleDistance: config.MIN_CASTLE_DISTANCE
+                minCastleDistance: config.MIN_CASTLE_DISTANCE,
+                blockAreaSize: config.BLOCK_AREA_SIZE
             };
         },
 
@@ -289,6 +301,7 @@
                     toY: user.startY + 500
                 };
                 this.$store.dispatch("GET_CASTLES", loadRange);
+                this.$store.dispatch("GET_ACTION_LOG", loadRange);
                 this.$store.dispatch("GET_CATAPULTS", loadRange);
                 this.$store.dispatch("GET_WAREHOUSES", loadRange);
                 this.$store.dispatch("GET_CASTLE_PRICE");
@@ -376,6 +389,7 @@
                 this.websocket = this.$websocket.connect();
                 [
                     "UPDATE_USER",
+                    "NEW_ACTION_LOG",
                     "DELETE_CASTLE", "NEW_CASTLE", "UPDATE_CASTLE",
                     "DELETE_CATAPULT", "NEW_CATAPULT", "UPDATE_CATAPULT",
                     "DELETE_WAREHOUSE", "NEW_WAREHOUSE", "UPDATE_WAREHOUSE",
