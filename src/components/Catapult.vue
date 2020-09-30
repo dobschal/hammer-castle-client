@@ -156,7 +156,7 @@
                 </linearGradient>
             </defs>
         </svg>
-        <text x="40" y="82" class="count-down" fill="white" text-anchor="middle">{{ countDown }}</text>
+        <text v-if="countDown" x="40" y="82" class="count-down" fill="white" text-anchor="middle">{{ countDown }}</text>
     </svg>
 
 </template>
@@ -178,15 +178,18 @@
             }
         },
         data() {
-            return {countDown: 0};
+            return {countDown: 0, intervalId: undefined};
         },
         created() {
-            setInterval(() => {
+            this.intervalId = setInterval(() => {
                 let seconds = Math.max(0, Math.floor(((Date.parse(this.catapult.timestamp.replace(" ", "T") + ".000Z") + config.CATAPULT_LIFETIME) - Date.now()) / 1000));
                 const minutes = Math.floor(seconds / 60) || 0;
                 seconds = seconds % 60;
                 this.countDown = `${minutes < 10 ? ('0' + minutes) : minutes}:${seconds < 10 ? ('0' + seconds) : seconds}`;
             }, 1000);
+        },
+        beforeDestroy() {
+            if (this.intervalId) clearInterval(this.intervalId);
         }
     }
 </script>
