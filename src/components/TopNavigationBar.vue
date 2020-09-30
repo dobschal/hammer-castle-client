@@ -64,10 +64,13 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            margin: 0 auto;
+            max-width: 400px;
+            padding: 0 1rem;
 
             .icon-value-pair {
-                padding: 0 1rem;
+                padding: 0 0;
                 border-radius: 8px;
                 display: flex;
                 flex-direction: row;

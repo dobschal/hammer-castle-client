@@ -309,6 +309,7 @@
                 this.$store.dispatch("GET_WAREHOUSES", loadRange);
                 this.$store.dispatch("GET_CASTLE_PRICE");
                 this.$store.dispatch("GET_WAREHOUSE_PRICE");
+                this.$store.dispatch("GET_CATAPULT_PRICE");
             });
             this.$store.dispatch("GET_SERVER_VERSION");
             this.$store.dispatch("GET_BLOCK_AREAS");

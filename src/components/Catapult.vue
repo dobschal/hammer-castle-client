@@ -1,5 +1,5 @@
 <template>
-    <svg :x="position.x - 40" :y="position.y - 75">
+    <svg :x="position.x - 40" :y="position.y - 75" v-tooltip="'Chance to win is ' + catapult.chance_to_win + '%'">
         <svg width="75" height="120" viewBox="0 0 197 186" fill="none"
              xmlns="http://www.w3.org/2000/svg">
             <g filter="url(#catapult_filter0_d)">

@@ -1,7 +1,8 @@
 import {axios} from "../plugins/axios";
 
 export const catapultState = {
-    catapults: []
+    catapults: [],
+    catapultPrice: undefined
 };
 
 export const catapultMutations = {
@@ -16,6 +17,9 @@ export const catapultMutations = {
                 }
             });
         }
+    },
+    SET_CATAPULT_PRICE(state, {price}) { // injected from websocket
+        state.catapultPrice = price;
     },
     NEW_CATAPULT(state, catapult) { // injected from websocket
         console.log("[catapult] Got new catapult: ", catapult);
@@ -50,5 +54,14 @@ export const catapultActions = {
         } finally {
             commit("PROGRESS", -1);
         }
+    },
+    async GET_CATAPULT_PRICE({commit}) {
+    try {
+        commit("PROGRESS", 1);
+        const response = await axios.get(`/catapult/price`);
+        commit("SET_CATAPULT_PRICE", response.data);
+    } finally {
+        commit("PROGRESS", -1);
     }
+}
 };

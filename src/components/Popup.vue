@@ -4,7 +4,8 @@
         <div class="items" v-if="type === 'road'">
             <div v-if="canBuildCatapult" class="item" @click="buildCatapult"
                  v-tooltip="'A catapult is going to attack the opponents castle. There is a possibility that the opponents castle gets destroyed or the catapult remains unaffected.'">
-                Build a Catapult
+                Build Catapult for {{ catapultPrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
+                                                            alt="Hammer">
             </div>
             <div v-else-if="canBuildWarehouse"
                  class="item"
@@ -38,6 +39,9 @@
         computed: {
             warehousePrice() {
                 return this.$store.state.warehousePrice;
+            },
+            catapultPrice() {
+                return this.$store.state.catapultPrice;
             },
             user() {
                 return this.$store.state.user;
@@ -76,6 +80,7 @@
                         x: this.item.middleBetweenCastles.x + this.viewPosition.x,
                         y: this.item.middleBetweenCastles.y + this.viewPosition.y
                     });
+                    await this.$store.dispatch("GET_CATAPULT_PRICE");
                 } catch (e) {
                     this.$emit("ERROR", e.response.data.message);
                 }
