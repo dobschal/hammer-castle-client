@@ -178,6 +178,7 @@
     import Warehouse from "./Warehouse";
     import ActionLog from "./ActionLog";
     import DailyReward from "./DailyReward";
+    import cookie from "js-cookie";
 
     let timestamp = Date.now();
 
@@ -508,6 +509,7 @@
                 this.websocket.disconnect();
                 this.$store.commit("SET_AUTH_TOKEN", "");
                 this.$store.commit("SET_USER", undefined);
+                cookie.remove("auth-token");
                 window.location.reload(true);
             },
             loadCastles() {
