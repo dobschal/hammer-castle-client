@@ -7,16 +7,16 @@ export const warehouseState = {
 
 export const warehouseMutations = {
     SET_WAREHOUSES(state, warehouses) {
-        console.log("[warehouse] Set warehouses: ", warehouses);
-        if (state.warehouses.length === 0) {
-            state.warehouses = warehouses;
-        } else {
-            warehouses.forEach(c1 => {
-                if (!state.warehouses.some(c2 => c1.x === c2.x && c1.y === c2.y)) {
-                    state.warehouses.push(c1);
-                }
-            });
-        }
+        // console.log("[warehouse] Set warehouses: ", warehouses);
+        // if (state.warehouses.length === 0) {
+        state.warehouses = warehouses;
+        // } else {
+        //     warehouses.forEach(c1 => {
+        //         if (!state.warehouses.some(c2 => c1.x === c2.x && c1.y === c2.y)) {
+        //             state.warehouses.push(c1);
+        //         }
+        //     });
+        // }
     },
     SET_WAREHOUSE_PRICE(state, {price}) { // injected from websocket
         state.warehousePrice = price;

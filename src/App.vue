@@ -53,10 +53,17 @@
     color: white;
     font-weight: bold;
     transition: transform 0.3s ease-out;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
 
     &:hover {
       cursor: pointer;
       transform: scale(1.05);
+      background: rgba(11, 75, 87, 0.8);
     }
 
     &:active {

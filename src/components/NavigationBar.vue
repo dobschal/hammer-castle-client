@@ -23,7 +23,6 @@
                 this.$emit("update:activeAction", "")
             },
             buildCastle() {
-                console.log("[NavigationBar] Click build castle: ");
                 this.$emit("update:activeAction", "BUILD_CASTLE");
             }
         }

@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-        <span class="close-button" :class="{ open: open }" @click="toggle">{{ open ? "Close" : "Open Logs" }}</span>
         <template v-if="open">
             <div v-for="(item, index) in actionLog" :key="item.id" class="item"
                  :style="{ opacity: Math.min(1, 0.5 + index / actionLog.length) }">
@@ -8,6 +7,7 @@
                 <span class="content">{{ item.content }}</span>
             </div>
         </template>
+        <span class="close-button" :class="{ open: open }" @click="toggle">{{ open ? "Close" : "Open Logs" }}</span>
     </div>
 </template>
 
@@ -53,31 +53,41 @@
         .close-button {
             display: block;
             text-align: center;
-            background-color: #0b5a66;
+            background: rgba(11, 90, 102, 0.7);
+            backdrop-filter: blur(5px);
             border-radius: 5px;
             width: 120px;
             margin-left: calc(100% - 120px);
             margin-bottom: 1rem;
             padding: 0.3rem;
+            box-shadow: 0 5px 15px -5px black;
+            transition: transform 0.3s ease-out;
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
 
             &.open {
-                background-color: #ff6d69;
+                background: rgba(236, 0, 0, 0.7);
 
                 &:hover {
-                    background-color: #893635;
+                    background: rgba(200, 0, 0, 0.8);
                     cursor: pointer;
                 }
             }
 
             &:hover {
-                background-color: #083139;
+                background: rgba(11, 75, 87, 0.8);
                 cursor: pointer;
+                transform: scale(1.05);
             }
         }
 
         .item {
-            background: rgba(5, 29, 32, 0.66);
-            backdrop-filter: blur(15px);
+            background: rgba(5, 45, 51, 1.0);
+            backdrop-filter: blur(5px);
             margin-bottom: 1rem;
             padding: 0.5rem;
             border-radius: 3px;

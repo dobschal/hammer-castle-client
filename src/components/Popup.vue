@@ -1,6 +1,6 @@
 <template>
     <div class="popup" @mouseup.stop @touchend.stop
-         :style="{ left: (position.x / zoomFactor) + 'px', top: (position.y / zoomFactor) + 'px' }">
+         :style="{ left: ((position.x - viewPosition.x) / zoomFactor) + 'px', top: ((position.y - viewPosition.y) / zoomFactor) + 'px' }">
         <div class="items" v-if="type === 'road'">
             <div v-if="canBuildCatapult" class="item" @click="buildCatapult"
                  v-tooltip="'A catapult is going to attack the opponents castle. There is a possibility that the opponents castle gets destroyed or the catapult remains unaffected.'">
@@ -18,8 +18,9 @@
         </div>
         <div class="items" v-else-if="type === 'castle'">
             <div class="item">{{ item.username }}</div>
-            <div class="item">{{ item.x }} / {{ item.y }}</div>
-            <div class="item" :class="{ positive: item.isOnline }">{{ item.isOnline ? 'User is online' : 'Not online'
+            <div class="item">{{ Math.floor(item.x) }} / {{ Math.floor(item.y) }}</div>
+            <div class="item" v-if="item.isOnline !== undefined" :class="{ positive: item.isOnline }">{{ item.isOnline ?
+                'User is online' : 'Not online'
                 }}
             </div>
         </div>
@@ -62,7 +63,8 @@
         mounted() {
             if (this.type === "castle") {
                 this.$store.dispatch("IS_ONLINE", this.item.username).then(isOnline => {
-                    this.item.isOnline = isOnline;
+                    this.$set(this.item, "isOnline", isOnline);
+                    console.log("[Popup] Got online state: ", isOnline);
                 });
             }
         },
@@ -77,8 +79,8 @@
                         opponentCastleY: opponentCastle.y,
                         userCastleX: userCastle.x,
                         userCastleY: userCastle.y,
-                        x: this.item.middleBetweenCastles.x + this.viewPosition.x,
-                        y: this.item.middleBetweenCastles.y + this.viewPosition.y
+                        x: this.item.middleBetweenCastles.x,
+                        y: this.item.middleBetweenCastles.y
                     });
                     await this.$store.dispatch("GET_CATAPULT_PRICE");
                 } catch (e) {
@@ -95,8 +97,8 @@
                         castle1Y: this.item.c1.y,
                         castle2X: this.item.c2.x,
                         castle2Y: this.item.c2.y,
-                        x: this.item.middleBetweenCastles.x + this.viewPosition.x,
-                        y: this.item.middleBetweenCastles.y + this.viewPosition.y
+                        x: this.item.middleBetweenCastles.x,
+                        y: this.item.middleBetweenCastles.y
                     });
                     await this.$store.dispatch("GET_WAREHOUSE_PRICE");
                 } catch (e) {

@@ -1,92 +1,138 @@
 <template>
     <div>
         <div class="game-container" ref="game-container">
-            <svg
-                    :width="gameWidth + 'px'"
-                    :height="gameHeight + 'px'"
-                    :viewBox="gameViewBox"
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.1"
+            <svg :width="gameWidth + 'px'"
+                 :height="gameHeight + 'px'"
+                 :viewBox="gameViewBox"
+                 xmlns="http://www.w3.org/2000/svg"
+                 version="1.1"
             >
 
-                <BuildCastle
-                        v-if="activeAction === 'BUILD_CASTLE'"
-                        :user="user"
-                        :zoom-factor="zoomFactor"
-                        :last-mouse-position="lastMousePosition"
-                        :mouse-down-timestamp="mouseDownTimestamp"
-                        :dragging="dragging"
-                        :view-position="viewPosition"
-                        @DONE="activeAction = ''"
-                        @ERROR="error = $event"
-                ></BuildCastle>
+                <!-- For the castle flags -->
+                <defs>
+                    <clipPath id="flagMaskCastle">
+                        <polygon id="maskCastle" points="100,31 33.032,31 49.467,49.826 32.684,69 100,69"/>
+                    </clipPath>
+                </defs>
 
-                <g v-for="blockArea in blockAreas" :key="'block-area-' + blockArea.x + '' + blockArea.y">
-                    <svg v-if="activeAction === 'BUILD_CASTLE'"
-                         :x="blockArea.x - viewPosition.x - blockAreaSize"
-                         :y="blockArea.y - viewPosition.y - blockAreaSize"
-                         :width="blockAreaSize * 2"
-                         :height="blockAreaSize * 2">
-                        <circle :cx="blockAreaSize"
-                                :cy="blockAreaSize"
-                                :r="blockAreaSize"
-                                fill="transparent"
-                                stroke-width="3"
-                                stroke-opacity="0.5"
-                                stroke="green"/>
+                <g :transform="'translate(' + (-viewPosition.x) + ', ' + (-viewPosition.y) + ')'">
+
+                    <template v-if="activeAction === 'BUILD_CASTLE'">
+                        <g v-for="castle in castles.filter(c => c.userId === user.id)"
+                           :key="'build-2-castle-' + castle.x + '' + castle.y">
+                            <svg :x="castle.x - maxCastleDistance"
+                                 :y="castle.y - maxCastleDistance"
+                                 :width="maxCastleDistance * 2"
+                                 :height="maxCastleDistance * 2">
+                                <circle :cx="maxCastleDistance"
+                                        :cy="maxCastleDistance"
+                                        :r="maxCastleDistance"
+                                        fill="#c4f981"
+                                        class="build-castle-green-area"
+                                        stroke="none"/>
+                            </svg>
+                        </g>
+                        <g v-for="castle in castles"
+                           :key="'build-castle-' + castle.x + '' + castle.y">
+                            <svg :x="castle.x - minCastleDistance"
+                                 :y="castle.y - minCastleDistance"
+                                 :width="minCastleDistance * 2"
+                                 :height="minCastleDistance * 2">
+                                <circle :cx="minCastleDistance"
+                                        :cy="minCastleDistance"
+                                        :r="minCastleDistance"
+                                        fill="#c6cc71"
+                                        stroke="none"/>
+                            </svg>
+                        </g>
+                        <g v-for="blockArea in blockAreas" :key="'build-block-area-' + blockArea.x + '' + blockArea.y">
+                            <svg :x="blockArea.x - blockAreaSize"
+                                 :y="blockArea.y - blockAreaSize"
+                                 :width="blockAreaSize * 2"
+                                 :height="blockAreaSize * 2">
+                                <circle :cx="blockAreaSize"
+                                        :cy="blockAreaSize"
+                                        :r="blockAreaSize"
+                                        fill="#c6cc71"
+                                        stroke="none"/>
+                            </svg>
+                        </g>
+                    </template>
+
+                    <g v-for="blockArea in blockAreas" :key="'block-area-' + blockArea.x + '' + blockArea.y">
+                        <BlockArea :position="{ x: blockArea.x, y: blockArea.y }"></BlockArea>
+                    </g>
+
+                    <svg v-for="road in roads"
+                         :key="road.id"
+                         :x="road.middleBetweenCastles.x - road.distanceBetweenCastles * 0.4"
+                         :y="road.middleBetweenCastles.y - road.distanceBetweenCastles * 0.4"
+                         :width="road.distanceBetweenCastles * 0.8"
+                         :height="road.distanceBetweenCastles * 0.8"
+                         viewBox="0 0 403 403"
+                         fill="none"
+                         xmlns="http://www.w3.org/2000/svg"
+                         @click="roadClicked(road)">
+                        <path class="road"
+                              :class="{ 'is-my-road': road.isMyRoad }"
+                              :style="{transform: 'rotate(' + road.angle + 'deg)', 'transform-origin': '50% 50%' }"
+                              d="M222.195 504.255L223.33 504.232L223.617 503.135C228.888 482.983 234.822 446.034 234.976 406.023C235.13 366.043 229.515 322.786 211.509 290.172C205.231 278.8 199.772 269.673 195.225 262.07C193.31 258.87 191.557 255.94 189.973 253.226C184.595 244.013 181.191 237.342 179.761 230.88C178.347 224.491 178.84 218.187 181.54 209.694C184.257 201.15 189.172 190.496 196.53 175.425C199.445 169.455 202.086 164.384 204.431 159.88C204.671 159.419 204.908 158.964 205.142 158.515C207.655 153.685 209.819 149.479 211.569 145.512C215.095 137.522 216.958 130.462 216.773 120.962C216.59 111.537 214.393 99.7574 209.929 82.3212C205.702 65.8103 199.414 44.1202 190.803 14.417C190.313 12.726 189.815 11.009 189.309 9.26554L188.632 6.92665L186.848 8.58431L174.535 20.0257L173.878 20.6369L174.106 21.5054C177.23 33.4069 181.697 44.8679 186.08 56.0521L186.293 56.5967C190.613 67.6199 194.825 78.3675 197.661 89.1468C203.4 110.963 203.478 132.793 187.102 156.725C166.164 187.323 160.443 206.064 163.087 225.416C164.398 235.01 167.755 244.67 172.151 255.88C173.344 258.921 174.613 262.077 175.943 265.383C179.53 274.302 183.553 284.305 187.68 296.059C192.048 308.503 196.618 319.17 200.902 329.171C202.104 331.976 203.283 334.729 204.429 337.453C209.668 349.909 214.231 361.82 217.203 375.688C223.141 403.396 222.77 439.134 208.26 502.668L207.833 504.539L209.752 504.501L222.195 504.255Z"
+                              fill="#6F4E37"
+                              stroke="#867350"
+                              stroke-width="5"/>
                     </svg>
-                    <BlockArea
-                            :position="{ x: blockArea.x - viewPosition.x, y: blockArea.y - viewPosition.y }"></BlockArea>
-                </g>
 
-                <Roads :roads="roads" @CLICK="roadClicked"></Roads>
+                    <BuildCastle
+                            v-if="activeAction === 'BUILD_CASTLE'"
+                            :user="user"
+                            :zoom-factor="zoomFactor"
+                            :last-mouse-position="lastMousePosition"
+                            :mouse-down-timestamp="mouseDownTimestamp"
+                            :dragging="dragging"
+                            :view-position="viewPosition"
+                            ref="buildCastle"
+                            @DONE="activeAction = ''"
+                            @NEW_CASTLE_POSITION="newCastlePosition = $event"
+                            @ERROR="error = $event"
+                    ></BuildCastle>
 
-                <g v-for="castle in castles"
-                   :key="'castle-' + castle.x + '' + castle.y">
-                    <svg v-if="activeAction === 'BUILD_CASTLE'"
-                         :x="castle.x - viewPosition.x - minCastleDistance"
-                         :y="castle.y - viewPosition.y - minCastleDistance"
-                         :width="minCastleDistance * 2"
-                         :height="minCastleDistance * 2">
-                        <circle :cx="minCastleDistance"
-                                :cy="minCastleDistance"
-                                :r="minCastleDistance"
-                                fill="transparent"
-                                stroke-width="3"
-                                stroke-opacity="0.5"
-                                :stroke="castle.color"/>
-                    </svg>
-                    <Castle :position="{ x: castle.x - viewPosition.x, y: castle.y - viewPosition.y }"
-                            :castle="castle"
-                            :color="castle.color"
-                            @CLICK="castleClick($event)"
-                            @HIGHLIGHT-ON="highlightedCastle = castle"
-                            @HIGHLIGHT-OFF="highlightedCastle = undefined"></Castle>
-                </g>
+                    <g v-for="castle in castles"
+                       :key="'castle-' + castle.x + '' + castle.y">
+                        <Castle :position="{ x: castle.x, y: castle.y }"
+                                :castle="castle"
+                                :color="castle.color"
+                                :dragging="dragging"
+                                :action-action="activeAction"
+                                @CLICK="castleClick($event)"
+                                @HIGHLIGHT-ON="highlightedCastle = castle"
+                                @HIGHLIGHT-OFF="highlightedCastle = undefined"></Castle>
+                    </g>
 
-                <g v-for="catapult in catapults"
-                   :key="'catapult-' + catapult.x + '' + catapult.y + '' + catapult.user_id">
-                    <svg :x="catapult.x - viewPosition.x - minCastleDistance"
-                         :y="catapult.y - viewPosition.y - minCastleDistance"
-                         :width="minCastleDistance * 2"
-                         :height="minCastleDistance * 2">
-                        <circle :cx="minCastleDistance"
-                                :cy="minCastleDistance"
-                                r="30"
-                                fill="transparent"
-                                stroke-width="3"
-                                :stroke="catapult.color"
-                                class="catapult-ring"/>
-                    </svg>
-                    <Catapult :catapult="catapult"
-                              :position="{ x: catapult.x - viewPosition.x, y: catapult.y - viewPosition.y }"
-                              :color="catapult.color"></Catapult>
-                </g>
+                    <g v-for="catapult in catapults"
+                       :key="'catapult-' + catapult.x + '' + catapult.y + '' + catapult.user_id">
+                        <svg :x="catapult.x - minCastleDistance"
+                             :y="catapult.y - minCastleDistance"
+                             :width="minCastleDistance * 2"
+                             :height="minCastleDistance * 2">
+                            <circle :cx="minCastleDistance"
+                                    :cy="minCastleDistance"
+                                    r="30"
+                                    fill="transparent"
+                                    stroke-width="3"
+                                    :stroke="catapult.color"
+                                    class="catapult-ring"/>
+                        </svg>
+                        <Catapult :catapult="catapult"
+                                  :position="{ x: catapult.x, y: catapult.y }"
+                                  :color="catapult.color"></Catapult>
+                    </g>
 
-                <g v-for="warehouse in warehouses"
-                   :key="'warehouse-' + warehouse.x + '' + warehouse.y + '' + warehouse.user_id">
-                    <Warehouse :position="{ x: warehouse.x - viewPosition.x, y: warehouse.y - viewPosition.y }"
-                               :color="warehouse.color"></Warehouse>
+                    <g v-for="warehouse in warehouses"
+                       :key="'warehouse-' + warehouse.x + '' + warehouse.y + '' + warehouse.user_id">
+                        <Warehouse :position="{ x: warehouse.x, y: warehouse.y }"
+                                   :color="warehouse.color"></Warehouse>
+                    </g>
+
                 </g>
 
             </svg>
@@ -121,7 +167,6 @@
     import Menu from "./Menu";
     import ErrorToast from "./ErrorToast";
     import Catapult from "./Catapult";
-    import Roads from "./Roads";
     import Popup from "./Popup";
     import Warehouse from "./Warehouse";
     import ActionLog from "./ActionLog";
@@ -138,7 +183,6 @@
             Menu,
             ErrorToast,
             Catapult,
-            Roads,
             Popup,
             Warehouse,
             ActionLog
@@ -164,20 +208,29 @@
                 popupItem: undefined,
                 popupPosition: undefined,
                 minCastleDistance: config.MIN_CASTLE_DISTANCE,
-                blockAreaSize: config.BLOCK_AREA_SIZE
+                maxCastleDistance: config.MAX_CASTLE_DISTANCE,
+                blockAreaSize: config.BLOCK_AREA_SIZE,
+                newCastlePosition: undefined
             };
         },
 
         computed: {
             roads() {
+                console.log("[Game] Compute roads...");
                 const roads = [];
-                for (let i = 0; i < this.castles.length; i++) {
-                    const c1 = this.castles[i];
-                    for (let j = i + 1; j < this.castles.length; j++) {
-                        const c2 = this.castles[j];
+                const castles = [
+                    ...this.castles
+                ];
+                if (this.activeAction === "BUILD_CASTLE" && this.newCastlePosition) {
+                    castles.push(this.newCastlePosition);
+                }
+                for (let i = 0; i < castles.length; i++) {
+                    const c1 = castles[i];
+                    for (let j = i + 1; j < castles.length; j++) {
+                        const c2 = castles[j];
                         const distanceBetweenCastles = this.$util.positionDistance(c1, c2);
                         if (distanceBetweenCastles < config.MAX_CASTLE_DISTANCE) {
-                            const angle = Math.floor(Math.atan2(c2.viewPositionY - c1.viewPositionY, c2.viewPositionX - c1.viewPositionX) * 180 / Math.PI) - 82;
+                            const angle = Math.floor(Math.atan2(c2.y - c1.y, c2.x - c1.x) * 180 / Math.PI) - 82;
                             const isMyRoad = c1.userId === this.user.id || c2.userId === this.user.id;
                             roads.push({
                                 id: c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y,
@@ -185,8 +238,8 @@
                                 c2,
                                 isMyRoad,
                                 middleBetweenCastles: {
-                                    x: (c1.viewPositionX + c2.viewPositionX) / 2,
-                                    y: (c1.viewPositionY + c2.viewPositionY) / 2
+                                    x: (c1.x + c2.x) / 2,
+                                    y: (c1.y + c2.y) / 2
                                 },
                                 angle,
                                 distanceBetweenCastles
@@ -204,56 +257,24 @@
             },
 
             warehouses() {
-                return this.$store.state.warehouses
-                    .map(c => {
-                        c.viewPositionX = c.x - this.viewPosition.x;
-                        c.viewPositionY = c.y - this.viewPosition.y;
-                        return c;
-                    })
-                    .filter(c => {
-                        return Boolean(c.viewPositionX > -200 && c.viewPositionX < this.gameWidthWithZoom + 200 && c.viewPositionY > -200 && c.viewPositionY < this.gameHeightWithZoom + 200);
-                    });
+                return this.$store.state.warehouses;
             },
 
             catapults() {
-                return this.$store.state.catapults
-                    .map(c => {
-                        c.viewPositionX = c.x - this.viewPosition.x;
-                        c.viewPositionY = c.y - this.viewPosition.y;
-                        return c;
-                    })
-                    .filter(c => {
-                        return Boolean(c.viewPositionX > -200 && c.viewPositionX < this.gameWidthWithZoom + 200 && c.viewPositionY > -200 && c.viewPositionY < this.gameHeightWithZoom + 200);
-                    });
+                return this.$store.state.catapults;
             },
             castles() {
-
-                // TODO: Add clean up of not shown castles... remove them from store... and maybe cache somewhere else.
-
                 return this.$store.state.castles
                     .map(c => {
-                        c.viewPositionX = c.x - this.viewPosition.x;
-                        c.viewPositionY = c.y - this.viewPosition.y;
                         const conquer = this.$store.state.conquers.find(co => co.castle.x === c.x && co.castle.y === c.y);
                         c.isInConquer = Boolean(conquer);
                         if (conquer)
                             c.attackHappensAt = conquer.timestamp + config.CONQUER_DELAY;
                         return c;
-                    })
-                    .filter(c => {
-                        return Boolean(c.viewPositionX > -200 && c.viewPositionX < this.gameWidthWithZoom + 200 && c.viewPositionY > -200 && c.viewPositionY < this.gameHeightWithZoom + 200);
                     });
             },
             blockAreas() {
-                return this.$store.state.blockAreas
-                    .map(ba => {
-                        ba.viewPositionX = ba.x - this.viewPosition.x;
-                        ba.viewPositionY = ba.y - this.viewPosition.y;
-                        return ba;
-                    })
-                    .filter(ba => {
-                        return Boolean(ba.viewPositionX > -200 && ba.viewPositionX < this.gameWidthWithZoom + 200 && ba.viewPositionY > -200 && ba.viewPositionY < this.gameHeightWithZoom + 200);
-                    });
+                return this.$store.state.blockAreas;
             },
             loading() {
                 return this.$store.getters.busy;
@@ -265,6 +286,14 @@
             },
             user() {
                 return this.$store.state.user;
+            },
+            loadPosition() {
+                return {
+                    fromX: Math.floor(this.viewPosition.x) - 200,
+                    fromY: Math.floor(this.viewPosition.y) - 200,
+                    toX: Math.floor(this.viewPosition.x + this.gameWidthWithZoom) + 200,
+                    toY: Math.floor(this.viewPosition.y + this.gameHeightWithZoom) + 200
+                };
             }
         },
 
@@ -298,10 +327,10 @@
             this.$store.dispatch("GET_USER").then(user => {
                 this.moveMapTo({x: user.startX, y: user.startY});
                 const loadRange = {
-                    fromX: user.startX - 500,
-                    fromY: user.startY - 500,
-                    toX: user.startX + 500,
-                    toY: user.startY + 500
+                    fromX: user.startX - 1000,
+                    fromY: user.startY - 1000,
+                    toX: user.startX + 1000,
+                    toY: user.startY + 1000
                 };
                 this.$store.dispatch("GET_CASTLES", loadRange);
                 this.$store.dispatch("GET_ACTION_LOG", loadRange);
@@ -342,7 +371,6 @@
             document.removeEventListener("touchend", this.onMouseUp);
             document.removeEventListener("mousewheel", this.onScroll);
             document.removeEventListener("keyup", this.onKeyUp);
-            document.removeEventListener("mousewheel", this.onScroll);
             window.removeEventListener("resize", this.onWindowResize);
             this.$refs["game-container"].removeEventListener("mousedown", this.onMouseDown);
             this.$refs["game-container"].removeEventListener("touchstart", this.onMouseDown);
@@ -373,13 +401,12 @@
 
             castleClick(castle) {
                 if (Date.now() - this.mouseDownTimestamp > 300) return;
-                console.log("[Game] Castle click: ", this.user.id, castle.userId);
                 if (castle.userId === this.user.id) {
                     this.showDialog = true;
                 } else {
                     this.popupType = "castle";
                     this.popupItem = castle;
-                    this.popupPosition = {x: castle.viewPositionX, y: castle.viewPositionY - 50};
+                    this.popupPosition = {x: castle.x, y: castle.y - 50};
                 }
                 this.latestClickedCastle = castle;
             },
@@ -407,8 +434,8 @@
             onScroll(event) {
                 if (this.activeAction === "BUILD_CASTLE" || this.menuOpen) return;
                 const delta = event.deltaY * config.SCROLL_SENSITIVITY;
-                this.zoomFactor = Math.min(1.3, Math.max(0.7, this.zoomFactor + delta));
-                if (this.zoomFactor > 0.7 && this.zoomFactor < 1.3) {
+                this.zoomFactor = Math.min(1.2, Math.max(0.5, this.zoomFactor + delta));
+                if (this.zoomFactor > 0.5 && this.zoomFactor < 1.2) {
                     this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
                     this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
                     this.loadCastles();
@@ -462,28 +489,13 @@
                 this.$store.commit("SET_USER", undefined);
             },
             loadCastles() {
-                this.$store.dispatch("GET_CASTLES", {
-                    fromX: this.viewPosition.x,
-                    fromY: this.viewPosition.y,
-                    toX: Math.floor((this.viewPosition.x + this.gameWidth) * this.zoomFactor),
-                    toY: Math.floor((this.viewPosition.y + this.gameHeight) * this.zoomFactor)
-                });
+                this.$store.dispatch("GET_CASTLES", this.loadPosition);
             },
             loadCatapults() {
-                this.$store.dispatch("GET_CATAPULTS", {
-                    fromX: this.viewPosition.x,
-                    fromY: this.viewPosition.y,
-                    toX: Math.floor((this.viewPosition.x + this.gameWidth) * this.zoomFactor),
-                    toY: Math.floor((this.viewPosition.y + this.gameHeight) * this.zoomFactor)
-                });
+                this.$store.dispatch("GET_CATAPULTS", this.loadPosition);
             },
             loadWarehouses() {
-                this.$store.dispatch("GET_WAREHOUSES", {
-                    fromX: this.viewPosition.x,
-                    fromY: this.viewPosition.y,
-                    toX: Math.floor((this.viewPosition.x + this.gameWidth) * this.zoomFactor),
-                    toY: Math.floor((this.viewPosition.y + this.gameHeight) * this.zoomFactor)
-                });
+                this.$store.dispatch("GET_WAREHOUSES", this.loadPosition);
             }
         }
     };
@@ -522,9 +534,9 @@
         }
     }
 
-    @keyframes pulsate_catapult_ring {
+    @keyframes pulsate_opacity {
         0% {
-            opacity: 0;
+            opacity: 0.2;
         }
 
         50% {
@@ -532,15 +544,23 @@
         }
 
         100% {
-            opacity: 0;
+            opacity: 0.2;
         }
     }
 
     .catapult-ring {
         opacity: 1;
-        animation: pulsate_catapult_ring;
+        animation: pulsate_opacity;
         animation-iteration-count: infinite;
         animation-duration: 3.2s;
         animation-timing-function: ease-out;
+    }
+
+    .road {
+        &.is-my-road:hover {
+            stroke: #ff7761;
+            stroke-width: 5px;
+            cursor: pointer;
+        }
     }
 </style>

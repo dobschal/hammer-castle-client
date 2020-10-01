@@ -1,5 +1,4 @@
 <template>
-    <svg>
 
         <!--        <svg :x="position.x - size" :y="position.y - size" :width="size * 2" :height="size * 2" :viewBox="'0 0 ' + (size * 2) + ' ' + (size * 2)" fill="none" xmlns="http://www.w3.org/2000/svg">-->
         <!--            <circle :cx="size" :cy="size" :r="size" fill="#08621E"/>-->
@@ -34,7 +33,6 @@
 
         <Forest :position="position" :size="size" :padding="padding"></Forest>
 
-    </svg>
 </template>
 
 <script>

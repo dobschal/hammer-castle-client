@@ -7,16 +7,15 @@ export const catapultState = {
 
 export const catapultMutations = {
     SET_CATAPULTS(state, catapults) {
-        console.log("[catapult] Set catapults: ", catapults);
-        if (state.catapults.length === 0) {
-            state.catapults = catapults;
-        } else {
-            catapults.forEach(c1 => {
-                if (!state.catapults.some(c2 => c1.x === c2.x && c1.y === c2.y)) {
-                    state.catapults.push(c1);
-                }
-            });
-        }
+        // if (state.catapults.length === 0) {
+        state.catapults = catapults;
+        // } else {
+        //     catapults.forEach(c1 => {
+        //         if (!state.catapults.some(c2 => c1.x === c2.x && c1.y === c2.y)) {
+        //             state.catapults.push(c1);
+        //         }
+        //     });
+        // }
     },
     SET_CATAPULT_PRICE(state, {price}) { // injected from websocket
         state.catapultPrice = price;

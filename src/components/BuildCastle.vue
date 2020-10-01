@@ -1,7 +1,8 @@
 <template>
-  <svg :opacity="opacity">
+  <g :opacity="opacity">
+
     <Castle :position="newCastlePosition" :color="user.color"></Castle>
-  </svg>
+  </g>
 </template>
 
 <script>
@@ -48,6 +49,7 @@
       zoomFactor() {
         this.newCastlePosition.x = this.lastMousePosition.x * this.zoomFactor;
         this.newCastlePosition.y = this.lastMousePosition.y * this.zoomFactor;
+        this.$emit("NEW_CASTLE_POSITION", this.newCastlePosition);
       }
     },
 
@@ -59,6 +61,7 @@
     },
 
     beforeDestroy() {
+      this.$emit("NEW_CASTLE_POSITION", undefined);
       document.removeEventListener("mousemove", this.onMouseMove);
       document.removeEventListener("mouseup", this.onMouseUp);
       document.removeEventListener("touchmove", this.onTouchMove);
@@ -78,8 +81,9 @@
         if (this.waitingForAnimationFrame) return;
         this.waitingForAnimationFrame = true;
         window.requestAnimationFrame(() => {
-          this.newCastlePosition.x = event.clientX * this.zoomFactor;
-          this.newCastlePosition.y = event.clientY * this.zoomFactor;
+          this.newCastlePosition.x = (this.viewPosition.x + event.clientX) * this.zoomFactor;
+          this.newCastlePosition.y = (this.viewPosition.y + event.clientY) * this.zoomFactor;
+          this.$emit("NEW_CASTLE_POSITION", this.newCastlePosition);
           this.hasCastleValidDistance({
             x: (this.viewPosition.x + event.clientX) * this.zoomFactor,
             y: (this.viewPosition.y + event.clientY) * this.zoomFactor
