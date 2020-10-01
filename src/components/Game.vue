@@ -508,6 +508,7 @@
                 this.websocket.disconnect();
                 this.$store.commit("SET_AUTH_TOKEN", "");
                 this.$store.commit("SET_USER", undefined);
+                window.location.reload(true);
             },
             loadCastles() {
                 this.$store.dispatch("GET_CASTLES", this.loadPosition);
