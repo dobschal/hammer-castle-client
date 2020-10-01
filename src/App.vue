@@ -25,12 +25,14 @@
 
 <style lang="scss">
   @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
-  body {
+  html, body {
     margin: 0;
     font-size: 16px;
     font-family: 'MedievalSharp', cursive;
     letter-spacing: 1.5px;
     background-color: #b6e57b;
+    height: 100%;
+    overflow: hidden;
   }
 
   #app {
