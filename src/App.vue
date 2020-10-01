@@ -30,6 +30,7 @@
     font-size: 16px;
     font-family: 'MedievalSharp', cursive;
     letter-spacing: 1.5px;
+    background-color: #b6e57b;
   }
 
   #app {

@@ -1,6 +1,10 @@
 <template>
     <div>
-        <div class="game-container" ref="game-container">
+        <div class="game-container"
+             ref="game-container"
+             :class="{ dragging: dragging }"
+             :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }">
+
             <svg :width="gameWidth + 'px'"
                  :height="gameHeight + 'px'"
                  :viewBox="gameViewBox"
@@ -137,6 +141,7 @@
 
             </svg>
         </div>
+        <div class="frame" :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }"></div>
         <DialogBox v-if="showDialog" @CLOSE="showDialog = false"
                    :latest-clicked-castle="latestClickedCastle"></DialogBox>
         <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
@@ -152,6 +157,7 @@
                @ERROR="error = $event"
                @CLOSE="closePopup"></Popup>
         <ActionLog></ActionLog>
+        <div v-if="$store.state.progress > 0" class="loading"></div>
     </div>
 </template>
 
@@ -170,6 +176,8 @@
     import Popup from "./Popup";
     import Warehouse from "./Warehouse";
     import ActionLog from "./ActionLog";
+
+    let timestamp = Date.now();
 
     export default {
         name: "Game",
@@ -197,6 +205,7 @@
                 mouseDownTimestamp: 0,
                 viewPosition: {x: 0, y: 0},
                 lastMousePosition: {x: 0, y: 0},
+                mouseMoveDelta: {x: 0, y: 0},
                 showDialog: false,
                 websocket: undefined,
                 activeAction: "",
@@ -301,6 +310,10 @@
 
             "viewPosition.x"() {
                 this.closePopup();
+                const now = Date.now();
+                const fps = Math.floor(1000 / (now - timestamp));
+                console.log("[Game] Frames per second: ", fps);
+                timestamp = now;
             },
 
             error(val) {
@@ -465,8 +478,8 @@
                     const x = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
                     const y = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
                     if (this.dragging) {
-                        this.viewPosition.x += Math.round((this.lastMousePosition.x - x) * this.zoomFactor);
-                        this.viewPosition.y += Math.round((this.lastMousePosition.y - y) * this.zoomFactor);
+                        this.mouseMoveDelta.x += (this.lastMousePosition.x - x);
+                        this.mouseMoveDelta.y += (this.lastMousePosition.y - y);
                     }
                     this.lastMousePosition.x = x;
                     this.lastMousePosition.y = y;
@@ -474,12 +487,17 @@
                 });
             },
             onMouseUp() {
-                if (this.dragging && Date.now() - this.mouseDownTimestamp > 250) {
-                    this.loadCastles();
-                    this.loadCatapults();
-                    this.loadWarehouses();
-                } else if (this.popupType) {
-                    this.closePopup();
+                if (this.dragging) {
+                    if (this.mouseMoveDelta.x) {
+                        this.viewPosition.x += Math.round(this.mouseMoveDelta.x * this.zoomFactor);
+                        this.viewPosition.y += Math.round(this.mouseMoveDelta.y * this.zoomFactor);
+                        this.mouseMoveDelta.x = 0;
+                        this.mouseMoveDelta.y = 0;
+                        this.loadCastles();
+                        this.loadCatapults();
+                        this.loadWarehouses();
+                    }
+                    if (this.popupType) this.closePopup();
                 }
                 this.dragging = false;
             },
@@ -517,6 +535,18 @@
         }
     }
 
+    .frame {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 2;
+        pointer-events: none;
+        background: transparent;
+        box-shadow: inset 0 0 20px 20px #b6e57b;
+    }
+
     .footer {
         position: fixed;
         bottom: 0;
@@ -548,6 +578,23 @@
         }
     }
 
+    @keyframes pulsate_scale {
+        0% {
+            transform: translateX(-50px) translateY(-50px) scale(1);
+            opacity: 1;
+        }
+
+        50% {
+            transform: translateX(-50px) translateY(-50px) scale(1.5);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateX(-50px) translateY(-50px) scale(1);
+            opacity: 1;
+        }
+    }
+
     .catapult-ring {
         opacity: 1;
         animation: pulsate_opacity;
@@ -562,5 +609,27 @@
             stroke-width: 5px;
             cursor: pointer;
         }
+    }
+
+    .loading {
+        position: fixed;
+        z-index: 11;
+        top: 50%;
+        left: 50%;
+        opacity: 0;
+        transform: translateX(-50px) translateY(-50px);
+        width: 100px;
+        height: 100px;
+        background-color: rgba(255, 255, 255, 0.33);
+        background-image: url("../assets/logo.svg");
+        background-size: contain;
+        background-position: center;
+        border-radius: 50%;
+        box-shadow: 0 0 50px 50px rgba(255, 255, 255, 0.33);
+        animation: pulsate_scale;
+        animation-iteration-count: infinite;
+        animation-duration: 3.2s;
+        animation-timing-function: ease-out;
+        animation-delay: 0.5s;
     }
 </style>
