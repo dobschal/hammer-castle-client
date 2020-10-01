@@ -158,6 +158,7 @@
                @CLOSE="closePopup"></Popup>
         <ActionLog></ActionLog>
         <div v-if="$store.state.progress > 0" class="loading"></div>
+        <DailyReward v-if="user && user.last_daily_reward_claim < Date.now() - 1000 * 60 * 60 * 24"></DailyReward>
     </div>
 </template>
 
@@ -176,6 +177,7 @@
     import Popup from "./Popup";
     import Warehouse from "./Warehouse";
     import ActionLog from "./ActionLog";
+    import DailyReward from "./DailyReward";
 
     let timestamp = Date.now();
 
@@ -193,7 +195,8 @@
             Catapult,
             Popup,
             Warehouse,
-            ActionLog
+            ActionLog,
+            DailyReward
         },
         data() {
             return {
@@ -225,7 +228,7 @@
 
         computed: {
             roads() {
-                console.log("[Game] Compute roads...");
+                console.log("[Game] Compute roads...", this.castles.length);
                 const roads = [];
                 const castles = [
                     ...this.castles
@@ -242,7 +245,7 @@
                             const angle = Math.floor(Math.atan2(c2.y - c1.y, c2.x - c1.x) * 180 / Math.PI) - 82;
                             const isMyRoad = c1.userId === this.user.id || c2.userId === this.user.id;
                             roads.push({
-                                id: c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y,
+                                id: "road-" + c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y,
                                 c1,
                                 c2,
                                 isMyRoad,

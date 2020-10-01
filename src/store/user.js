@@ -27,7 +27,16 @@ export const userMutations = {
 
 export const userActions = {
 
-  async GET_USER({ commit }) {
+  async CLAIM_DAILY_REWARD({commit}) {
+    try {
+      commit("PROGRESS", 1);
+      await axios.post("/user/daily-reward");
+    } finally {
+      commit("PROGRESS", -1);
+    }
+  },
+
+  async GET_USER({commit}) {
     try {
       commit("PROGRESS", 1);
       const {
