@@ -84,6 +84,7 @@
                     y: this.latestClickedCastle.y
                 });
                 this.$store.dispatch("GET_CASTLE_PRICE");
+                this.$store.dispatch("GET_CATAPULT_PRICE");
                 this.$emit("CLOSE");
             }
         }
