@@ -4,7 +4,8 @@
 
     <div class="wrapper">
         <div class="buttons">
-            <button v-if="activeAction" type="button" @click="cancel">Cancel</button>
+            <button v-if="activeAction && isTouchDevice" type="button" @click="buildIt">Build It</button>
+            <button v-if="activeAction" type="button" class="negative" @click="cancel">Cancel</button>
             <button v-else type="button" @click="buildCastle">Build Castle for {{ $store.state.castlePrice }} <img
                     src="../assets/icon-hammer.svg" class="hammer-icon" alt="Hammer"></button>
 
@@ -18,12 +19,29 @@
         props: {
             activeAction: String
         },
+        data() {
+            return {
+                isTouchDevice: false
+            };
+        },
+        created() {
+            document.addEventListener("touchstart", this.onTouchStart);
+        },
+        beforeDestroy() {
+            document.removeEventListener("touchstart", this.onTouchStart);
+        },
         methods: {
             cancel() {
                 this.$emit("update:activeAction", "")
             },
             buildCastle() {
                 this.$emit("update:activeAction", "BUILD_CASTLE");
+            },
+            onTouchStart() {
+                this.isTouchDevice = true;
+            },
+            buildIt() {
+                this.$emit("BUILD_IT");
             }
         }
     };

@@ -144,9 +144,9 @@
         <div class="frame" :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }"></div>
         <DialogBox v-if="showDialog" @CLOSE="showDialog = false"
                    :latest-clicked-castle="latestClickedCastle"></DialogBox>
-        <NavigationBar :activeAction.sync="activeAction"></NavigationBar>
+        <NavigationBar :activeAction.sync="activeAction" @BUILD_IT="triggerCastleBuild"></NavigationBar>
         <TopNavigationBar @OPEN-MENU="menuOpen = true"></TopNavigationBar>
-        <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false"></Menu>
+        <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false" @GO_TO="moveMapTo($event)"></Menu>
         <ErrorToast v-if="error">{{ error }}</ErrorToast>
         <Popup :zoomFactor="zoomFactor"
                v-if="popupType && popupPosition"
@@ -246,7 +246,7 @@
                             const angle = Math.floor(Math.atan2(c2.y - c1.y, c2.x - c1.x) * 180 / Math.PI) - 82;
                             const isMyRoad = c1.userId === this.user.id || c2.userId === this.user.id;
                             roads.push({
-                                id: "road-" + c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y,
+                                id: "road-" + c1.x + "-" + c1.y + "-" + c2.x + "-" + c2.y + "-" + Math.random(),
                                 c1,
                                 c2,
                                 isMyRoad,
@@ -311,6 +311,10 @@
         },
 
         watch: {
+
+            menuOpen() {
+                this.closePopup();
+            },
 
             "viewPosition.x"() {
                 this.closePopup();
@@ -395,6 +399,11 @@
 
         methods: {
 
+            triggerCastleBuild() {
+                console.log("[Game] this.$refs.buildCastle.buildCastle: ", this.$refs.buildCastle.buildCastle);
+                this.$refs.buildCastle.buildCastle();
+            },
+
             closePopup() {
                 this.popupPosition = undefined;
                 this.popupType = "";
@@ -431,6 +440,9 @@
             moveMapTo(position) {
                 this.viewPosition.x = position.x - window.innerWidth / 2;
                 this.viewPosition.y = position.y - window.innerHeight / 2;
+                this.loadCastles();
+                this.loadCatapults();
+                this.loadWarehouses();
             },
 
             attachWebsocketListener() {

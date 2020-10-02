@@ -26,7 +26,8 @@
         newCastlePosition: {x: window.innerWidth / 2, y: window.innerHeight / 2},
         waitingForAnimationFrame: false,
         validDistance: false,
-        isTouchDevice: false
+        isTouchDevice: false,
+        buildPosition: undefined
       };
     },
 
@@ -50,21 +51,29 @@
         this.newCastlePosition.x = this.lastMousePosition.x * this.zoomFactor;
         this.newCastlePosition.y = this.lastMousePosition.y * this.zoomFactor;
         this.$emit("NEW_CASTLE_POSITION", this.newCastlePosition);
+      },
+      "viewPosition.x"() {
+        if (this.isTouchDevice) {
+          this.newCastlePosition.x = (this.viewPosition.x + window.innerWidth / 2) * this.zoomFactor;
+          this.newCastlePosition.y = (this.viewPosition.y + window.innerHeight / 2) * this.zoomFactor;
+          this.hasCastleValidDistance(this.newCastlePosition);
+        }
       }
     },
 
     mounted() {
       document.addEventListener("mousemove", this.onMouseMove);
       document.addEventListener("mouseup", this.onMouseUp);
-      document.addEventListener("touchmove", this.onTouchMove);
       document.addEventListener("touchstart", this.onTouchStart);
+      this.newCastlePosition.x = (this.viewPosition.x + window.innerWidth / 2) * this.zoomFactor;
+      this.newCastlePosition.y = (this.viewPosition.y + window.innerHeight / 2) * this.zoomFactor;
+      this.hasCastleValidDistance(this.newCastlePosition);
     },
 
     beforeDestroy() {
       this.$emit("NEW_CASTLE_POSITION", undefined);
       document.removeEventListener("mousemove", this.onMouseMove);
       document.removeEventListener("mouseup", this.onMouseUp);
-      document.removeEventListener("touchmove", this.onTouchMove);
       document.removeEventListener("touchstart", this.onTouchStart);
     },
 
@@ -72,18 +81,13 @@
       onTouchStart() {
         this.isTouchDevice = true;
       },
-      onTouchMove() {
-        const x = (this.viewPosition.x + window.innerWidth / 2) * this.zoomFactor;
-        const y = (this.viewPosition.y + window.innerHeight / 2) * this.zoomFactor;
-        this.hasCastleValidDistance({x, y});
-      },
       onMouseMove(event) {
+        if (this.isTouchDevice) return;
         if (this.waitingForAnimationFrame) return;
         this.waitingForAnimationFrame = true;
         window.requestAnimationFrame(() => {
           this.newCastlePosition.x = (this.viewPosition.x + event.clientX) * this.zoomFactor;
           this.newCastlePosition.y = (this.viewPosition.y + event.clientY) * this.zoomFactor;
-          this.$emit("NEW_CASTLE_POSITION", this.newCastlePosition);
           this.hasCastleValidDistance({
             x: (this.viewPosition.x + event.clientX) * this.zoomFactor,
             y: (this.viewPosition.y + event.clientY) * this.zoomFactor
@@ -122,6 +126,11 @@
             }
           }
         }
+
+        if (this.validDistance) {
+          this.$emit("NEW_CASTLE_POSITION", this.newCastlePosition);
+        }
+
         return this.validDistance;
       },
 
@@ -133,16 +142,14 @@
       },
 
       async onClick(event) {
+        if (this.isTouchDevice) return;
+        this.newCastlePosition.x = (this.viewPosition.x + event.clientX) * this.zoomFactor;
+        this.newCastlePosition.y = (this.viewPosition.y + event.clientY) * this.zoomFactor;
+        this.buildCastle();
+      },
 
-        // TODO: Zoom in calculation missing here!
-
-        const position = !this.isTouchDevice ? {
-          x: this.viewPosition.x + event.clientX,
-          y: this.viewPosition.y + event.clientY
-        } : {
-          x: this.viewPosition.x + window.innerWidth / 2,
-          y: this.viewPosition.y + window.innerHeight / 2
-        };
+      async buildCastle() {
+        const position = this.newCastlePosition;
         if (this.hasCastleValidDistance(position)) {
           try {
             await this.$store.dispatch("CREATE_CASTLE", position);

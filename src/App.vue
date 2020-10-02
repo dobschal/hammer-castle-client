@@ -73,6 +73,15 @@
       cursor: pointer;
       transform: scale(0.95);
     }
+
+    &.negative {
+      background: rgba(236, 0, 0, 0.7);
+
+      &:hover {
+        background: rgba(200, 0, 0, 0.8);
+        cursor: pointer;
+      }
+    }
   }
 
   .link {

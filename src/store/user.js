@@ -59,6 +59,16 @@ export const userActions = {
     }
   },
 
+  async GET_HOME_POSITION({commit}, userId) {
+    try {
+      commit("PROGRESS", 1);
+      const response = await axios.get("/user/home?user_id=" + userId);
+      return response.data.position;
+    } finally {
+      commit("PROGRESS", -1);
+    }
+  },
+
   async GET_RANKING({commit}) {
     try {
       commit("PROGRESS", 1);

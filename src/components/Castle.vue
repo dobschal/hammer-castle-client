@@ -117,7 +117,7 @@
         },
         computed: {
             points() {
-                return this.castle && typeof this.castle.points === "number" ? this.castle.points : "?";
+                return this.castle && typeof this.castle.points === "number" ? this.castle.points : 0;
             },
             flagPositions() {
                 if (this.points === "?") return [{x: 91, y: 54}];

@@ -13,7 +13,12 @@
                     </div>
                     <div v-else-if="type === 'ranking'" class="ranking items" @click.stop>
                         <div class="item" @click="type = 'menu'">Back</div>
-                        <div v-for="(rank, index) in ranking" class="item" :key="rank.username">
+                        <div v-for="(rank, index) in ranking"
+                             class="item"
+                             :key="rank.username"
+                             v-tooltip="'Jump to users home castle via click.'"
+                             :class="{ highlight: rank.id === user.id }"
+                             @click="showUser(rank.id)">
                             <span class="rank">{{ index + 1 }}.</span>
                             <span class="level">{{ rank.level }}</span>
                             <span class="username">{{ rank.username }}</span>
@@ -42,6 +47,9 @@
         computed: {
             ranking() {
                 return this.$store.state.ranking;
+            },
+            user() {
+                return this.$store.state.user;
             }
         },
         watch: {
@@ -55,6 +63,13 @@
             fetch("/commit-hash.txt").then(r => r.text()).then(r => {
                 this.clientCommitHash = r;
             });
+        },
+        methods: {
+            async showUser(userId) {
+                const position = await this.$store.dispatch("GET_HOME_POSITION", userId);
+                this.$emit("GO_TO", position);
+                this.$emit("CLOSE-MENU");
+            }
         }
     };
 </script>
@@ -118,6 +133,13 @@
                             &:hover {
                                 color: red;
                                 cursor: pointer;
+                            }
+
+                            &.highlight {
+                                color: red;
+                                font-weight: bold;
+                                text-transform: uppercase;
+                                background: rgba(255, 255, 255, 0.3);
                             }
 
                             .rank {

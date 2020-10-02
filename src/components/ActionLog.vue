@@ -45,6 +45,7 @@
         z-index: 10;
         padding: 1rem 2rem;
         color: white;
+        max-width: 40vw;
 
         @media only screen and (max-width: 1024px) {
             display: none;
