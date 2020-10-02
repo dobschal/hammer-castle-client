@@ -158,7 +158,7 @@
                @CLOSE="closePopup"></Popup>
         <ActionLog></ActionLog>
         <div v-if="$store.state.progress > 0" class="loading"></div>
-        <DailyReward v-if="user && user.last_daily_reward_claim < Date.now() - 1000 * 60 * 60 * 24"></DailyReward>
+        <DailyReward></DailyReward>
     </div>
 </template>
 

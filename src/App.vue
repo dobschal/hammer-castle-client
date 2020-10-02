@@ -25,6 +25,7 @@
 
 <style lang="scss">
   @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Piazzolla&display=swap');
   html, body {
     margin: 0;
     font-size: 16px;
@@ -104,6 +105,13 @@
       padding: 1rem;
       max-width: 240px;
       font-size: 0.9rem;
+      font-family: 'Piazzolla', serif;
+      letter-spacing: 1px;
+
+      * {
+        font-family: 'Piazzolla', serif;
+        letter-spacing: 1px;
+      }
     }
 
     .tooltip-arrow {
