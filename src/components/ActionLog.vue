@@ -92,13 +92,17 @@
             margin-bottom: 1rem;
             padding: 0.5rem;
             border-radius: 3px;
+            font-family: 'Piazzolla', serif;
+            letter-spacing: 0.8px;
 
             .date-view {
                 font-size: 0.6rem;
+                line-height: 0.4rem;
             }
 
             .content {
                 font-size: 0.8rem;
+                line-height: 0.8rem;
             }
         }
     }
