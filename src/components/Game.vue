@@ -21,6 +21,33 @@
 
                 <g :transform="'translate(' + (-viewPosition.x) + ', ' + (-viewPosition.y) + ')'">
 
+                    <!-- Grid -->
+                    <line v-for="index in Math.ceil(gameWidth / 500)"
+                          :key="'grid-x-' + index"
+                          :x1="Math.floor(viewPosition.x / 500) * 500 + index * 500"
+                          :y1="viewPosition.y - gameHeight"
+                          :x2="Math.floor(viewPosition.x / 500) * 500 + index * 500"
+                          :y2="viewPosition.y + gameHeight"
+                          stroke="rgba(0, 0, 0, 0.05)"/>
+                    <line v-for="index in Math.ceil(gameHeight / 500)"
+                          :key="'grid-y-' + index"
+                          :y1="Math.floor(viewPosition.y / 500) * 500 + index * 500"
+                          :x1="viewPosition.x - gameWidth"
+                          :y2="Math.floor(viewPosition.y / 500) * 500 + index * 500"
+                          :x2="viewPosition.x + gameWidth"
+                          stroke="rgba(0, 0, 0, 0.05)"/>
+                    <g v-for="index2 in Math.ceil(gameHeight / 1000)"
+                       :key="'grid-num2-' + index2">
+                        <text v-for="index in Math.ceil(gameWidth / 1000)"
+                              :key="'grid-num-' + index"
+                              :x="Math.floor(viewPosition.x / 1000) * 1000 + index * 1000 + 2"
+                              :y="Math.floor(viewPosition.y / 1000) * 1000 + index2 * 1000 - 2"
+                              class="grid-number">
+                            {{ Math.floor(viewPosition.x / 1000) * 1000 + index * 1000 }} / {{ Math.floor(viewPosition.y / 1000) * 1000 + index2 * 1000 }}
+                        </text>
+                    </g>
+
+
                     <template v-if="activeAction === 'BUILD_CASTLE'">
                         <g v-for="castle in castles.filter(c => c.userId === user.id)"
                            :key="'build-2-castle-' + castle.x + '' + castle.y">
@@ -551,6 +578,18 @@
         &:hover {
             cursor: grab;
         }
+    }
+
+    .grid-number {
+        font: 10px 'Piazzolla';
+        letter-spacing: 1px;
+        fill: rgba(0, 0, 0, 0.3);
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
     }
 
     .frame {
