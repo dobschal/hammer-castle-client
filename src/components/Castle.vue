@@ -153,10 +153,23 @@
                 } else {
                     this.$emit("HIGHLIGHT-OFF", this.castle);
                 }
+            },
+            "castle.isInConquer"(val) {
+                if (val) {
+                    this.initCountDown();
+                }
             }
         },
         created() {
             if (this.castle && this.castle.isInConquer) {
+                this.initCountDown();
+            }
+        },
+        beforeDestroy() {
+            if (this.intervalId) clearInterval(this.intervalId);
+        },
+        methods: {
+            initCountDown() {
                 this.intervalId = setInterval(() => {
                     let seconds = Math.max(0, Math.floor((this.castle.attackHappensAt - Date.now()) / 1000));
                     const minutes = Math.floor(seconds / 60) || 0;
@@ -164,9 +177,6 @@
                     this.countDown = `${minutes < 10 ? ('0' + minutes) : minutes}:${seconds < 10 ? ('0' + seconds) : seconds}`;
                 }, 1000);
             }
-        },
-        beforeDestroy() {
-            if (this.intervalId) clearInterval(this.intervalId);
         }
     };
 </script>
