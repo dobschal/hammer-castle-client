@@ -43,11 +43,11 @@
         <hr>
         <div>
           <h2>What is Hammer Castle?</h2>
-          <p>Hammer Castle in a browser game.</p>
+          <InfoView></InfoView>
         </div>
         <div>
           <h2>Changelog</h2>
-          <p>Here is a list of things changed in the game. Stay always up to date!</p>
+          <p>Version 1.0.0 is live!</p>
         </div>
         <div>
           <h2>Imprint</h2>
@@ -60,6 +60,7 @@
 </template>
 
 <script>
+  import InfoView from "./Info";
 
   function randomColor() {
     let color = "#" + Math.floor(Math.random()*16777215).toString(16);
@@ -71,6 +72,7 @@
 
 export default {
   name: "Authenticator",
+  components: {InfoView},
   data() {
     return {
       password: "",
@@ -132,11 +134,13 @@ export default {
     height: 100vh;
     background-image: url("../assets/bg-image-castle.jpg");
     background-size: cover;
+    font-family: 'Piazzolla', serif !important;
+    letter-spacing: initial;
 
     .wrapper {
-      display: flex;
       width: 100%;
       height: 100vh;
+      padding: 2rem 0;
       background-color: rgba(255, 255, 255, 0.3);
       backdrop-filter: blur(3px);
       overflow-y: scroll;
@@ -147,9 +151,16 @@ export default {
         backdrop-filter: blur(5px);
         width: 100%;
         max-width: 480px;
-        margin: auto;
+        margin: 0 auto 5rem auto;
         padding: 2rem;
         border-radius: 0.5rem;
+        box-sizing: border-box;
+
+        hr {
+          margin: 2rem -2rem;
+          border: none;
+          border-bottom: solid 1px #0b5a66b3;
+        }
 
         .logo img {
           width: 200px;

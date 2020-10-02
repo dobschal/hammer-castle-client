@@ -41,7 +41,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  * {
+  button {
     box-sizing: border-box;
     font-size: 16px;
     font-family: 'MedievalSharp', cursive;
