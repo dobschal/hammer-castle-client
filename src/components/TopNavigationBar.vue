@@ -2,7 +2,8 @@
     <div class="wrapper">
         <div class="buttons">
             <div class="icon-value-pair">
-                <span class="icon"><img src="../assets/icon-hammer.svg" alt="Hammer"></span>
+                <span class="icon" :class="{ animated: gotHammer }"><img src="../assets/icon-hammer.svg"
+                                                                         alt="Hammer"></span>
                 <span class="value">{{ hammer }} <span class="small">/ {{ maxHammers }}</span></span>
             </div>
             <div class="icon-value-pair">
@@ -40,6 +41,21 @@
                 return this.$store.state.user ? this.$store.state.user.username : "Unknown";
             }
         },
+        watch: {
+            hammer() {
+                if (this.timeoutId) clearTimeout(this.timeoutId);
+                this.gotHammer = true;
+                this.timeoutId = setTimeout(() => {
+                    this.gotHammer = false;
+                }, 2000);
+            }
+        },
+        data() {
+            return {
+                gotHammer: false,
+                timeoutId: undefined
+            };
+        },
         methods: {
             openMenu() {
                 this.$emit("OPEN-MENU");
@@ -49,6 +65,18 @@
 </script>
 
 <style lang="scss" scoped>
+    @keyframes rotate {
+        0% {
+            transform: rotate(0deg) scale(1.0);
+        }
+        50% {
+            transform: rotate(40deg) scale(1.5);
+        }
+        100% {
+            transform: rotate(0deg) scale(1.0);
+        }
+    }
+
     .wrapper {
         position: fixed;
         top: 0;
@@ -107,6 +135,13 @@
                     width: 40px;
                     display: block;
                     margin: auto;
+
+                    &.animated {
+                        animation: rotate;
+                        animation-iteration-count: infinite;
+                        animation-timing-function: ease-in-out;
+                        animation-duration: 2s;
+                    }
 
                     img {
                         width: 100%;
