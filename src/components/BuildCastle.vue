@@ -154,6 +154,7 @@
           try {
             await this.$store.dispatch("CREATE_CASTLE", position);
             await this.$store.dispatch("GET_CASTLE_PRICE");
+            await this.$store.dispatch("GET_CATAPULT_PRICE");
           } catch (e) {
             console.log("[BuildCastle] Cannot build castle: ", e, e.response);
             this.$emit("ERROR", e.response.data.message);
