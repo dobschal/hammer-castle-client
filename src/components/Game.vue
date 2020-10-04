@@ -168,12 +168,16 @@
 
             </svg>
         </div>
-        <div class="frame" :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }"></div>
+        <div class="frame"
+             :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }"></div>
         <DialogBox v-if="showDialog" @CLOSE="showDialog = false"
                    :latest-clicked-castle="latestClickedCastle"></DialogBox>
         <NavigationBar :activeAction.sync="activeAction" @BUILD_IT="triggerCastleBuild"></NavigationBar>
         <TopNavigationBar @OPEN-MENU="menuOpen = true"></TopNavigationBar>
-        <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false" @GO_TO="moveMapTo($event)"></Menu>
+        <Menu v-if="menuOpen" @LOGOUT="logout"
+              @CLOSE-MENU="menuOpen = false"
+              @GO_TO="moveMapTo($event)"
+              @OPEN_PAGE="openPage"></Menu>
         <ErrorToast v-if="error">{{ error }}</ErrorToast>
         <Popup :zoomFactor="zoomFactor"
                :mouseMoveDelta="mouseMoveDelta"
@@ -188,6 +192,11 @@
         <div v-if="$store.state.progress > 0" class="loading"></div>
         <DailyReward></DailyReward>
         <ZoomButtons @ZOOM_IN="zoomIn" @ZOOM_OUT="zoomOut"></ZoomButtons>
+        <PageOverlay v-if="pageOverlayOpen"
+                     title="What is Castles?"
+                     @CLOSE="pageOverlayOpen = false">
+            <InfoView></InfoView>
+        </PageOverlay>
     </div>
 </template>
 
@@ -209,6 +218,8 @@
     import DailyReward from "./DailyReward";
     import cookie from "js-cookie";
     import ZoomButtons from "./ZoomButtons";
+    import PageOverlay from "./PageOverlay";
+    import InfoView from "./Info";
 
     export default {
         name: "Game",
@@ -226,7 +237,9 @@
             Warehouse,
             ActionLog,
             DailyReward,
-            ZoomButtons
+            ZoomButtons,
+            PageOverlay,
+            InfoView
         },
         data() {
             return {
@@ -252,7 +265,8 @@
                 minCastleDistance: config.MIN_CASTLE_DISTANCE,
                 maxCastleDistance: config.MAX_CASTLE_DISTANCE,
                 blockAreaSize: config.BLOCK_AREA_SIZE,
-                newCastlePosition: undefined
+                newCastlePosition: undefined,
+                pageOverlayOpen: false
             };
         },
 
@@ -368,27 +382,6 @@
             }
         },
 
-        // created() {
-        //     this.$store.dispatch("GET_USER").then(user => {
-        //         this.moveMapTo({x: user.startX, y: user.startY});
-        //
-        //         // const loadRange = {
-        //         //     fromX: user.startX - 1000,
-        //         //     fromY: user.startY - 1000,
-        //         //     toX: user.startX + 1000,
-        //         //     toY: user.startY + 1000
-        //         // };
-        //         // this.$store.dispatch("GET_CASTLES", loadRange);
-        //         // this.$store.dispatch("GET_ACTION_LOG", loadRange);
-        //         // this.$store.dispatch("GET_CATAPULTS", loadRange);
-        //         // this.$store.dispatch("GET_WAREHOUSES", loadRange);
-        //         // this.$store.dispatch("GET_CASTLE_PRICE");
-        //         // this.$store.dispatch("GET_WAREHOUSE_PRICE");
-        //         // this.$store.dispatch("GET_CATAPULT_PRICE");
-        //         // this.$store.dispatch("GET_CONQUERS");
-        //     });
-        // },
-
         mounted() {
             this.$store.dispatch("GET_USER").then(user => {
                 this.moveMapTo({x: user.startX, y: user.startY});
@@ -400,6 +393,7 @@
             this.gameWidth = this.$refs["game-container"].offsetWidth;
 
             window.addEventListener("resize", this.onWindowResize);
+            window.addEventListener("focus", this.onWindowFocus);
 
             document.addEventListener("mousemove", this.onMouseMove);
             document.addEventListener("touchmove", this.onMouseMove);
@@ -422,11 +416,22 @@
             document.removeEventListener("mousewheel", this.onScroll);
             document.removeEventListener("keyup", this.onKeyUp);
             window.removeEventListener("resize", this.onWindowResize);
+            window.removeEventListener("focus", this.onWindowFocus);
             this.$refs["game-container"].removeEventListener("mousedown", this.onMouseDown);
             this.$refs["game-container"].removeEventListener("touchstart", this.onMouseDown);
         },
 
         methods: {
+
+            openPage() {
+                this.closePopup();
+                this.menuOpen = false;
+                this.pageOverlayOpen = true;
+            },
+
+            onWindowFocus() {
+                this.load();
+            },
 
             triggerCastleBuild() {
                 console.log("[Game] this.$refs.buildCastle.buildCastle: ", this.$refs.buildCastle.buildCastle);
@@ -488,7 +493,7 @@
             },
 
             onScroll(event) {
-                if (this.activeAction === "BUILD_CASTLE" || this.menuOpen) return;
+                if (this.activeAction === "BUILD_CASTLE" || this.menuOpen || this.pageOverlayOpen) return;
                 const delta = event.deltaY * config.SCROLL_SENSITIVITY;
                 this.zoom(delta);
             },
@@ -526,6 +531,7 @@
                 this.mouseDownTimestamp = Date.now();
             },
             load() {
+                console.log("[Game] Load...");
                 this.$store.dispatch("GET_CASTLES", this.loadPosition);
                 this.$store.dispatch("GET_CATAPULTS", this.loadPosition);
                 this.$store.dispatch("GET_ACTION_LOG", this.loadPosition);

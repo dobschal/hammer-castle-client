@@ -38,7 +38,6 @@ export const castleMutations = {
     ];
   },
   SET_CONQUERS(state, conquers) {
-    console.log("[castle] Got all conquers: ", conquers);
     state.conquers = conquers;
   },
   NEW_CONQUER(state, conquer) {

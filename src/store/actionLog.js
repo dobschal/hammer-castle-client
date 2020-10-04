@@ -21,7 +21,6 @@ export const actionLogActions = {
         try {
             commit("PROGRESS", 1);
             const response = await axios.get(`/action-log`);
-            console.log("[actionLog] Got action log: ", response);
             commit("SET_ACTION_LOG", response.data);
         } finally {
             commit("PROGRESS", -1);

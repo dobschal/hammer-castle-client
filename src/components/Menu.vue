@@ -7,7 +7,7 @@
                     <div class="items" v-if="type === 'menu'">
                         <div class="item" @click="type = 'ranking'">Ranking</div>
                         <div class="item" @click="type = 'history'">Show History</div>
-                        <div class="item">Info</div>
+                        <div class="item" @click="$emit('OPEN_PAGE', 'info')">Info</div>
                         <div class="item" @click="type = 'profile'">Profile</div>
                         <div class="item">Forum</div>
                         <div class="item" @click="$emit('LOGOUT')">Logout</div>
@@ -151,6 +151,7 @@
                     overflow-y: auto;
                     -ms-overflow-style: none; /* IE and Edge */
                     scrollbar-width: none;
+                    -webkit-overflow-scrolling: touch;
 
                     &::-webkit-scrollbar {
                         display: none;
@@ -169,7 +170,7 @@
 
                         &.history {
                             .item {
-                                padding: 0.5rem 0;
+                                padding: 0.5rem 0.3rem;
                                 font-size: 0.9rem;
 
                                 .date-view {
@@ -204,7 +205,7 @@
                             &:hover {
                                 color: red;
                                 cursor: pointer;
-                                transform: rotate(2deg) scale(1.1);
+                                transform: rotate(1deg) scale(1.05);
                             }
 
                             &.highlight {
