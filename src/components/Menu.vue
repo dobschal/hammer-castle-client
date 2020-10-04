@@ -103,7 +103,7 @@
         position: fixed;
         width: 100vw;
         height: 100vh;
-        z-index: 2;
+        z-index: 5;
         background-color: rgba(0, 0, 0, 0.5);
 
         .menu-container {
