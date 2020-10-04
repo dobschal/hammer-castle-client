@@ -62,7 +62,7 @@
     .daily-reward {
         position: fixed;
         right: 1rem;
-        top: 45%;
+        top: 16rem;
         z-index: 3;
         background-image: url("../assets/icon-gift.png");
         background-size: contain;

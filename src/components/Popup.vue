@@ -1,6 +1,8 @@
 <template>
-    <div class="popup" @mouseup.stop @touchend.stop
-         :style="{ left: ((position.x - viewPosition.x) / zoomFactor) + 'px', top: ((position.y - viewPosition.y) / zoomFactor) + 'px' }">
+    <div class="popup"
+         @mouseup.stop
+         @touchend.stop
+         :style="{ left: ((position.x - viewPosition.x) / zoomFactor) + 'px', top: ((position.y - viewPosition.y) / zoomFactor) + 'px', transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }">
         <div class="items" v-if="type === 'road'">
             <div v-if="canBuildCatapult" class="item" @click="buildCatapult"
                  v-tooltip="'A catapult is going to attack the opponents castle. There is a possibility that the opponents castle gets destroyed or the catapult remains unaffected.'">
@@ -35,6 +37,7 @@
             item: Object, // depending on type ... might be a road or castle
             zoomFactor: Number,
             viewPosition: Object,
+            mouseMoveDelta: Object,
             position: Object // x, y
         },
         computed: {
@@ -125,7 +128,9 @@
         position: fixed;
         left: 50%;
         top: 50%;
-        transform: translateY(-170px) translateX(-117px);
+        // transform: translateY(-170px) translateX(-117px);
+        margin-top: -170px;
+        margin-left: -117px;
         width: 234px;
         height: 173px;
         z-index: 3;

@@ -176,6 +176,7 @@
         <Menu v-if="menuOpen" @LOGOUT="logout" @CLOSE-MENU="menuOpen = false" @GO_TO="moveMapTo($event)"></Menu>
         <ErrorToast v-if="error">{{ error }}</ErrorToast>
         <Popup :zoomFactor="zoomFactor"
+               :mouseMoveDelta="mouseMoveDelta"
                v-if="popupType && popupPosition"
                :type="popupType"
                :item="popupItem"
@@ -186,6 +187,7 @@
         <ActionLog></ActionLog>
         <div v-if="$store.state.progress > 0" class="loading"></div>
         <DailyReward></DailyReward>
+        <ZoomButtons @ZOOM_IN="zoomIn" @ZOOM_OUT="zoomOut"></ZoomButtons>
     </div>
 </template>
 
@@ -206,8 +208,7 @@
     import ActionLog from "./ActionLog";
     import DailyReward from "./DailyReward";
     import cookie from "js-cookie";
-
-    let timestamp = Date.now();
+    import ZoomButtons from "./ZoomButtons";
 
     export default {
         name: "Game",
@@ -224,7 +225,8 @@
             Popup,
             Warehouse,
             ActionLog,
-            DailyReward
+            DailyReward,
+            ZoomButtons
         },
         data() {
             return {
@@ -256,7 +258,6 @@
 
         computed: {
             roads() {
-                console.log("[Game] Compute roads...", this.castles.length);
                 const roads = [];
                 const castles = [
                     ...this.castles
@@ -345,10 +346,6 @@
 
             "viewPosition.x"() {
                 this.closePopup();
-                const now = Date.now();
-                const fps = Math.floor(1000 / (now - timestamp));
-                console.log("[Game] Frames per second: ", fps);
-                timestamp = now;
             },
 
             error(val) {
@@ -371,29 +368,34 @@
             }
         },
 
-        created() {
+        // created() {
+        //     this.$store.dispatch("GET_USER").then(user => {
+        //         this.moveMapTo({x: user.startX, y: user.startY});
+        //
+        //         // const loadRange = {
+        //         //     fromX: user.startX - 1000,
+        //         //     fromY: user.startY - 1000,
+        //         //     toX: user.startX + 1000,
+        //         //     toY: user.startY + 1000
+        //         // };
+        //         // this.$store.dispatch("GET_CASTLES", loadRange);
+        //         // this.$store.dispatch("GET_ACTION_LOG", loadRange);
+        //         // this.$store.dispatch("GET_CATAPULTS", loadRange);
+        //         // this.$store.dispatch("GET_WAREHOUSES", loadRange);
+        //         // this.$store.dispatch("GET_CASTLE_PRICE");
+        //         // this.$store.dispatch("GET_WAREHOUSE_PRICE");
+        //         // this.$store.dispatch("GET_CATAPULT_PRICE");
+        //         // this.$store.dispatch("GET_CONQUERS");
+        //     });
+        // },
+
+        mounted() {
             this.$store.dispatch("GET_USER").then(user => {
                 this.moveMapTo({x: user.startX, y: user.startY});
-                const loadRange = {
-                    fromX: user.startX - 1000,
-                    fromY: user.startY - 1000,
-                    toX: user.startX + 1000,
-                    toY: user.startY + 1000
-                };
-                this.$store.dispatch("GET_CASTLES", loadRange);
-                this.$store.dispatch("GET_ACTION_LOG", loadRange);
-                this.$store.dispatch("GET_CATAPULTS", loadRange);
-                this.$store.dispatch("GET_WAREHOUSES", loadRange);
-                this.$store.dispatch("GET_CASTLE_PRICE");
-                this.$store.dispatch("GET_WAREHOUSE_PRICE");
-                this.$store.dispatch("GET_CATAPULT_PRICE");
+                this.load();
             });
             this.$store.dispatch("GET_SERVER_VERSION");
             this.$store.dispatch("GET_BLOCK_AREAS");
-            this.$store.dispatch("GET_CONQUERS");
-        },
-
-        mounted() {
             this.gameHeight = this.$refs["game-container"].offsetHeight;
             this.gameWidth = this.$refs["game-container"].offsetWidth;
 
@@ -467,9 +469,7 @@
             moveMapTo(position) {
                 this.viewPosition.x = position.x - window.innerWidth / 2;
                 this.viewPosition.y = position.y - window.innerHeight / 2;
-                this.loadCastles();
-                this.loadCatapults();
-                this.loadWarehouses();
+                this.load();
             },
 
             attachWebsocketListener() {
@@ -490,11 +490,22 @@
             onScroll(event) {
                 if (this.activeAction === "BUILD_CASTLE" || this.menuOpen) return;
                 const delta = event.deltaY * config.SCROLL_SENSITIVITY;
-                this.zoomFactor = Math.min(1.2, Math.max(0.5, this.zoomFactor + delta));
-                if (this.zoomFactor > 0.5 && this.zoomFactor < 1.2) {
+                this.zoom(delta);
+            },
+
+            zoomOut() {
+                this.zoom(0.1);
+            },
+            zoomIn() {
+                this.zoom(-0.1);
+            },
+
+            zoom(delta) {
+                this.zoomFactor = Math.min(1.8, Math.max(0.3, this.zoomFactor + delta));
+                if (this.zoomFactor > 0.3 && this.zoomFactor < 1.8) {
                     this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
                     this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
-                    this.loadCastles();
+                    this.load();
                 }
             },
 
@@ -513,6 +524,18 @@
                 this.lastMousePosition.x = x;
                 this.lastMousePosition.y = y;
                 this.mouseDownTimestamp = Date.now();
+            },
+            load() {
+                this.$store.dispatch("GET_CASTLES", this.loadPosition);
+                this.$store.dispatch("GET_CATAPULTS", this.loadPosition);
+                this.$store.dispatch("GET_ACTION_LOG", this.loadPosition);
+                this.$store.dispatch("GET_WAREHOUSES", this.loadPosition);
+                this.$store.dispatch("GET_CASTLE_PRICE");
+                this.$store.dispatch("GET_WAREHOUSE_PRICE");
+                this.$store.dispatch("GET_CATAPULT_PRICE");
+                this.$store.dispatch("GET_CONQUERS");
+                this.$store.dispatch("GET_SERVER_VERSION");
+                this.$store.dispatch("GET_BLOCK_AREAS");
             },
             onMouseMove(event) {
                 if (this.waitingForAnimationFrame) return;
@@ -536,9 +559,7 @@
                         this.viewPosition.y += Math.round(this.mouseMoveDelta.y * this.zoomFactor);
                         this.mouseMoveDelta.x = 0;
                         this.mouseMoveDelta.y = 0;
-                        this.loadCastles();
-                        this.loadCatapults();
-                        this.loadWarehouses();
+                        this.load();
                     }
                     if (this.popupType) this.closePopup();
                 }
@@ -550,15 +571,6 @@
                 this.$store.commit("SET_USER", undefined);
                 cookie.remove("auth-token");
                 window.location.reload(true);
-            },
-            loadCastles() {
-                this.$store.dispatch("GET_CASTLES", this.loadPosition);
-            },
-            loadCatapults() {
-                this.$store.dispatch("GET_CATAPULTS", this.loadPosition);
-            },
-            loadWarehouses() {
-                this.$store.dispatch("GET_WAREHOUSES", this.loadPosition);
             }
         }
     };

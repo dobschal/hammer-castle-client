@@ -21,7 +21,7 @@
         },
         data() {
             return {
-                open: window.innerWidth > 1024
+                open: window.innerWidth > 1900
             };
         },
         computed: {
@@ -47,7 +47,7 @@
         color: white;
         max-width: 40vw;
 
-        @media only screen and (max-width: 1024px) {
+        @media only screen and (max-width: 1900px) {
             display: none;
         }
 

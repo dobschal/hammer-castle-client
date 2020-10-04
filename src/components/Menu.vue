@@ -2,17 +2,18 @@
     <div class="menu-wrapper" @click="$emit('CLOSE-MENU')">
         <div class="menu-container">
             <div class="menu-content" @click.stop>
+                <div class="close" @click="close"> {{ closeButtonText }}</div>
                 <div class="content">
                     <div class="items" v-if="type === 'menu'">
-                        <div class="item">Help & Info</div>
                         <div class="item" @click="type = 'ranking'">Ranking</div>
-                        <div class="item">Profile</div>
+                        <div class="item" @click="type = 'history'">Show History</div>
+                        <div class="item">Info</div>
+                        <div class="item" @click="type = 'profile'">Profile</div>
                         <div class="item">Forum</div>
                         <div class="item" @click="$emit('LOGOUT')">Logout</div>
-                        <div class="item" @click="$emit('CLOSE-MENU')">Close Menu</div>
                     </div>
                     <div v-else-if="type === 'ranking'" class="ranking items" @click.stop>
-                        <div class="item" @click="type = 'menu'">Back</div>
+                        <!--                        <div class="item" @click="type = 'menu'">Back</div>-->
                         <div v-for="(rank, index) in ranking"
                              class="item"
                              :key="rank.username"
@@ -22,6 +23,12 @@
                             <span class="rank">{{ index + 1 }}.</span>
                             <span class="level">{{ rank.level }}</span>
                             <span class="username">{{ rank.username }}</span>
+                        </div>
+                    </div>
+                    <div v-else-if="type === 'history'" class="items history">
+                        <div v-for="item in actionLog" :key="item.id" class="item">
+                            <DateView :timestamp="item.timestamp"></DateView>
+                            <span class="text">{{ item.content }}</span>
                         </div>
                     </div>
                 </div>
@@ -34,9 +41,13 @@
 <script>
 
     import {version} from "../../package";
+    import DateView from "./DateView";
 
     export default {
         name: "Menu",
+        components: {
+            DateView
+        },
         data() {
             return {
                 clientCommitHash: "",
@@ -50,6 +61,12 @@
             },
             user() {
                 return this.$store.state.user;
+            },
+            closeButtonText() {
+                return this.type === "menu" ? "Close" : "Back";
+            },
+            actionLog() {
+                return [...this.$store.state.actionLog].sort((a, b) => b.timestamp - a.timestamp);
             }
         },
         watch: {
@@ -69,6 +86,13 @@
                 const position = await this.$store.dispatch("GET_HOME_POSITION", userId);
                 this.$emit("GO_TO", position);
                 this.$emit("CLOSE-MENU");
+            },
+            close() {
+                if (this.type === "menu") {
+                    this.$emit('CLOSE-MENU');
+                } else {
+                    this.type = 'menu';
+                }
             }
         }
     };
@@ -98,6 +122,28 @@
                 height: 394px;
                 margin: auto;
 
+                .close {
+                    background-image: url("../assets/icon-cancel.svg");
+                    background-repeat: no-repeat;
+                    background-size: contain;
+                    background-position: right center;
+                    background-color: rgba(0, 0, 0, 0.4);
+                    height: 32px;
+                    width: 32px;
+                    font-size: 0;
+                    line-height: 0;
+                    border-radius: 50%;
+                    margin-top: -24px;
+                    margin-right: 1.4rem;
+                    float: right;
+                    transition: transform 0.5s ease-out;
+
+                    &:hover, &:active {
+                        cursor: pointer;
+                        transform: scale(1.3);
+                    }
+                }
+
                 .content {
                     height: 298px;
                     margin-bottom: 20px;
@@ -117,14 +163,39 @@
                         &.ranking {
                             .item {
                                 padding: 0.5rem 0;
+                                font-size: 0.9rem;
+                            }
+                        }
+
+                        &.history {
+                            .item {
+                                padding: 0.5rem 0;
+                                font-size: 0.9rem;
+
+                                .date-view {
+                                    font-size: 0.7rem;
+                                    text-align: left;
+                                }
+
+                                .text {
+                                    white-space: normal;
+                                    text-align: left;
+                                    display: block;
+                                    font-family: 'Piazzolla', serif;
+                                    font-size: 1rem;
+                                    line-height: 1.2rem;
+                                    letter-spacing: 0.3px;
+                                }
+
                             }
                         }
 
                         .item {
                             font-size: 1.2rem;
                             padding: 0.77rem 1rem;
-                            border-bottom: dashed 2px rgba(0, 0, 0, 0.19);
+                            border-bottom: dashed 2px rgba(0, 0, 0, 0.15);
                             white-space: nowrap;
+                            transition: transform 0.3s ease-out;
 
                             &:last-child {
                                 border-bottom: none;
@@ -133,6 +204,7 @@
                             &:hover {
                                 color: red;
                                 cursor: pointer;
+                                transform: rotate(2deg) scale(1.1);
                             }
 
                             &.highlight {
