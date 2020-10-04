@@ -7,9 +7,9 @@
                     <div class="items" v-if="type === 'menu'">
                         <div class="item" @click="type = 'ranking'">Ranking</div>
                         <div class="item" @click="type = 'history'">Show History</div>
-                        <div class="item" @click="$emit('OPEN_PAGE', 'info')">Info</div>
                         <div class="item" @click="type = 'profile'">Profile</div>
-                        <div class="item">Forum</div>
+                        <div class="item" @click="$emit('OPEN_PAGE', 'info')">Info</div>
+                        <div class="item" @click="$emit('OPEN_PAGE', 'forum')">Forum</div>
                         <div class="item" @click="$emit('LOGOUT')">Logout</div>
                     </div>
                     <div v-else-if="type === 'ranking'" class="ranking items" @click.stop>
@@ -29,6 +29,14 @@
                         <div v-for="item in actionLog" :key="item.id" class="item">
                             <DateView :timestamp="item.timestamp"></DateView>
                             <span class="text">{{ item.content }}</span>
+                        </div>
+                    </div>
+                    <div v-else-if="type === 'profile'" class="items user">
+                        <div class="item">
+                            Username: {{ user.username }}
+                        </div>
+                        <div class="item">
+                            Level: {{ user.level }}
                         </div>
                     </div>
                 </div>
@@ -162,7 +170,7 @@
                         padding: 0rem 3rem 2rem 3rem;
                         text-align: center;
 
-                        &.ranking {
+                        &.ranking, &.user {
                             .item {
                                 padding: 0.5rem 0;
                                 font-size: 0.9rem;

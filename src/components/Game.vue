@@ -177,7 +177,7 @@
         <Menu v-if="menuOpen" @LOGOUT="logout"
               @CLOSE-MENU="menuOpen = false"
               @GO_TO="moveMapTo($event)"
-              @OPEN_PAGE="openPage"></Menu>
+              @OPEN_PAGE="openPage($event)"></Menu>
         <ErrorToast v-if="error">{{ error }}</ErrorToast>
         <Popup :zoomFactor="zoomFactor"
                :mouseMoveDelta="mouseMoveDelta"
@@ -192,10 +192,15 @@
         <div v-if="$store.state.progress > 0" class="loading"></div>
         <DailyReward></DailyReward>
         <ZoomButtons @ZOOM_IN="zoomIn" @ZOOM_OUT="zoomOut"></ZoomButtons>
-        <PageOverlay v-if="pageOverlayOpen"
+        <PageOverlay v-if="pageOverlayOpen && pageOverlayType === 'info'"
                      title="What is Castles?"
                      @CLOSE="pageOverlayOpen = false">
             <InfoView></InfoView>
+        </PageOverlay>
+        <PageOverlay v-else-if="pageOverlayOpen && pageOverlayType === 'forum'"
+                     title="Forum"
+                     @CLOSE="pageOverlayOpen = false">
+            <Forum></Forum>
         </PageOverlay>
     </div>
 </template>
@@ -220,6 +225,7 @@
     import ZoomButtons from "./ZoomButtons";
     import PageOverlay from "./PageOverlay";
     import InfoView from "./Info";
+    import Forum from "./Forum";
 
     export default {
         name: "Game",
@@ -239,7 +245,8 @@
             DailyReward,
             ZoomButtons,
             PageOverlay,
-            InfoView
+            InfoView,
+            Forum
         },
         data() {
             return {
@@ -266,7 +273,8 @@
                 maxCastleDistance: config.MAX_CASTLE_DISTANCE,
                 blockAreaSize: config.BLOCK_AREA_SIZE,
                 newCastlePosition: undefined,
-                pageOverlayOpen: false
+                pageOverlayOpen: false,
+                pageOverlayType: ""
             };
         },
 
@@ -423,10 +431,11 @@
 
         methods: {
 
-            openPage() {
+            openPage($event) {
                 this.closePopup();
                 this.menuOpen = false;
                 this.pageOverlayOpen = true;
+                this.pageOverlayType = $event;
             },
 
             onWindowFocus() {
