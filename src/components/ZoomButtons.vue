@@ -8,7 +8,7 @@
 <style lang="scss" scoped>
     .zoom-buttons {
         position: fixed;
-        right: 1.2rem;
+        right: 1.5rem;
         top: 5rem;
         z-index: 3;
         /*background-image: url("../assets/icon-gift.png");*/
@@ -16,8 +16,9 @@
         /*background-position: center;*/
         /*background-repeat: no-repeat;*/
         background-color: rgba(8, 49, 57, 0.15);
+        backdrop-filter: blur(5px);
         border-radius: 1rem;
-        width: calc(40px + 1rem);
+        width: calc(32px + 0.8rem);
         opacity: 1;
 
         .zoom-in {
@@ -25,8 +26,8 @@
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             margin: 0.5rem auto;
             transition: transform 0.3s ease-out;
 
@@ -41,9 +42,9 @@
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
-            width: 40px;
-            height: 40px;
-            margin: 1.5rem auto 0.5rem auto;
+            width: 32px;
+            height: 32px;
+            margin: 1.2rem auto 0.5rem auto;
             transition: transform 0.3s ease-out;
 
             &:hover, &:active {

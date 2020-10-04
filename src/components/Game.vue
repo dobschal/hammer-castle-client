@@ -499,10 +499,10 @@
             },
 
             zoomOut() {
-                this.zoom(0.1);
+                this.zoom(0.15);
             },
             zoomIn() {
-                this.zoom(-0.1);
+                this.zoom(-0.15);
             },
 
             zoom(delta) {

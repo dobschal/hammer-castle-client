@@ -26,7 +26,8 @@
         left: 0;
         top: 0;
         z-index: 8;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.66);
+        backdrop-filter: blur(5px);
         width: 100vw;
         height: 100vh;
         padding: 2rem;

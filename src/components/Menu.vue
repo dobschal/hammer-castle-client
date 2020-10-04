@@ -104,7 +104,8 @@
         width: 100vw;
         height: 100vh;
         z-index: 5;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.66);
+        backdrop-filter: blur(5px);
 
         .menu-container {
             display: flex;
@@ -120,7 +121,7 @@
                 background-position: 50% 50%;
                 width: 302px;
                 height: 394px;
-                margin: auto;
+                margin: -4rem auto 0 auto;
 
                 .close {
                     background-image: url("../assets/icon-cancel.svg");
