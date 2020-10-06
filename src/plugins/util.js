@@ -48,6 +48,21 @@ export default {
                     dt = Math.floor(dt / 16);
                     return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
                 });
+            },
+
+            setUrlParam(key, value) {
+                const params = new URLSearchParams(location.search);
+                params.set(key, value);
+                window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+            },
+
+            getUrlParam(key) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(key);
+            },
+
+            deleteUrlParam() {
+                window.history.replaceState({}, '', `${location.pathname}`);
             }
         };
     }

@@ -194,12 +194,12 @@
         <ZoomButtons @ZOOM_IN="zoomIn" @ZOOM_OUT="zoomOut"></ZoomButtons>
         <PageOverlay v-if="pageOverlayOpen && pageOverlayType === 'info'"
                      title="What is Castles?"
-                     @CLOSE="pageOverlayOpen = false">
+                     @CLOSE="closePage">
             <InfoView></InfoView>
         </PageOverlay>
         <PageOverlay v-else-if="pageOverlayOpen && pageOverlayType === 'forum'"
                      title="Forum"
-                     @CLOSE="pageOverlayOpen = false">
+                     @CLOSE="closePage">
             <Forum></Forum>
         </PageOverlay>
     </div>
@@ -419,6 +419,9 @@
             this.$refs["game-container"].addEventListener("touchstart", this.onTouchDown, {passive: true});
 
             this.attachWebsocketListener();
+
+            const page = this.$util.getUrlParam("page");
+            if(page) this.openPage(page);
         },
 
         beforeDestroy() {
@@ -441,11 +444,17 @@
                 return x < p.toX && x > p.fromX && y < p.toY && y > p.fromY;
             },
 
+            closePage() {
+                this.pageOverlayOpen = false;
+                this.$util.deleteUrlParam("page");
+            },
+
             openPage($event) {
                 this.closePopup();
                 this.menuOpen = false;
                 this.pageOverlayOpen = true;
                 this.pageOverlayType = $event;
+                this.$util.setUrlParam("page", $event);
             },
 
             async onWindowFocus() {
