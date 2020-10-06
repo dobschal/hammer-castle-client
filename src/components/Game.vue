@@ -274,7 +274,10 @@
                 blockAreaSize: config.BLOCK_AREA_SIZE,
                 newCastlePosition: undefined,
                 pageOverlayOpen: false,
-                pageOverlayType: ""
+                pageOverlayType: "",
+                fps: 0,
+                lastRenderTimestamp: undefined,
+                isLoading: false
             };
         },
 
@@ -337,7 +340,7 @@
                     });
             },
             blockAreas() {
-                return this.$store.state.blockAreas;
+                return this.$store.state.blockAreas.filter(this.isInViewPosition);
             },
             loading() {
                 return this.$store.getters.busy;
@@ -394,6 +397,8 @@
             this.$store.dispatch("GET_USER").then(user => {
                 this.moveMapTo({x: user.startX, y: user.startY});
                 this.load();
+            }).catch(() => {
+                this.logout();
             });
             this.$store.dispatch("GET_SERVER_VERSION");
             this.$store.dispatch("GET_BLOCK_AREAS");
@@ -404,21 +409,21 @@
             window.addEventListener("focus", this.onWindowFocus);
 
             document.addEventListener("mousemove", this.onMouseMove);
-            document.addEventListener("touchmove", this.onMouseMove);
+            document.addEventListener("touchmove", this.onTouchMove);
             document.addEventListener("mouseup", this.onMouseUp);
             document.addEventListener("touchend", this.onMouseUp);
             document.addEventListener("keyup", this.onKeyUp);
             document.addEventListener("mousewheel", this.onScroll);
 
             this.$refs["game-container"].addEventListener("mousedown", this.onMouseDown);
-            this.$refs["game-container"].addEventListener("touchstart", this.onMouseDown, {passive: true});
+            this.$refs["game-container"].addEventListener("touchstart", this.onTouchDown, {passive: true});
 
             this.attachWebsocketListener();
         },
 
         beforeDestroy() {
             document.removeEventListener("mousemove", this.onMouseMove);
-            document.removeEventListener("touchmove", this.onMouseMove);
+            document.removeEventListener("touchmove", this.onTouchMove);
             document.removeEventListener("mouseup", this.onMouseUp);
             document.removeEventListener("touchend", this.onMouseUp);
             document.removeEventListener("mousewheel", this.onScroll);
@@ -426,10 +431,15 @@
             window.removeEventListener("resize", this.onWindowResize);
             window.removeEventListener("focus", this.onWindowFocus);
             this.$refs["game-container"].removeEventListener("mousedown", this.onMouseDown);
-            this.$refs["game-container"].removeEventListener("touchstart", this.onMouseDown);
+            this.$refs["game-container"].removeEventListener("touchstart", this.onTouchDown);
         },
 
         methods: {
+
+            isInViewPosition({x, y}) {
+                const p = this.loadPosition;
+                return x < p.toX && x > p.fromX && y < p.toY && y > p.fromY;
+            },
 
             openPage($event) {
                 this.closePopup();
@@ -438,7 +448,8 @@
                 this.pageOverlayType = $event;
             },
 
-            onWindowFocus() {
+            async onWindowFocus() {
+                await this.$store.dispatch("GET_USER");
                 this.load();
             },
 
@@ -532,36 +543,58 @@
             },
 
             onMouseDown(event) {
-                const x = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
-                const y = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
+                const x = event.clientX;
+                const y = event.clientY;
+                this.onPointerDown({x, y});
+            },
+
+            onTouchDown(event) {
+                const x = event.touches[0].clientX;
+                const y = event.touches[0].clientY;
+                this.onPointerDown({x, y});
+            },
+
+            onPointerDown({x, y}) {
                 this.dragging = true;
                 this.lastMousePosition.x = x;
                 this.lastMousePosition.y = y;
                 this.mouseDownTimestamp = Date.now();
             },
-            load() {
+
+            async load() {
+                if (this.isLoading) return;
+                this.isLoading = true;
                 console.log("[Game] Load...");
-                this.$store.dispatch("GET_CASTLES", this.loadPosition);
-                this.$store.dispatch("GET_CATAPULTS", this.loadPosition);
-                this.$store.dispatch("GET_ACTION_LOG", this.loadPosition);
-                this.$store.dispatch("GET_WAREHOUSES", this.loadPosition);
-                this.$store.dispatch("GET_CASTLE_PRICE");
-                this.$store.dispatch("GET_WAREHOUSE_PRICE");
-                this.$store.dispatch("GET_CATAPULT_PRICE");
-                this.$store.dispatch("GET_CONQUERS");
-                this.$store.dispatch("GET_SERVER_VERSION");
-                this.$store.dispatch("GET_BLOCK_AREAS");
+                await Promise.all([
+                    this.$store.dispatch("GET_CASTLES", this.loadPosition),
+                    this.$store.dispatch("GET_CATAPULTS", this.loadPosition),
+                    this.$store.dispatch("GET_ACTION_LOG", this.loadPosition),
+                    this.$store.dispatch("GET_WAREHOUSES", this.loadPosition),
+                    this.$store.dispatch("GET_CASTLE_PRICE"),
+                    this.$store.dispatch("GET_WAREHOUSE_PRICE"),
+                    this.$store.dispatch("GET_CATAPULT_PRICE"),
+                    this.$store.dispatch("GET_CONQUERS"),
+                    this.$store.dispatch("GET_SERVER_VERSION"),
+                    this.$store.dispatch("GET_BLOCK_AREAS")
+                ]);
+                this.isLoading = false;
+            },
+            onTouchMove(event) {
+                const x = event.touches[0].clientX;
+                const y = event.touches[0].clientY;
+                this.onPointerMove({x, y});
             },
             onMouseMove(event) {
-                if (this.waitingForAnimationFrame) return;
+                const x = event.clientX;
+                const y = event.clientY;
+                this.onPointerMove({x, y});
+            },
+            onPointerMove({x, y}) {
+                if (!this.dragging || this.waitingForAnimationFrame) return;
                 this.waitingForAnimationFrame = true;
                 window.requestAnimationFrame(() => {
-                    const x = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
-                    const y = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
-                    if (this.dragging) {
-                        this.mouseMoveDelta.x += (this.lastMousePosition.x - x);
-                        this.mouseMoveDelta.y += (this.lastMousePosition.y - y);
-                    }
+                    this.mouseMoveDelta.x += (this.lastMousePosition.x - x);
+                    this.mouseMoveDelta.y += (this.lastMousePosition.y - y);
                     this.lastMousePosition.x = x;
                     this.lastMousePosition.y = y;
                     this.waitingForAnimationFrame = false;

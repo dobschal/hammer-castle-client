@@ -3,6 +3,7 @@ import io from "socket.io-client";
 import cookie from "js-cookie";
 
 let socket;
+let lastHeartbeatTimstamp = undefined;
 
 function connect() {
   if (socket) {
@@ -15,8 +16,12 @@ function connect() {
     }
   });
 
-  socket.on("HEARTBEAT", data => {
-    console.log("[websocket] Got heartbeat: ", data);
+  socket.on("HEARTBEAT", () => {
+    const now = Date.now();
+    if (lastHeartbeatTimstamp && now - lastHeartbeatTimstamp > 5000) {
+      console.warn("[websocket] Heartbeat is delayed, should reload?");
+    }
+    lastHeartbeatTimstamp = now;
   });
 
   return socket;
