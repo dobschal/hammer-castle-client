@@ -2,6 +2,17 @@
     <svg :x="position.x - 40" :y="position.y - 75" v-tooltip="'Chance to win is ' + catapult.chance_to_win + '%'">
         <svg width="75" height="120" viewBox="0 0 197 186" fill="none"
              xmlns="http://www.w3.org/2000/svg">
+
+            <!-- ARROW -->
+            <svg :height="56" :width="88" x="125" y="10" viewBox="0 0 32 46" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.4 19.4968L10.68 45H21.6V19.4968H30L16 1L2 19.4968H10.4Z"
+                      :fill="color"
+                      stroke="black"
+                      class="arrow"
+                      :style="{transform: 'rotate(' + angle + 'deg)', 'transform-origin': '50% 50%' }"/>
+            </svg>
+
             <g filter="url(#catapult_filter0_d)">
                 <ellipse cx="166.5" cy="127.5" rx="8.5" ry="12.5" transform="rotate(-16.5175 166.5 127.5)"
                          fill="#5B4B4B"/>
@@ -178,9 +189,11 @@
             }
         },
         data() {
-            return {countDown: 0, intervalId: undefined};
+            return {countDown: 0, intervalId: undefined, angle: 0};
         },
         created() {
+            this.angle = Math.floor(Math.atan2(this.catapult.user_castle_y - this.catapult.opponent_castle_y, this.catapult.user_castle_x - this.catapult.opponent_castle_x) * 180 / Math.PI) - 82;
+            console.log("[Catapult] Catapult: ", this.catapult, this.angle);
             this.intervalId = setInterval(() => {
                 let seconds = Math.max(0, Math.floor(((Date.parse(this.catapult.timestamp.replace(" ", "T") + ".000Z") + config.CATAPULT_LIFETIME) - Date.now()) / 1000));
                 const minutes = Math.floor(seconds / 60) || 0;
