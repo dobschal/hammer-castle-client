@@ -9,7 +9,7 @@ export const userState = {
 
 export const userMutations = {
   SET_AUTH_TOKEN(state, token) {
-    cookie.set("auth-token", token);
+    cookie.set("auth-token", token, {expires: 7});
     state.authToken = token;
   },
   SET_USER(state, user) {

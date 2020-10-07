@@ -48,14 +48,17 @@
 
     watch: {
       zoomFactor() {
+
+        // TODO: Correct?
+
         this.newCastlePosition.x = this.lastMousePosition.x * this.zoomFactor;
         this.newCastlePosition.y = this.lastMousePosition.y * this.zoomFactor;
         this.$emit("NEW_CASTLE_POSITION", this.newCastlePosition);
       },
       "viewPosition.x"() {
         if (this.isTouchDevice) {
-          this.newCastlePosition.x = (this.viewPosition.x + window.innerWidth / 2) * this.zoomFactor;
-          this.newCastlePosition.y = (this.viewPosition.y + window.innerHeight / 2) * this.zoomFactor;
+          this.newCastlePosition.x = this.viewPosition.x + (window.innerWidth / 2 * this.zoomFactor);
+          this.newCastlePosition.y = this.viewPosition.y + (window.innerHeight / 2 * this.zoomFactor);
           this.hasCastleValidDistance(this.newCastlePosition);
         }
       }
@@ -65,8 +68,8 @@
       document.addEventListener("mousemove", this.onMouseMove);
       document.addEventListener("mouseup", this.onMouseUp);
       document.addEventListener("touchstart", this.onTouchStart);
-      this.newCastlePosition.x = (this.viewPosition.x + window.innerWidth / 2) * this.zoomFactor;
-      this.newCastlePosition.y = (this.viewPosition.y + window.innerHeight / 2) * this.zoomFactor;
+      this.newCastlePosition.x = this.viewPosition.x + (window.innerWidth / 2 * this.zoomFactor);
+      this.newCastlePosition.y = this.viewPosition.y + (window.innerHeight / 2 * this.zoomFactor);
       this.hasCastleValidDistance(this.newCastlePosition);
     },
 
@@ -86,20 +89,14 @@
         if (this.waitingForAnimationFrame) return;
         this.waitingForAnimationFrame = true;
         window.requestAnimationFrame(() => {
-          this.newCastlePosition.x = (this.viewPosition.x + event.clientX) * this.zoomFactor;
-          this.newCastlePosition.y = (this.viewPosition.y + event.clientY) * this.zoomFactor;
-          this.hasCastleValidDistance({
-            x: (this.viewPosition.x + event.clientX) * this.zoomFactor,
-            y: (this.viewPosition.y + event.clientY) * this.zoomFactor
-          });
+          this.newCastlePosition.x = this.viewPosition.x + (event.clientX * this.zoomFactor);
+          this.newCastlePosition.y = this.viewPosition.y + (event.clientY * this.zoomFactor);
+          this.hasCastleValidDistance(this.newCastlePosition);
           this.waitingForAnimationFrame = false;
         });
       },
 
       hasCastleValidDistance(position) {
-
-        // TODO: include zoom factor in calculation...
-
         if (this.blockAreas.length > 0) {
           for (let i = 0; i < this.blockAreas.length; i++) {
             const blockArea = this.blockAreas[i];
@@ -143,8 +140,8 @@
 
       async onClick(event) {
         if (this.isTouchDevice) return;
-        this.newCastlePosition.x = (this.viewPosition.x + event.clientX) * this.zoomFactor;
-        this.newCastlePosition.y = (this.viewPosition.y + event.clientY) * this.zoomFactor;
+        this.newCastlePosition.x = this.viewPosition.x + (event.clientX * this.zoomFactor);
+        this.newCastlePosition.y = this.viewPosition.y + (event.clientY * this.zoomFactor);
         this.buildCastle();
       },
 

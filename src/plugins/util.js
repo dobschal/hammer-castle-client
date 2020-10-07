@@ -51,9 +51,9 @@ export default {
             },
 
             setUrlParam(key, value) {
-                const params = new URLSearchParams(location.search);
-                params.set(key, value);
-                window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set(key, value);
+                window.history.replaceState({}, '', `${location.pathname}?${urlParams.toString()}`);
             },
 
             getUrlParam(key) {
@@ -61,8 +61,10 @@ export default {
                 return urlParams.get(key);
             },
 
-            deleteUrlParam() {
-                window.history.replaceState({}, '', `${location.pathname}`);
+            deleteUrlParam(key) {
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.delete(key);
+                window.history.replaceState({}, '', `${location.pathname}?${urlParams.toString()}`);
             }
         };
     }

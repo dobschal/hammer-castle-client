@@ -381,19 +381,13 @@
                         }
                     }, 3000);
                 }
-            },
-
-            activeAction(val) {
-                if (val === "BUILD_CASTLE") {
-
-                    //  TODO: this is a hotfix, cause the zoomFactor is missing in the distance calculation on build castle
-
-                    this.zoomFactor = 1;
-                }
             }
         },
 
         mounted() {
+            const zoomFactor = this.$util.getUrlParam("zoom");
+            if (zoomFactor) this.zoomFactor = Number(zoomFactor);
+
             this.$store.dispatch("GET_USER").then(user => {
                 this.moveMapTo({x: user.startX, y: user.startY});
                 this.load();
@@ -522,7 +516,7 @@
             },
 
             onScroll(event) {
-                if (this.activeAction === "BUILD_CASTLE" || this.menuOpen || this.pageOverlayOpen) return;
+                if (this.menuOpen || this.pageOverlayOpen) return;
                 const delta = event.deltaY * config.SCROLL_SENSITIVITY;
                 this.zoom(delta);
             },
@@ -541,6 +535,7 @@
                     this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
                     this.load();
                 }
+                this.$util.setUrlParam("zoom", this.zoomFactor.toFixed(2));
             },
 
             onKeyUp(event) {
