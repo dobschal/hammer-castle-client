@@ -1,5 +1,5 @@
 <template>
-    <div class="date-view">{{parsedString}}</div>
+    <span class="date-view">{{parsedString}}</span>
 </template>
 
 <script>

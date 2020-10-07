@@ -46,6 +46,7 @@
             font-size: 1rem;
             max-width: 640px;
             margin: 0 auto;
+            overflow-y: hidden;
 
 
             .close {
@@ -79,9 +80,10 @@
             .content-inner {
                 max-height: calc(100vh - 9rem);
                 -webkit-overflow-scrolling: touch;
-                overflow-y: auto;
                 -ms-overflow-style: none; /* IE and Edge */
                 scrollbar-width: none;
+                overflow-y: hidden;
+                width: 100%;
             }
         }
     }

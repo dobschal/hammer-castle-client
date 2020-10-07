@@ -35,14 +35,36 @@
             <button @click="closeCategory">Close</button>
             <h2>{{ activeCategory.name }}</h2>
             <p>{{ activeCategory.description }}</p>
+            <div class="entries">
+                <div class="entry" v-for="entry in entries" :key="entry.id">
+                    <h4>{{ entry.username }} wrote
+                        <DateView :timestamp="entry.timestamp"></DateView>
+                        :
+                    </h4>
+                    <pre>{{ entry.content }}</pre>
+                </div>
+            </div>
+            <div>
+                <form @submit.prevent="addEntry">
+                    <div>
+                        <label for="entry-content">Add Entry</label>
+                        <textarea name="entry-content" id="entry-content" cols="30" rows="10"
+                                  v-model="entryContent"></textarea>
+                    </div>
+                    <button type="submit">Save Entry</button>
+                </form>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 
+    import DateView from "./DateView";
+
     export default {
         name: "Forum",
+        components: {DateView},
         computed: {
             user() {
                 return this.$store.state.user;
@@ -58,6 +80,17 @@
             },
             editCategory() {
                 return Boolean(this.categoryId);
+            },
+            entries() {
+                const entries = this.$store.state.forumEntries;
+                console.log("[Forum] Entries: ", entries);
+                return entries;
+            }
+        },
+        watch: {
+            "activeCategory.id"(categoryId) {
+                if (categoryId)
+                    this.$store.dispatch("GET_FORUM_ENTRIES", categoryId);
             }
         },
         data() {
@@ -66,7 +99,8 @@
                 categoryDescription: "",
                 categoryId: undefined,
                 addCategory: false,
-                activeCategory: undefined
+                activeCategory: undefined,
+                entryContent: ""
             };
         },
         created() {
@@ -108,6 +142,14 @@
             },
             closeCategory() {
                 this.activeCategory = undefined;
+            },
+            async addEntry() {
+                console.log("[Forum] Add entry: ", this.activeCategory.id);
+                await this.$store.dispatch("CREATE_FORUM_ENTRY", {
+                    content: this.entryContent,
+                    categoryId: this.activeCategory.id
+                });
+                await this.$store.dispatch("GET_FORUM_ENTRIES", this.activeCategory.id);
             }
         }
     }
