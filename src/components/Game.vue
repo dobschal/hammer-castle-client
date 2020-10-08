@@ -5,6 +5,7 @@
         <!--             :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }"></div>-->
         <div class="game-container"
              ref="game-container"
+             v-if="!pageOverlayOpen"
              :class="{ dragging: dragging }">
             <!--             :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }">-->
 
@@ -281,7 +282,8 @@
                 pageOverlayType: "",
                 fps: 0,
                 lastRenderTimestamp: undefined,
-                isLoading: false
+                isLoading: false,
+                zoomLoadTimeout: undefined
             };
         },
 
@@ -533,12 +535,18 @@
             },
 
             zoom(delta) {
-                this.zoomFactor = Math.min(1.8, Math.max(0.3, this.zoomFactor + delta));
-                if (this.zoomFactor > 0.3 && this.zoomFactor < 1.8) {
-                    this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
-                    this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
-                    this.load();
-                }
+                if (this.waitingForAnimationFrame) return;
+                this.waitingForAnimationFrame = true;
+                window.requestAnimationFrame(() => {
+                    this.zoomFactor = Math.min(1.8, Math.max(0.3, this.zoomFactor + delta));
+                    if (this.zoomFactor > 0.3 && this.zoomFactor < 1.8) {
+                        this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
+                        this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
+                    }
+                    this.waitingForAnimationFrame = false;
+                });
+                if (this.zoomLoadTimeout) clearTimeout(this.zoomLoadTimeout);
+                this.zoomLoadTimeout = setTimeout(this.load.bind(this), 1000);
                 this.$util.setUrlParam("zoom", this.zoomFactor.toFixed(2));
             },
 

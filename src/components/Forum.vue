@@ -1,16 +1,19 @@
 <template>
     <div class="forum">
-        <p>This will be the amazing forum to discuss new features and change requests. Aaaand of course to report bugs
-            :) </p>
+        <div v-if="!activeCategory">
+            <p>This is the amazing forum to discuss new features and change requests. Aaaand of course to report bugs...</p>
+            <img src="../assets/banner.gif" alt="Banner" class="banner">
+        </div>
         <div class="categories" v-if="!activeCategory">
             <div class="header">
                 <button v-if="isAdmin" @click="openAddCategory">Add Category</button>
                 <h2>Categories</h2>
+                <p>Select a category...</p>
             </div>
             <div class="category-list">
                 <div class="category" v-for="category in categories" :key="category.id" @click="openCategory(category)">
                     <button v-if="isAdmin" @click="openEditCategory(category)">edit</button>
-                    <h3>{{ category.name }}</h3>
+                    <h3>❆ {{ category.name }}</h3>
                     <p>{{ category.description }}</p>
                 </div>
             </div>
@@ -32,10 +35,11 @@
             </div>
         </div>
         <div class="category" v-else-if="activeCategory">
-            <button @click="closeCategory">Close</button>
+            <button @click="closeCategory" class="negative">Back</button>
             <h2>{{ activeCategory.name }}</h2>
             <p>{{ activeCategory.description }}</p>
             <div class="entries">
+                <div class="empty" v-if="entries.length === 0">No entries found.</div>
                 <div class="entry" v-for="entry in entries" :key="entry.id">
                     <h4>{{ entry.username }} wrote
                         <DateView :timestamp="entry.timestamp"></DateView>
@@ -47,7 +51,7 @@
             <div>
                 <form @submit.prevent="addEntry">
                     <div>
-                        <label for="entry-content">Add Entry</label>
+                        <label for="entry-content">Add new entry to {{ activeCategory.name }}.</label>
                         <textarea name="entry-content" id="entry-content" cols="30" rows="10"
                                   v-model="entryContent"></textarea>
                     </div>
@@ -83,7 +87,6 @@
             },
             entries() {
                 const entries = this.$store.state.forumEntries;
-                console.log("[Forum] Entries: ", entries);
                 return entries;
             }
         },
@@ -156,15 +159,41 @@
 </script>
 
 <style lang="scss" scoped>
+
+    .banner {
+        display: block;
+        margin: 0 auto;
+        width: 66%;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 5px 5px -5px black;
+    }
+
     form label {
         display: block;
         font-weight: bold;
+        margin-bottom: 0.5rem;
     }
 
     form input, form textarea {
         display: block;
         width: 100%;
         box-sizing: border-box;
+    }
+
+    .entries {
+        margin-bottom: 2rem;
+        .entry {
+            h4 {
+                font-family: 'Piazzolla', serif;
+                margin: 0;
+            }
+
+            pre {
+                font-family: 'Piazzolla', serif;
+                margin: 0;
+            }
+        }
     }
 
     button {
@@ -189,10 +218,22 @@
                 float: right;
             }
 
+            transition: padding-left 0.3s ease-out;
+
             &:hover {
-                background-color: rgba(0, 0, 0, 0.1);
                 cursor: pointer;
+                padding-left: 1rem;
             }
         }
+    }
+
+    textarea {
+        border: solid 1px #EFEFEF;
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 1rem;
+        font-family: 'Piazzolla', serif;
+        font-size: 1rem;
+        padding: 0.5rem;
     }
 </style>

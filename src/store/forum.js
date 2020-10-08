@@ -35,6 +35,7 @@ export const forumActions = {
     async GET_FORUM_ENTRIES({commit}, categoryId) {
         try {
             commit("PROGRESS", 1);
+            commit("SET_FORUM_ENTRIES", []);
             const response = await axios.get(`/forum/entry?category_id=${categoryId}`);
             commit("SET_FORUM_ENTRIES", response.data);
         } finally {
