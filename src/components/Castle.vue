@@ -9,7 +9,8 @@
         <CastleLevel2 v-else-if="points === 2"></CastleLevel2>
         <CastleLevel3 v-else-if="points === 3"></CastleLevel3>
         <CastleLevel4 v-else-if="points === 4"></CastleLevel4>
-        <CastleLevel5 v-else></CastleLevel5>
+        <CastleLevel5 v-else-if="points === 5"></CastleLevel5>
+        <CastleLevel6 v-else></CastleLevel6>
 
         <svg v-for="flagPos in flagPositions"
              :key="flagPos.x + '' + flagPos.y" :x="flagPos.x" :y="flagPos.y"
@@ -42,7 +43,7 @@
                       fill="#564942" stroke-opacity="0.5" :stroke="highlighted ? color : '#C0C0C0'"
                       :stroke-width="highlighted ? 5 : 3"/>
             </svg>
-            <text :x="160" :y="67" class="points" :fill="highlighted ? 'white' : '#E0E0E0'" v-if="castle"
+            <text :x="160" :y="68" class="points" :fill="highlighted ? 'white' : '#E0E0E0'" v-if="castle"
                   text-anchor="middle">{{ points }}
             </text>
         </g>
@@ -96,10 +97,11 @@
     import CastleLevel3 from "./castles/level3";
     import CastleLevel4 from "./castles/level4";
     import CastleLevel5 from "./castles/level5";
+    import CastleLevel6 from "./castles/level6";
 
     export default {
         name: "Castle",
-        components: {CastleLevel1, CastleLevel2, CastleLevel3, CastleLevel4, CastleLevel5},
+        components: {CastleLevel1, CastleLevel2, CastleLevel3, CastleLevel4, CastleLevel5, CastleLevel6},
         props: {
             color: String,
             castle: {
@@ -132,9 +134,11 @@
                     case 4:
                         return [{x: 66, y: 50}, {x: 110, y: 60}];
                     case 5:
-                        return [{x: 45, y: 59}, {x: 90, y: 69}, {x: 91, y: 53}, {x: 132, y: 62}];
+                        return [{x: 53, y: 65}, {x: 89, y: 73}, {x: 90, y: 58}, {x: 122, y: 66}];
+                    case 6:
+                        return [{x: 81, y: 31}];
                     default:
-                        return [{x: 64, y: 39}, {x: 116, y: 50}];
+                        return [{x: 81, y: 31}];
                 }
             }
         },
