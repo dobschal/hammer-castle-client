@@ -2,12 +2,8 @@
     <div>
         <div class="frame"
              ref="frame"></div>
-        <!--             :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }"></div>-->
         <div class="game-container"
-             ref="game-container"
-             v-if="!pageOverlayOpen"
-             :class="{ dragging: dragging }">
-            <!--             :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }">-->
+             ref="game-container">
 
             <svg :width="gameWidth + 'px'"
                  :height="gameHeight + 'px'"
