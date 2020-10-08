@@ -164,6 +164,8 @@
                        :key="'warehouse-' + warehouse.x + '' + warehouse.y + '' + warehouse.user_id">
                         <Warehouse :position="{ x: warehouse.x, y: warehouse.y }"
                                    :dragging="dragging"
+                                   :warehouse="warehouse"
+                                   @CLICK="openWarehousePopup($event)"
                                    :color="warehouse.color"></Warehouse>
                     </g>
 
@@ -482,6 +484,14 @@
                     this.popupItem = road;
                     this.popupPosition = road.middleBetweenCastles;
                 });
+            },
+
+            openWarehousePopup(warehouse) {
+                if (warehouse.user_id === this.user.id) {
+                    this.popupType = "warehouse";
+                    this.popupItem = warehouse;
+                    this.popupPosition = {x: warehouse.x, y: warehouse.y - 40};
+                }
             },
 
             castleClick(castle) {

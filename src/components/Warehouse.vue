@@ -7,9 +7,9 @@
          width="50"
          height="60"
          viewBox="0 0 199 248"
+         @click="$emit('CLICK', warehouse)"
          fill="none"
-         xmlns="http://www.w3.org/2000/svg"
-         v-tooltip="'This is a warehouse, that stores your hammers.'">
+         xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="99.4627"
                  cy="176.465"
                  rx="89.2065"
@@ -87,6 +87,10 @@
         <path d="M110.5 61.7667L105.733 54.8L105 36.8333L110.5 38.3V61.7667Z" fill="#9D754D" stroke="#725232"/>
         <path d="M116 36.8333L110.5 38.3L110.867 62.5L116 59.5667V36.8333Z" fill="#A4794E" stroke="#7B5C3C"/>
         <path d="M109.4 35L105.367 36.4667L110.5 37.9333L115.267 36.4667L109.4 35Z" fill="#383838" stroke="#73502E"/>
+
+        <!-- Circle with Level -->
+        <circle cx="170" cy="30" r="28" fill="rgba(0,0,0,0.5)" stroke="none"/>
+        <text :x="170" :y="47" class="name" v-if="warehouse" text-anchor="middle">{{ warehouse.level }}</text>
     </svg>
 
 </template>
@@ -97,6 +101,7 @@
         props: {
             color: String,
             dragging: Boolean,
+            warehouse: Object,
             position: {
                 type: Object,
                 validator: value => {
@@ -172,5 +177,19 @@
         animation-timing-function: ease-in-out;
         animation-iteration-count: infinite;
         will-change: transform;
+    }
+
+    .name {
+        font: 50px 'MedievalSharp';
+        letter-spacing: 0.5px;
+        fill: white;
+        font-weight: bold;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+        /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
     }
 </style>

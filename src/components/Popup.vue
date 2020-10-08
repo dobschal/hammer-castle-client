@@ -12,7 +12,7 @@
             <div v-else-if="canBuildWarehouse"
                  class="item"
                  @click="buildWarehouse"
-                 v-tooltip="{ content: '<i>A warehouse will increase the amount of hammers you can store.</i>', html: true }">
+                 v-tooltip="'A warehouse will increase the amount of hammers you can store.'">
                 Build Warehouse for {{ warehousePrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
                                                               alt="Hammer">
             </div>
@@ -20,11 +20,19 @@
         </div>
         <div class="items" v-else-if="type === 'castle'">
             <div class="item">{{ item.username }}</div>
-            <div class="item">{{ Math.floor(item.x) }} / {{ Math.floor(item.y) }}</div>
+            <div class="item inactive">{{ Math.floor(item.x) }} / {{ Math.floor(item.y) }}</div>
             <div class="item" v-if="item.isOnline !== undefined" :class="{ positive: item.isOnline }">{{ item.isOnline ?
                 'User is online' : 'Not online'
                 }}
             </div>
+        </div>
+        <div class="items" v-else-if="type === 'warehouse'">
+            <div class="item inactive">You have {{ warehouseAmount }} warehouses.</div>
+            <div v-if="item.level === 1" @click="upgradeWarehouse" class="item"
+                 v-tooltip="'Warehouses level 2 allow you to store gold.'">Upgrade Warehouse for<br> {{ warehousePrice
+                }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
+                        alt="Hammer"></div>
+            <div v-else class="item inactive">The warehouse is already at the max level.</div>
         </div>
     </div>
 </template>
@@ -43,6 +51,9 @@
         computed: {
             warehousePrice() {
                 return this.$store.state.warehousePrice;
+            },
+            warehouseAmount() {
+                return this.$store.state.warehouseAmount;
             },
             catapultPrice() {
                 return this.$store.state.catapultPrice;
@@ -69,6 +80,8 @@
                     this.$set(this.item, "isOnline", isOnline);
                     console.log("[Popup] Got online state: ", isOnline);
                 });
+            } else if (this.type === "warehouse") {
+                this.$store.dispatch("GET_WAREHOUSE_AMOUNT", {x: this.item.x, y: this.item.y});
             }
         },
         methods: {
@@ -92,7 +105,6 @@
                 this.$emit("CLOSE");
             },
             async buildWarehouse() {
-                console.log("[Popup] click: ");
                 if (!this.canBuildWarehouse) return this.$emit("ERROR", "Wrong position for a warehouse...");
                 try {
                     await this.$store.dispatch("CREATE_WAREHOUSE", {
@@ -102,6 +114,18 @@
                         castle2Y: this.item.c2.y,
                         x: this.item.middleBetweenCastles.x,
                         y: this.item.middleBetweenCastles.y
+                    });
+                    await this.$store.dispatch("GET_WAREHOUSE_PRICE");
+                } catch (e) {
+                    this.$emit("ERROR", e.response.data.message);
+                }
+                this.$emit("CLOSE");
+            },
+            async upgradeWarehouse() {
+                try {
+                    await this.$store.dispatch("UPGRADE_WAREHOUSE", {
+                        x: this.item.x,
+                        y: this.item.y
                     });
                     await this.$store.dispatch("GET_WAREHOUSE_PRICE");
                 } catch (e) {
@@ -146,7 +170,7 @@
         user-select: none;
 
         .items {
-            padding-top: 3rem;
+            padding-top: 2.2rem;
 
             .item {
                 text-align: center;
@@ -155,8 +179,8 @@
                 font-weight: bold;
                 letter-spacing: 1.4px;
                 border-bottom: dashed 2px rgba(255, 255, 255, 0.5);
-                margin: 0 2.75rem;
-                padding: .25rem 0;
+                margin: 0 2rem;
+                padding: .2rem 0;
 
                 &.positive {
                     color: #b6e57b;
@@ -168,11 +192,12 @@
 
                 &.inactive {
                     border: none;
-                    font-size: 0.9rem;
+                    font-size: 0.85rem;
+                    opacity: 0.8;
 
                     &:hover {
-                        color: white;
-                        cursor: initial;
+                        color: white !important;
+                        cursor: initial !important;
                     }
                 }
 
