@@ -82,8 +82,10 @@
                 -webkit-overflow-scrolling: touch;
                 -ms-overflow-style: none; /* IE and Edge */
                 scrollbar-width: none;
-                overflow-y: hidden;
+                overflow-y: auto;
                 width: 100%;
+                overflow-x: hidden;
+                box-sizing: border-box;
             }
         }
     }

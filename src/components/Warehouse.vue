@@ -41,8 +41,9 @@
         <line x1="63.1408" y1="170.015" x2="62.1408" y2="203.015" stroke="#311303"/>
         <line x1="68.14" y1="174.032" x2="66.14" y2="205.032" stroke="#311303"/>
         <path d="M54.1411 183.5L71.1411 189" stroke="#311303" stroke-width="3"/>
+
         <!-- Box -->
-        <g class="box">
+        <g class="box" :class="{ 'animate': !dragging }">
             <path d="M62.141 141.5L50.641 136V144.5L62.141 150V141.5Z" fill="#B06326" stroke="#854A1B"/>
             <path d="M55.141 147.5L43.641 142V150.5L55.141 156V147.5Z" fill="#B06326" stroke="#854A1B"/>
             <path d="M61.641 141.5L55.141 148L43.641 141.5L50.141 136L61.641 141.5Z" fill="#B06326" stroke="#854A1B"/>
@@ -62,7 +63,7 @@
             <line x1="48.8839" y1="137.563" x2="57.8839" y2="142.563" stroke="#854A1B"/>
         </g>
         <!-- line to box -->
-        <line x1="52.1411" y1="105" x2="52.1411" y2="142" stroke="black" class="line-to-box"/>
+        <line x1="52.1411" y1="105" x2="52.1411" y2="142" stroke="black" class="line-to-box" :class="{ 'animate': !dragging }"/>
 
 
         <line x1="124.14" y1="122.969" x2="125.14" y2="138.969" stroke="black"/>
@@ -95,6 +96,7 @@
         name: "Warehouse",
         props: {
             color: String,
+            dragging: Boolean,
             position: {
                 type: Object,
                 validator: value => {
@@ -153,20 +155,22 @@
 
     }
 
-    .box {
-        * {
+    .box.animate {
+        path, line {
             animation: move_box;
             animation-duration: 10s;
             animation-timing-function: ease-in-out;
             animation-iteration-count: infinite;
+            will-change: transform;
         }
     }
 
-    .line-to-box {
+    .line-to-box.animate {
         transform-origin: 50% 50%;
         animation: move_line_box;
         animation-duration: 10s;
         animation-timing-function: ease-in-out;
         animation-iteration-count: infinite;
+        will-change: transform;
     }
 </style>

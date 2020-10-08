@@ -1,9 +1,12 @@
 <template>
     <div>
+        <div class="frame"
+             ref="frame"></div>
+        <!--             :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }"></div>-->
         <div class="game-container"
              ref="game-container"
-             :class="{ dragging: dragging }"
-             :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }">
+             :class="{ dragging: dragging }">
+            <!--             :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }">-->
 
             <svg :width="gameWidth + 'px'"
                  :height="gameHeight + 'px'"
@@ -43,7 +46,8 @@
                               :x="Math.floor(viewPosition.x / 1000) * 1000 + index * 1000 + 2"
                               :y="Math.floor(viewPosition.y / 1000) * 1000 + index2 * 1000 - 2"
                               class="grid-number">
-                            {{ Math.floor(viewPosition.x / 1000) * 1000 + index * 1000 }} / {{ Math.floor(viewPosition.y / 1000) * 1000 + index2 * 1000 }}
+                            {{ Math.floor(viewPosition.x / 1000) * 1000 + index * 1000 }} / {{
+                            Math.floor(viewPosition.y / 1000) * 1000 + index2 * 1000 }}
                         </text>
                     </g>
 
@@ -76,7 +80,8 @@
                                         stroke="none"/>
                             </svg>
                         </g>
-                        <g v-for="blockArea in blockAreas" :key="'build-block-area-' + blockArea.x + '' + blockArea.y">
+                        <g v-for="blockArea in blockAreas"
+                           :key="'build-block-area-' + blockArea.x + '' + blockArea.y">
                             <svg :x="blockArea.x - blockAreaSize"
                                  :y="blockArea.y - blockAreaSize"
                                  :width="blockAreaSize * 2"
@@ -161,6 +166,7 @@
                     <g v-for="warehouse in warehouses"
                        :key="'warehouse-' + warehouse.x + '' + warehouse.y + '' + warehouse.user_id">
                         <Warehouse :position="{ x: warehouse.x, y: warehouse.y }"
+                                   :dragging="dragging"
                                    :color="warehouse.color"></Warehouse>
                     </g>
 
@@ -168,8 +174,6 @@
 
             </svg>
         </div>
-        <div class="frame"
-             :style="{ transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }"></div>
         <DialogBox v-if="showDialog" @CLOSE="showDialog = false"
                    :latest-clicked-castle="latestClickedCastle"></DialogBox>
         <NavigationBar :activeAction.sync="activeAction" @BUILD_IT="triggerCastleBuild"></NavigationBar>
@@ -181,7 +185,7 @@
         <ErrorToast v-if="error">{{ error }}</ErrorToast>
         <Popup :zoomFactor="zoomFactor"
                :mouseMoveDelta="mouseMoveDelta"
-               v-if="popupType && popupPosition"
+               v-if="!dragging && popupType && popupPosition"
                :type="popupType"
                :item="popupItem"
                :viewPosition="viewPosition"
@@ -601,8 +605,14 @@
                     this.mouseMoveDelta.y += (this.lastMousePosition.y - y);
                     this.lastMousePosition.x = x;
                     this.lastMousePosition.y = y;
+                    this.updateMouseMoveDeltaTransform();
                     this.waitingForAnimationFrame = false;
                 });
+            },
+            updateMouseMoveDeltaTransform() {
+                const transformStyle = 'translateX(' + (-this.mouseMoveDelta.x) + 'px) translateY(' + (-this.mouseMoveDelta.y) + 'px)';
+                this.$refs["game-container"].style.transform = transformStyle;
+                this.$refs["frame"].style.transform = transformStyle;
             },
             onMouseUp() {
                 if (this.dragging) {
@@ -611,6 +621,7 @@
                         this.viewPosition.y += Math.round(this.mouseMoveDelta.y * this.zoomFactor);
                         this.mouseMoveDelta.x = 0;
                         this.mouseMoveDelta.y = 0;
+                        this.updateMouseMoveDeltaTransform();
                         this.load();
                     }
                     if (this.popupType) this.closePopup();
@@ -667,6 +678,7 @@
         pointer-events: none;
         background: transparent;
         box-shadow: inset 0 0 20px 20px #b6e57b;
+        will-change: transform;
     }
 
     .footer {
