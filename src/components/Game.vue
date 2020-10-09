@@ -122,6 +122,7 @@
                             :last-mouse-position="lastMousePosition"
                             :mouse-down-timestamp="mouseDownTimestamp"
                             :dragging="dragging"
+                            :pageOverlayOpen="pageOverlayOpen"
                             :view-position="viewPosition"
                             ref="buildCastle"
                             @DONE="activeAction = ''"
@@ -135,6 +136,7 @@
                                 :castle="castle"
                                 :color="castle.color"
                                 :dragging="dragging"
+                                :pageOverlayOpen="pageOverlayOpen"
                                 :action-action="activeAction"
                                 @CLICK="castleClick($event)"
                                 @HIGHLIGHT-ON="highlightedCastle = castle"
@@ -164,6 +166,7 @@
                        :key="'warehouse-' + warehouse.x + '' + warehouse.y + '' + warehouse.user_id">
                         <Warehouse :position="{ x: warehouse.x, y: warehouse.y }"
                                    :dragging="dragging"
+                                   :pageOverlayOpen="pageOverlayOpen"
                                    :warehouse="warehouse"
                                    @CLICK="openWarehousePopup($event)"
                                    :color="warehouse.color"></Warehouse>

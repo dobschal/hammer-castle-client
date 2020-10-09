@@ -199,6 +199,7 @@
       &::before {
         font-size: 30px;
         line-height: 15px;
+        color: rgba(0, 0, 0, 1) !important;
       }
     }
 
@@ -208,6 +209,7 @@
       &::before {
         font-size: 30px;
         line-height: 15px;
+        color: rgba(0, 0, 0, 0.5);
       }
     }
   }

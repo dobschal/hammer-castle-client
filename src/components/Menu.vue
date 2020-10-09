@@ -145,7 +145,7 @@
                     margin-top: -24px;
                     margin-right: 1.4rem;
                     float: right;
-                    transition: transform 0.5s ease-out;
+                    /*transition: transform 0.5s ease-out;*/
 
                     &:hover, &:active {
                         cursor: pointer;
@@ -205,7 +205,7 @@
                             padding: 0.77rem 1rem;
                             border-bottom: dashed 2px rgba(0, 0, 0, 0.15);
                             white-space: nowrap;
-                            transition: transform 0.3s ease-out;
+                            /*transition: transform 0.3s ease-out;*/
 
                             &:last-child {
                                 border-bottom: none;

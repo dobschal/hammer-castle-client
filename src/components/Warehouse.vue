@@ -43,7 +43,7 @@
         <path d="M54.1411 183.5L71.1411 189" stroke="#311303" stroke-width="3"/>
 
         <!-- Box -->
-        <g class="box" :class="{ 'animate': !dragging }">
+        <g class="box" :class="{ 'animate': !dragging && !pageOverlayOpen }">
             <path d="M62.141 141.5L50.641 136V144.5L62.141 150V141.5Z" fill="#B06326" stroke="#854A1B"/>
             <path d="M55.141 147.5L43.641 142V150.5L55.141 156V147.5Z" fill="#B06326" stroke="#854A1B"/>
             <path d="M61.641 141.5L55.141 148L43.641 141.5L50.141 136L61.641 141.5Z" fill="#B06326" stroke="#854A1B"/>
@@ -63,7 +63,7 @@
             <line x1="48.8839" y1="137.563" x2="57.8839" y2="142.563" stroke="#854A1B"/>
         </g>
         <!-- line to box -->
-        <line x1="52.1411" y1="105" x2="52.1411" y2="142" stroke="black" class="line-to-box" :class="{ 'animate': !dragging }"/>
+        <line x1="52.1411" y1="105" x2="52.1411" y2="142" stroke="black" class="line-to-box" :class="{ 'animate': !dragging && !pageOverlayOpen }"/>
 
 
         <line x1="124.14" y1="122.969" x2="125.14" y2="138.969" stroke="black"/>
@@ -101,6 +101,7 @@
         props: {
             color: String,
             dragging: Boolean,
+            pageOverlayOpen: Boolean,
             warehouse: Object,
             position: {
                 type: Object,

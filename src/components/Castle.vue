@@ -23,7 +23,7 @@
 
             <g clip-path="url(#flagMaskCastle)">
                 <path class="flag"
-                      :class="{ animated: !dragging }"
+                      :class="{ animated: !dragging && !pageOverlayOpen }"
                       :fill="color"
                       d="M100,31c-8.118,0-8.364,4.504-16.471,4.504
 		c-7.657,0-8.026-4.504-16.47-4.504c-8.675,0-8.675,4.504-16.471,4.504c-8.091,0-8.091-4.504-16.471-4.504
@@ -115,6 +115,7 @@
                 }
             },
             dragging: Boolean,
+            pageOverlayOpen: Boolean,
             actionAction: String
         },
         computed: {

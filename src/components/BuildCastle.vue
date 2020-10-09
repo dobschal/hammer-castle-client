@@ -15,6 +15,7 @@
     props: {
       mouseDownTimestamp: Number,
       dragging: Boolean,
+      pageOverlayOpen: Boolean,
       viewPosition: Object,
       zoomFactor: Number,
       lastMousePosition: Object,

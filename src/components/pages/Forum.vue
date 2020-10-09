@@ -214,15 +214,46 @@
 
     .category-list {
         .category {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            transition: padding-left 0.1s ease-out;
+            margin-bottom: 0.5rem;
+            box-sizing: border-box;
+            width: calc(100% - 0.5rem);
+            border-radius: 0.5rem;
+            box-shadow: 0 5px 5px -5px black;
+            min-height: 4.7rem;
+
+            h3 {
+                margin: 0;
+            }
+
+            p {
+                margin: 0;
+                color: #3B3B3B;
+            }
+
+            &::before {
+                font-family: 'MedievalSharp', cursive;
+                color: #3B3B3B;
+                content: ">";
+                display: block;
+                font-size: 30px;
+                line-height: 30px;
+                float: right;
+                margin: 0.5rem 0.5rem 0 1rem;
+                transform: rotate(90deg);
+                vertical-align: top;
+            }
+
             button {
                 float: right;
             }
 
-            transition: padding-left 0.3s ease-out;
-
             &:hover {
                 cursor: pointer;
-                padding-left: 1rem;
+                background-color: rgba(255, 255, 255, 0.9);
+                box-shadow: 0 1px 5px -5px black;
             }
         }
     }
