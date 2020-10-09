@@ -227,8 +227,8 @@
     import cookie from "js-cookie";
     import ZoomButtons from "./ZoomButtons";
     import PageOverlay from "./PageOverlay";
-    import InfoView from "./Info";
-    import Forum from "./Forum";
+    import InfoView from "./pages/Info";
+    import Forum from "./pages/Forum";
 
     export default {
         name: "Game",

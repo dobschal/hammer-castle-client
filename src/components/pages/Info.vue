@@ -1,10 +1,10 @@
 <template>
     <div class="info-view">
         <p>In the browser game Hammer Castle you build castles to build your own great empire.</p>
-        <img class="empire" src="../assets/info/empire.png" alt="Banner">
+        <img class="empire" src="../../assets/info/empire.png" alt="Banner">
 
         <h3>Castles</h3>
-        <img class="castle" src="../assets/info/castle.png" alt="Castle">
+        <img class="castle" src="../../assets/info/castle.png" alt="Castle">
         <p>Castles are the central element of the game. To build a castle, you need hammers. The price is shown in
             button
             “Build Castle for …”.
@@ -13,7 +13,7 @@
             own.</p>
 
         <h3>Warehouses</h3>
-        <img src="../assets/info/warehouse.png" alt="Warehouse">
+        <img src="../../assets/info/warehouse.png" alt="Warehouse">
         <p>Warehouses store your hammers. Click on a road between two of your castle and select “Build Warehouse for …”.
             The more warehouses you have, the more hammers you can store.</p>
         <p>
@@ -21,12 +21,12 @@
             destroyed too!</p>
 
         <h3>Conquers</h3>
-        <img class="conquer" src="../assets/info/conquer.png" alt="Conquer">
+        <img class="conquer" src="../../assets/info/conquer.png" alt="Conquer">
         <p>To conquer an opponents castle, you simply need to attach more roads at the castle than your opponent.
             The level shown at a castle, is the amount of owned roads connected to it.</p>
 
         <h3>Catapults</h3>
-        <img class="catapult" src="../assets/info/catapult.png" alt="Catapult">
+        <img class="catapult" src="../../assets/info/catapult.png" alt="Catapult">
         <p>To destroy a castle, you can build a catapult on a road next to an opponents castle. The catapult has chance
             to
             destroy the castle, depending on the castles level.</p>

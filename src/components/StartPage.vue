@@ -3,6 +3,11 @@
     <div class="wrapper">
       <div class="container" v-if="!loading">
         <div class="logo"><img src="../assets/logo.svg" alt="Hammer Castle Logo"></div>
+        <div class="cookie" v-if="showRegistration">This page uses cookies and the local storage of your browser. If you
+          disagree with that, do
+          not create an account and just leave that page. Further information can be found here: <b class="link"
+                                                                                                    @click="openPrivacyPolicy">privacy
+            & cookie policy</b></div>
         <div v-if="showRegistration">
           <h2>Come in!</h2>
           <p>Hammer Castle is waiting for you!</p>
@@ -32,6 +37,12 @@
             <span class="link generate-color-link" @click="newColor">Change Color</span>
           </p>
           <div v-if="showRegistration">
+            <div class="toggle"
+                 :class="{ toggled: privacyPolicyAccepted }"
+                 @click="togglePrivacyAccept">
+              You need to read and accept the <b class="link" @click="openPrivacyPolicy">privacy & cookie policy</b> in
+              order to create a new account.
+            </div>
             <button type="submit">Create Account</button>
             or <span class="link" @click="showRegistration = false">log in</span>
           </div>
@@ -51,81 +62,156 @@
         </div>
         <div>
           <h2>Imprint</h2>
-          <p>© 2020, Sascha Dobschal. The game Hammer Castle was created and is an idea of Sascha Dobschal. info@hammercastle.de</p>
+          <p>© 2020, Sascha Dobschal. The game Hammer Castle was created and is an idea of Sascha Dobschal.</p>
+          <p>Contact: info@hammercastle.de
+            <br> <b class="link" @click="openImprint">Imprint</b> | <b class="link" @click="openPrivacyPolicy">Privacy &
+              Cookie
+              Policy</b></p>
         </div>
       </div>
       <div v-else>Loading...</div>
     </div>
+    <PageOverlay v-if="pageOverlayOpen && pageOverlayType === 'imprint'"
+                 title="Impressum"
+                 @CLOSE="closePage">
+      <Imprint></Imprint>
+    </PageOverlay>
+    <PageOverlay v-if="pageOverlayOpen && pageOverlayType === 'privacy'"
+                 title="Privacy & Cookie Policy"
+                 @CLOSE="closePage">
+      <PrivacyPolicy></PrivacyPolicy>
+    </PageOverlay>
   </div>
 </template>
 
 <script>
-  import InfoView from "./Info";
+  import InfoView from "./pages/Info";
+  import Imprint from "./pages/Imprint";
+  import PrivacyPolicy from "./pages/PrivacyPolicy";
+  import PageOverlay from "./PageOverlay";
 
   function randomColor() {
-    let color = "#" + Math.floor(Math.random()*16777215).toString(16);
+    let color = "#" + Math.floor(Math.random() * 16777215).toString(16);
     while (color.length < 7) {
       color += "f";
     }
     return color;
   }
 
-export default {
-  name: "Authenticator",
-  components: {InfoView},
-  data() {
-    return {
-      password: "",
-      username: "",
-      passwordVerify: "",
-      error: undefined,
-      showRegistration: Boolean(window.localStorage.getItem("was-here-before") !== "yes"),
-      randomColor: randomColor()
-    };
-  },
-  computed: {
-    authenticated() {
-      return this.$store.state.authToken;
+  export default {
+    name: "Authenticator",
+    components: {InfoView, PageOverlay, Imprint, PrivacyPolicy},
+    data() {
+      return {
+        password: "",
+        username: "",
+        passwordVerify: "",
+        error: undefined,
+        showRegistration: Boolean(window.localStorage.getItem("was-here-before") !== "yes"),
+        randomColor: randomColor(),
+        pageOverlayOpen: false,
+        pageOverlayType: "",
+        privacyPolicyAccepted: false
+      };
     },
-    inputValid() {
-      return (!this.showRegistration || this.password === this.passwordVerify) && this.password.length > 7 && this.username;
-    },
-    loading() {
-      return this.$store.getters.busy;
-    }
-  },
-  created() {
-    window.localStorage.setItem("was-here-before", "yes");
-  },
-  methods: {
-    newColor() {
-      this.randomColor = randomColor();
-    },
-    async authenticate() {
-      if (!this.inputValid) {
-        this.error = "Please fill out the form. Your password should contain at least 8 characters.";
-        return;
+    computed: {
+      authenticated() {
+        return this.$store.state.authToken;
+      },
+      inputValid() {
+        return (!this.showRegistration || this.password === this.passwordVerify) && this.password.length > 7 && this.username;
+      },
+      loading() {
+        return this.$store.getters.busy;
       }
-      this.error = undefined;
-      try {
-        await this.$store.dispatch(this.showRegistration ? "CREATE_USER" : "AUTHENTICATE", {
-          username: this.username,
-          password: this.password,
-          color: this.randomColor
-        });
-        if(this.showRegistration) {
-          this.showRegistration = false;
+    },
+    created() {
+      window.localStorage.setItem("was-here-before", "yes");
+    },
+    methods: {
+      togglePrivacyAccept() {
+        console.log("[StartPage] yeah: ", this.privacyPolicyAccepted);
+        this.privacyPolicyAccepted = !this.privacyPolicyAccepted;
+      },
+      openPrivacyPolicy() {
+        this.pageOverlayOpen = true;
+        this.pageOverlayType = "privacy";
+      },
+      openImprint() {
+        this.pageOverlayOpen = true;
+        this.pageOverlayType = "imprint";
+      },
+      closePage() {
+        this.pageOverlayOpen = false;
+        this.pageOverlayType = "";
+      },
+      newColor() {
+        this.randomColor = randomColor();
+      },
+      async authenticate() {
+        if (!this.inputValid) {
+          this.error = "Please fill out the form. Your password should contain at least 8 characters.";
+          return;
         }
-      } catch (e) {
-        console.log("[Authenticator] Login error: ", e);
-        this.error = e.response.data.message;
+        this.error = undefined;
+        if (this.showRegistration && !this.privacyPolicyAccepted) {
+          this.error = "You need to read and accept the privacy policy.";
+          return;
+        }
+        try {
+          await this.$store.dispatch(this.showRegistration ? "CREATE_USER" : "AUTHENTICATE", {
+            username: this.username,
+            password: this.password,
+            color: this.randomColor
+          });
+          if (this.showRegistration) {
+            this.showRegistration = false;
+          }
+        } catch (e) {
+          console.log("[Authenticator] Login error: ", e);
+          this.error = e.response.data.message;
+        }
       }
     }
-  }
-};
+  };
 </script>
 
 <style lang="scss" scoped>
+
+  .toggle {
+    margin-bottom: 1rem;
+
+    &::before {
+      content: "✓";
+      font-size: 0;
+      line-height: 0;
+      display: block;
+      float: left;
+      width: 20px;
+      height: 20px;
+      margin: 0.5rem 1rem 0.5rem 0;
+      border: 1px solid black;
+      border-radius: 50%;
+      text-align: center;
+    }
+
+    &.toggled {
+      &::before {
+        font-size: 30px;
+        line-height: 15px;
+      }
+    }
+
+    &:hover {
+      cursor: pointer;
+
+      &::before {
+        font-size: 30px;
+        line-height: 15px;
+      }
+    }
+  }
+
   .start-page {
     position: fixed;
     top: 0;
@@ -136,6 +222,15 @@ export default {
     background-size: cover;
     font-family: 'Piazzolla', serif !important;
     letter-spacing: initial;
+
+    .cookie {
+      font-size: 0.7rem;
+      line-height: 0.9rem;
+      background-color: rgba(242, 112, 255, 0.41);
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 25px 25px -25px rgba(0, 0, 0, 0.3);
+    }
 
     .wrapper {
       width: 100%;

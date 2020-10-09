@@ -2,7 +2,7 @@
     <div class="forum">
         <div v-if="!activeCategory">
             <p>This is the amazing forum to discuss new features and change requests. Aaaand of course to report bugs...</p>
-            <img src="../assets/banner.gif" alt="Banner" class="banner">
+            <img src="../../assets/banner.gif" alt="Banner" class="banner">
         </div>
         <div class="categories" v-if="!activeCategory">
             <div class="header">
@@ -64,7 +64,7 @@
 
 <script>
 
-    import DateView from "./DateView";
+    import DateView from "../DateView";
 
     export default {
         name: "Forum",
