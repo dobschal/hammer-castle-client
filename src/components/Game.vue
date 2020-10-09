@@ -544,19 +544,21 @@
             },
 
             zoom(delta) {
-                if (this.waitingForAnimationFrame) return;
-                this.waitingForAnimationFrame = true;
+                // if (this.waitingForAnimationFrame) return console.log("WAIT FOR FRAME ZOOM");
+                // this.waitingForAnimationFrame = true;
                 window.requestAnimationFrame(() => {
                     this.zoomFactor = Math.min(1.8, Math.max(0.3, this.zoomFactor + delta));
                     if (this.zoomFactor > 0.3 && this.zoomFactor < 1.8) {
                         this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
                         this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
+                        if (this.zoomLoadTimeout) clearTimeout(this.zoomLoadTimeout);
+                        this.zoomLoadTimeout = setTimeout(() => {
+                            this.load();
+                            this.$util.setUrlParam("zoom", this.zoomFactor.toFixed(2));
+                        }, 500);
                     }
-                    this.waitingForAnimationFrame = false;
+                    // this.waitingForAnimationFrame = false;
                 });
-                if (this.zoomLoadTimeout) clearTimeout(this.zoomLoadTimeout);
-                this.zoomLoadTimeout = setTimeout(this.load.bind(this), 1000);
-                this.$util.setUrlParam("zoom", this.zoomFactor.toFixed(2));
             },
 
             onKeyUp(event) {
@@ -615,15 +617,15 @@
                 this.onPointerMove({x, y});
             },
             onPointerMove({x, y}) {
-                if (!this.dragging || this.waitingForAnimationFrame) return;
-                this.waitingForAnimationFrame = true;
+                if (!this.dragging/* || this.waitingForAnimationFrame*/) return console.log("WAIT FOR FRAME MOVE");
+                // this.waitingForAnimationFrame = true;
                 window.requestAnimationFrame(() => {
+                    // this.waitingForAnimationFrame = false;
                     this.mouseMoveDelta.x += (this.lastMousePosition.x - x);
                     this.mouseMoveDelta.y += (this.lastMousePosition.y - y);
                     this.lastMousePosition.x = x;
                     this.lastMousePosition.y = y;
                     this.updateMouseMoveDeltaTransform();
-                    this.waitingForAnimationFrame = false;
                 });
             },
             updateMouseMoveDeltaTransform() {
