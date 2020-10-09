@@ -130,17 +130,19 @@
                             @ERROR="error = $event"
                     ></BuildCastle>
 
-                    <g v-for="castle in castles"
-                       :key="'castle-' + castle.x + '' + castle.y">
-                        <Castle :position="{ x: castle.x, y: castle.y }"
-                                :castle="castle"
-                                :color="castle.color"
-                                :dragging="dragging"
-                                :pageOverlayOpen="pageOverlayOpen"
-                                :action-action="activeAction"
-                                @CLICK="castleClick($event)"
-                                @HIGHLIGHT-ON="highlightedCastle = castle"
-                                @HIGHLIGHT-OFF="highlightedCastle = undefined"></Castle>
+                    <g v-if="zoomFactor <= 1.3">
+                        <g v-for="castle in castles"
+                           :key="'castle-' + castle.x + '' + castle.y">
+                            <Castle :position="{ x: castle.x, y: castle.y }"
+                                    :castle="castle"
+                                    :color="castle.color"
+                                    :dragging="dragging"
+                                    :pageOverlayOpen="pageOverlayOpen"
+                                    :action-action="activeAction"
+                                    @CLICK="castleClick($event)"
+                                    @HIGHLIGHT-ON="highlightedCastle = castle"
+                                    @HIGHLIGHT-OFF="highlightedCastle = undefined"></Castle>
+                        </g>
                     </g>
 
                     <g v-for="catapult in catapults"

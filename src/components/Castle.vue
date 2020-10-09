@@ -139,7 +139,7 @@
                     case 6:
                         return [{x: 42, y: 76}];
                     default:
-                        return [{x: 81, y: 31}];
+                        return [{x: 42, y: 76}];
                 }
             }
         },
