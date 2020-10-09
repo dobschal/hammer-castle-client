@@ -9,7 +9,9 @@
          viewBox="0 0 199 248"
          @click="$emit('CLICK', warehouse)"
          fill="none"
-         xmlns="http://www.w3.org/2000/svg">
+         xmlns="http://www.w3.org/2000/svg"
+         @mouseover="highlighted = true"
+         @mouseout="highlighted = false">
         <ellipse cx="99.4627"
                  cy="176.465"
                  rx="89.2065"
@@ -43,7 +45,7 @@
         <path d="M54.1411 183.5L71.1411 189" stroke="#311303" stroke-width="3"/>
 
         <!-- Box -->
-        <g class="box" :class="{ 'animate': !dragging && !pageOverlayOpen }">
+        <g class="box" :class="{ 'animate': highlighted && !dragging && !pageOverlayOpen }">
             <path d="M62.141 141.5L50.641 136V144.5L62.141 150V141.5Z" fill="#B06326" stroke="#854A1B"/>
             <path d="M55.141 147.5L43.641 142V150.5L55.141 156V147.5Z" fill="#B06326" stroke="#854A1B"/>
             <path d="M61.641 141.5L55.141 148L43.641 141.5L50.141 136L61.641 141.5Z" fill="#B06326" stroke="#854A1B"/>
@@ -63,7 +65,7 @@
             <line x1="48.8839" y1="137.563" x2="57.8839" y2="142.563" stroke="#854A1B"/>
         </g>
         <!-- line to box -->
-        <line x1="52.1411" y1="105" x2="52.1411" y2="142" stroke="black" class="line-to-box" :class="{ 'animate': !dragging && !pageOverlayOpen }"/>
+        <line x1="52.1411" y1="105" x2="52.1411" y2="142" stroke="black" class="line-to-box" :class="{ 'animate': highlighted && !dragging && !pageOverlayOpen }"/>
 
 
         <line x1="124.14" y1="122.969" x2="125.14" y2="138.969" stroke="black"/>
@@ -112,6 +114,7 @@
         },
         data() {
             return {
+                highlighted: false,
                 boxPosition: {
                     x: 0,
                     y: 50
@@ -127,13 +130,13 @@
         0% {
             transform: translateY(0px);
         }
-        50% {
+        10% {
             transform: translateY(0px);
         }
-        60% {
+        20% {
             transform: translateY(60px);
         }
-        90% {
+        50% {
             transform: translateY(60px);
         }
         100% {
@@ -146,13 +149,13 @@
         0% {
             transform: scale(1, 1) translateY(0px);
         }
-        50% {
+        10% {
             transform: scale(1, 1) translateY(0px);
         }
-        60% {
+        20% {
             transform: scale(1, 2.5) translateY(10px);
         }
-        90% {
+        50% {
             transform: scale(1, 2.5) translateY(10px);
         }
         100% {
@@ -164,7 +167,7 @@
     .box.animate {
         path, line {
             animation: move_box;
-            animation-duration: 10s;
+            animation-duration: 3s;
             animation-timing-function: ease-in-out;
             animation-iteration-count: infinite;
             will-change: transform;
@@ -174,7 +177,7 @@
     .line-to-box.animate {
         transform-origin: 50% 50%;
         animation: move_line_box;
-        animation-duration: 10s;
+        animation-duration: 3s;
         animation-timing-function: ease-in-out;
         animation-iteration-count: infinite;
         will-change: transform;
