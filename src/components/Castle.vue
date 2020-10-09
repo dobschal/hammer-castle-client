@@ -137,7 +137,7 @@
                     case 5:
                         return [{x: 53, y: 65}, {x: 89, y: 73}, {x: 90, y: 58}, {x: 122, y: 66}];
                     case 6:
-                        return [{x: 81, y: 31}];
+                        return [{x: 42, y: 76}];
                     default:
                         return [{x: 81, y: 31}];
                 }
