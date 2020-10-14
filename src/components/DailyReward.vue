@@ -2,7 +2,7 @@
     <div class="daily-reward"
          :class="{ active: active }"
          @click="claimDailyReward"
-         v-tooltip="{ content: 'Claim your daily reward: <br><br>Your storage will be filled up with hammers for free !!!', html: true }">
+         v-tooltip="{ content: 'Claim your daily reward: <br><br>Your storage will be filled up with hammers and you get a beer for free !!!', html: true }">
         <span class="count-down" v-if="user && !active" v-tooltip="'You can claim your daily reward once in 24 hours.'">{{ countDown }}</span>
     </div>
 </template>

@@ -21,7 +21,7 @@
              fill="none"
              xmlns="http://www.w3.org/2000/svg">
 
-            <g clip-path="url(#flagMaskCastle)">
+            <g clip-path="url(#flagMaskCastle)" :style="{ transform: 'scale(' + flagPos.scale + ')' }">
                 <path class="flag"
                       :class="{ animated: highlighted && !dragging && !pageOverlayOpen }"
                       :fill="color"
@@ -127,19 +127,19 @@
                 switch (this.points) {
                     case 0:
                     case 1:
-                        return [{x: 91, y: 66}];
+                        return [{x: 91, y: 66, scale: 1 }];
                     case 2:
-                        return [{x: 90, y: 55}];
+                        return [{x: 90, y: 55, scale: 1 }];
                     case 3:
-                        return [{x: 70, y: 49}];
+                        return [{x: 70, y: 49, scale: 1 }];
                     case 4:
-                        return [{x: 66, y: 50}, {x: 110, y: 60}];
+                        return [{x: 72, y: 63, scale: 0.9 }, {x: 106, y: 69, scale: 1 }];
                     case 5:
-                        return [{x: 53, y: 65}, {x: 89, y: 73}, {x: 90, y: 58}, {x: 122, y: 66}];
+                        return [{x: 56, y: 67, scale: 0.9 }, {x: 89, y: 74, scale: 1 }, {x: 100, y: 65, scale: 0.7 }, {x: 126, y: 69, scale: 0.9 }];
                     case 6:
-                        return [{x: 42, y: 76}];
+                        return [{x: 38, y: 62, scale: 0.9 }, {x: 102, y: 60, scale: 0.5 }, {x: 140, y: 68, scale: 0.65 }];
                     default:
-                        return [{x: 42, y: 76}];
+                        return [{x: 42, y: 76, scale: 1 }];
                 }
             }
         },
@@ -210,6 +210,8 @@
     }
 
     .flag {
+        transform-origin: 50% 50%;
+        will-change: transform;
 
         &.animated {
             animation: move_flag;

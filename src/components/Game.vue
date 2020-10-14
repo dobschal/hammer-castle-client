@@ -547,8 +547,9 @@
                 // if (this.waitingForAnimationFrame) return console.log("WAIT FOR FRAME ZOOM");
                 // this.waitingForAnimationFrame = true;
                 window.requestAnimationFrame(() => {
-                    this.zoomFactor = Math.min(1.8, Math.max(0.3, this.zoomFactor + delta));
-                    if (this.zoomFactor > 0.3 && this.zoomFactor < 1.8) {
+                    const oldFactor = this.zoomFactor;
+                    this.zoomFactor = Math.min(1.8, Math.max(0.35, this.zoomFactor + delta));
+                    if (oldFactor > 0.35 && oldFactor < 1.8) {
                         this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
                         this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
                         if (this.zoomLoadTimeout) clearTimeout(this.zoomLoadTimeout);
@@ -617,7 +618,7 @@
                 this.onPointerMove({x, y});
             },
             onPointerMove({x, y}) {
-                if (!this.dragging/* || this.waitingForAnimationFrame*/) return console.log("WAIT FOR FRAME MOVE");
+                if (!this.dragging/* || this.waitingForAnimationFrame*/) return;
                 // this.waitingForAnimationFrame = true;
                 window.requestAnimationFrame(() => {
                     // this.waitingForAnimationFrame = false;
