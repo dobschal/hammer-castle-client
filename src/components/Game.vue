@@ -271,7 +271,7 @@
                 latestClickedCastle: undefined,
                 menuOpen: false,
                 highlightedCastle: undefined,
-                error: "fjshog dkbdogb dfgjb fgjkb fgjb fgkbj fgkjb",
+                error: "",
                 popupType: "",
                 popupItem: undefined,
                 popupPosition: undefined,
