@@ -184,7 +184,7 @@
               @CLOSE-MENU="menuOpen = false"
               @GO_TO="moveMapTo($event)"
               @OPEN_PAGE="openPage($event)"></Menu>
-        <ErrorToast v-if="error">{{ error }}</ErrorToast>
+        <ErrorToast v-if="error" @CLICK="error = ''">{{ error }}</ErrorToast>
         <Popup :zoomFactor="zoomFactor"
                :mouseMoveDelta="mouseMoveDelta"
                v-if="!dragging && popupType && popupPosition"
@@ -271,7 +271,7 @@
                 latestClickedCastle: undefined,
                 menuOpen: false,
                 highlightedCastle: undefined,
-                error: "",
+                error: "fjshog dkbdogb dfgjb fgjkb fgjb fgkbj fgkjb",
                 popupType: "",
                 popupItem: undefined,
                 popupPosition: undefined,
@@ -386,7 +386,7 @@
                         if (this.error === val) {
                             this.error = "";
                         }
-                    }, 3000);
+                    }, 3500);
                 }
             }
         },
