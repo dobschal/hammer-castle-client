@@ -6,25 +6,31 @@
         <div class="items" v-if="type === 'road'">
             <div v-if="canBuildCatapult" class="item" @click="buildCatapult"
                  v-tooltip="'A catapult is going to attack the opponents castle. There is a possibility that the opponents castle gets destroyed or the catapult remains unaffected.'">
-                Build Catapult for {{ catapultPrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
-                                                            alt="Hammer">
+                Build Catapult for <br>{{ catapultPrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
+                                                                alt="Hammer">
             </div>
             <div v-else-if="canBuildWarehouse"
                  class="item"
                  @click="buildWarehouse"
                  v-tooltip="'A warehouse will increase the amount of hammers you can store.'">
-                Build Warehouse for {{ warehousePrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
-                                                              alt="Hammer">
+                Build Warehouse for <br>{{ warehousePrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
+                                                                  alt="Hammer">
             </div>
             <div v-else class="item inactive">Catapults need to be on a road next to an opponents Castle.</div>
         </div>
-        <div class="items" v-else-if="type === 'castle'">
-            <div class="item">{{ item.username }}</div>
+        <div class="items" v-else-if="type === 'castle' && !isMyCastle">
+            <div class="item no-link">{{ item.username }}</div>
             <div class="item inactive">{{ Math.floor(item.x) }} / {{ Math.floor(item.y) }}</div>
-            <div class="item" v-if="item.isOnline !== undefined" :class="{ positive: item.isOnline }">{{ item.isOnline ?
+            <div class="item no-link" v-if="item.isOnline !== undefined" :class="{ positive: item.isOnline }">{{
+                item.isOnline ?
                 'User is online' : 'Not online'
                 }}
             </div>
+        </div>
+        <div class="items" v-else-if="type === 'castle' && isMyCastle">
+            <div class="item">Build Knight</div>
+            <div class="item" @click="$emit('update:type', 'castle-change-name')">Change Name</div>
+            <div class="item" @click="deleteCastle">Destroy</div>
         </div>
         <div class="items" v-else-if="type === 'warehouse'">
             <div class="item inactive">You have {{ warehouseAmount }} warehouses.</div>
@@ -61,6 +67,9 @@
             user() {
                 return this.$store.state.user;
             },
+            isMyCastle() {
+                return this.type === "castle" && this.item.userId === this.user.id;
+            },
 
             //  the user can build a catapult on a road between an owned castle and an opponents castle...
             canBuildCatapult() {
@@ -85,6 +94,19 @@
             }
         },
         methods: {
+            async deleteCastle() {
+
+                // TODO: Error handling and dialog?
+
+                await this.$store.dispatch("DELETE_CASTLE", {
+                    x: this.item.x,
+                    y: this.item.y
+                });
+                await this.$store.dispatch("GET_CASTLE_PRICE");
+                await this.$store.dispatch("GET_CATAPULT_PRICE");
+                await this.$store.dispatch("GET_WAREHOUSE_PRICE");
+                this.$emit("CLOSE");
+            },
             async buildCatapult() {
                 if (!this.canBuildCatapult) return this.$emit("ERROR", "Wrong position for a catapult...");
                 try {
@@ -153,14 +175,14 @@
         left: 50%;
         top: 50%;
         // transform: translateY(-170px) translateX(-117px);
-        margin-top: -170px;
-        margin-left: -117px;
-        width: 234px;
-        height: 173px;
+        margin-top: -200px;
+        margin-left: -155px;
+        width: 320px;
+        height: 195px;
         z-index: 3;
         background-image: url("../assets/popup.svg");
-        background-size: 100%;
-        background-position: center 30px;
+        background-size: 100% auto;
+        background-position: center 0;
         background-repeat: no-repeat;
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Safari */
@@ -170,7 +192,13 @@
         user-select: none;
 
         .items {
-            padding-top: 2.2rem;
+            padding-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            justify-items: center;
+            height: calc(100% - 4.5rem);
 
             .item {
                 text-align: center;
@@ -178,23 +206,30 @@
                 font-size: 1rem;
                 font-weight: bold;
                 letter-spacing: 1.4px;
-                border-bottom: dashed 2px rgba(255, 255, 255, 0.5);
-                margin: 0 2rem;
+                border-bottom: dashed 2px rgba(255, 255, 255, 0.2);
+                margin: 0 3rem;
                 padding: .2rem 0;
 
                 &.positive {
                     color: #b6e57b;
                 }
 
-                &:last-child {
-                    border: none;
-                }
+                /*&:last-child {*/
+                /*    border: none;*/
+                /*}*/
 
                 &.inactive {
                     border: none;
                     font-size: 0.85rem;
                     opacity: 0.8;
 
+                    &:hover {
+                        color: white !important;
+                        cursor: initial !important;
+                    }
+                }
+
+                &.no-link {
                     &:hover {
                         color: white !important;
                         cursor: initial !important;

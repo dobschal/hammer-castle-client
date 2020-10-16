@@ -188,7 +188,7 @@
         <Popup :zoomFactor="zoomFactor"
                :mouseMoveDelta="mouseMoveDelta"
                v-if="!dragging && popupType && popupPosition"
-               :type="popupType"
+               :type.sync="popupType"
                :item="popupItem"
                :viewPosition="viewPosition"
                :position="popupPosition"
@@ -499,13 +499,9 @@
 
             castleClick(castle) {
                 if (Date.now() - this.mouseDownTimestamp > 300) return;
-                if (castle.userId === this.user.id) {
-                    this.showDialog = true;
-                } else {
-                    this.popupType = "castle";
-                    this.popupItem = castle;
-                    this.popupPosition = {x: castle.x, y: castle.y - 50};
-                }
+                this.popupType = "castle";
+                this.popupItem = castle;
+                this.popupPosition = {x: castle.x, y: castle.y - 50};
                 this.latestClickedCastle = castle;
             },
 
