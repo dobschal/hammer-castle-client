@@ -3,7 +3,17 @@
          @mouseup.stop
          @touchend.stop
          :style="{ left: ((position.x - viewPosition.x) / zoomFactor) + 'px', top: ((position.y - viewPosition.y) / zoomFactor) + 'px', transform: 'translateX(' + (-mouseMoveDelta.x) + 'px) translateY(' + (-mouseMoveDelta.y) + 'px)' }">
-        <div class="items" v-if="type === 'road'">
+        <span class="title" v-html="title"></span>
+        <div class="items" v-if="type === 'castle-change-name'">
+            <form @submit.prevent="changeCastleName">
+                <label>
+                    Enter a new name for your castle:
+                    <input type="text" v-model="newCastleName" placeholder="New castle name..." autofocus/>
+                </label>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+        <div class="items" v-else-if="type === 'road'">
             <div v-if="canBuildCatapult" class="item" @click="buildCatapult"
                  v-tooltip="'A catapult is going to attack the opponents castle. There is a possibility that the opponents castle gets destroyed or the catapult remains unaffected.'">
                 Build Catapult for <br>{{ catapultPrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
@@ -13,22 +23,29 @@
                  class="item"
                  @click="buildWarehouse"
                  v-tooltip="'A warehouse will increase the amount of hammers you can store.'">
-                Build Warehouse for <br>{{ warehousePrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
+                Build Warehouse <br>for {{ warehousePrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
                                                                   alt="Hammer">
             </div>
             <div v-else class="item inactive">Catapults need to be on a road next to an opponents Castle.</div>
         </div>
         <div class="items" v-else-if="type === 'castle' && !isMyCastle">
-            <div class="item no-link">{{ item.username }}</div>
-            <div class="item inactive">{{ Math.floor(item.x) }} / {{ Math.floor(item.y) }}</div>
-            <div class="item no-link" v-if="item.isOnline !== undefined" :class="{ positive: item.isOnline }">{{
-                item.isOnline ?
-                'User is online' : 'Not online'
-                }}
+            <div class="item no-link">{{ item.username }}<br>
+                <small v-if="item.isOnline !== undefined" :class="{ positive: item.isOnline }">
+                    {{
+                    item.isOnline ?
+                    'User is online' : 'Not online'
+                    }}
+                </small>
+            </div>
+            <div class="item inactive">Position: <br>{{ Math.floor(item.x) }} / {{ Math.floor(item.y) }}</div>
+            <div class="item inactive">
+                Built at:
+                <DateView :timestamp="Date.parse(item.timestamp.replace(' ', 'T') + '.000Z')"></DateView>
             </div>
         </div>
         <div class="items" v-else-if="type === 'castle' && isMyCastle">
-            <div class="item">Build Knight</div>
+            <div class="item" @click="buildKnight" :class="{ 'no-link': !canBuildKnight}">Build Knight</div>
+            <div class="item" @click="markAsHome">Mark as Home</div>
             <div class="item" @click="$emit('update:type', 'castle-change-name')">Change Name</div>
             <div class="item" @click="deleteCastle">Destroy</div>
         </div>
@@ -44,8 +61,11 @@
 </template>
 
 <script>
+    import DateView from "./DateView";
+
     export default {
         name: "Popup",
+        components: {DateView},
         props: {
             type: String,
             item: Object, // depending on type ... might be a road or castle
@@ -55,6 +75,20 @@
             position: Object // x, y
         },
         computed: {
+            title() {
+                if (!this.item) return "";
+                switch (this.type) {
+                    case "road":
+                        return "~ Road ~<br><small>at " + Math.floor(this.position.x) + "/" + Math.floor(this.position.y) + "</small>";
+                    case "castle-change-name":
+                    case "castle":
+                        return "~ Castle ~<br><small>'" + this.item.name + "'</small>";
+                    case "warehouse":
+                        return "~ Warehouse ~<br><small>at " + Math.floor(this.position.x) + "/" + Math.floor(this.position.y) + "</small>";
+                    default:
+                        return "";
+                }
+            },
             warehousePrice() {
                 return this.$store.state.warehousePrice;
             },
@@ -81,10 +115,20 @@
             canBuildWarehouse() {
                 if (this.type !== "road") return false;
                 return [this.item.c1, this.item.c2].filter(castle => castle.userId === this.user.id).length === 2;
+            },
+            canBuildKnight() {
+                if (this.type !== "castle") return false;
+                return this.item.points >= 5;
             }
+        },
+        data() {
+            return {
+                newCastleName: ""
+            };
         },
         mounted() {
             if (this.type === "castle") {
+                this.newCastleName = this.item.name;
                 this.$store.dispatch("IS_ONLINE", this.item.username).then(isOnline => {
                     this.$set(this.item, "isOnline", isOnline);
                     console.log("[Popup] Got online state: ", isOnline);
@@ -94,18 +138,61 @@
             }
         },
         methods: {
+            async markAsHome() {
+                try {
+                    console.log("[Popup] Mark home: ", this.item);
+                    await this.$store.dispatch("MARK_AS_HOME", {
+                        x: this.item.x,
+                        y: this.item.y
+                    });
+                    this.$emit("CLOSE");
+                } catch (e) {
+                    this.$emit("ERROR", e.response.data.message);
+                }
+            },
+            async buildKnight() {
+                if (!this.canBuildKnight) return this.$emit("ERROR", "Knights can be build in castles level 5 or greater.");
+                try {
+                    await this.$store.dispatch("CREATE_KNIGHT", {
+                        x: this.item.x,
+                        y: this.item.y
+                    });
+                    await this.$store.dispatch("GET_KNIGHT_PRICE");
+                    this.$emit("CLOSE");
+                } catch (e) {
+                    this.$emit("ERROR", e.response.data.message);
+                }
+            },
+            async changeCastleName() {
+                if (!this.newCastleName || this.newCastleName.length > 12) {
+                    this.$emit("ERROR", "Please insert a valid castle name! Max length is 12 characters.");
+                    return;
+                }
+                console.log("[Popup] New castle name for: ", this.input, this.latestClickedCastle);
+                try {
+                    await this.$store.dispatch("CHANGE_CASTLE_NAME", {
+                        x: this.item.x,
+                        y: this.item.y,
+                        name: this.newCastleName
+                    });
+                    this.$emit("CLOSE");
+                } catch (e) {
+                    this.$emit("ERROR", e.response.data.message);
+                }
+            },
             async deleteCastle() {
-
-                // TODO: Error handling and dialog?
-
-                await this.$store.dispatch("DELETE_CASTLE", {
-                    x: this.item.x,
-                    y: this.item.y
-                });
-                await this.$store.dispatch("GET_CASTLE_PRICE");
-                await this.$store.dispatch("GET_CATAPULT_PRICE");
-                await this.$store.dispatch("GET_WAREHOUSE_PRICE");
-                this.$emit("CLOSE");
+                try {
+                    await this.$store.dispatch("DELETE_CASTLE", {
+                        x: this.item.x,
+                        y: this.item.y
+                    });
+                    await this.$store.dispatch("GET_CASTLE_PRICE");
+                    await this.$store.dispatch("GET_CATAPULT_PRICE");
+                    await this.$store.dispatch("GET_WAREHOUSE_PRICE");
+                    this.$emit("CLOSE");
+                } catch (e) {
+                    this.$emit("ERROR", e.response.data.message);
+                }
             },
             async buildCatapult() {
                 if (!this.canBuildCatapult) return this.$emit("ERROR", "Wrong position for a catapult...");
@@ -121,10 +208,10 @@
                         y: this.item.middleBetweenCastles.y
                     });
                     await this.$store.dispatch("GET_CATAPULT_PRICE");
+                    this.$emit("CLOSE");
                 } catch (e) {
                     this.$emit("ERROR", e.response.data.message);
                 }
-                this.$emit("CLOSE");
             },
             async buildWarehouse() {
                 if (!this.canBuildWarehouse) return this.$emit("ERROR", "Wrong position for a warehouse...");
@@ -138,10 +225,10 @@
                         y: this.item.middleBetweenCastles.y
                     });
                     await this.$store.dispatch("GET_WAREHOUSE_PRICE");
+                    this.$emit("CLOSE");
                 } catch (e) {
                     this.$emit("ERROR", e.response.data.message);
                 }
-                this.$emit("CLOSE");
             },
             async upgradeWarehouse() {
                 try {
@@ -150,10 +237,10 @@
                         y: this.item.y
                     });
                     await this.$store.dispatch("GET_WAREHOUSE_PRICE");
+                    this.$emit("CLOSE");
                 } catch (e) {
                     this.$emit("ERROR", e.response.data.message);
                 }
-                this.$emit("CLOSE");
             }
         }
     }
@@ -175,12 +262,12 @@
         left: 50%;
         top: 50%;
         // transform: translateY(-170px) translateX(-117px);
-        margin-top: -200px;
-        margin-left: -155px;
-        width: 320px;
-        height: 195px;
+        margin-top: -250px;
+        margin-left: -115px;
+        width: 240px;
+        height: 255px;
         z-index: 3;
-        background-image: url("../assets/popup.svg");
+        background-image: url("../assets/popup-long.png");
         background-size: 100% auto;
         background-position: center 0;
         background-repeat: no-repeat;
@@ -191,14 +278,60 @@
         -ms-user-select: none; /* Internet Explorer/Edge */
         user-select: none;
 
+        .error {
+            color: #ff553e;
+            font-family: 'Piazzolla', serif;
+            line-height: 1.1rem;
+            letter-spacing: 0;
+            margin: 0 3rem;
+        }
+
+        .title {
+            color: white;
+            display: block;
+            text-align: center;
+            padding-top: 1.2rem;
+            padding-bottom: 0.35rem;
+            margin: 0 2rem;
+            white-space: nowrap;
+            border-bottom: solid 2px rgba(255, 244, 246, 0.1);
+            font-weight: bold;
+        }
+
         .items {
-            padding-top: 1rem;
+            padding: 0.5rem 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-around;
             justify-items: center;
-            height: calc(100% - 4.5rem);
+            height: calc(100% - 6.2rem);
+            box-sizing: border-box;
+
+            label {
+                color: white;
+                font-size: 0.85rem;
+                font-weight: bold;
+                display: block;
+                margin: 0 3rem;
+                text-align: center;
+
+                input {
+                    width: 100%;
+                    box-sizing: border-box;
+                    border: solid 1px rgba(255, 255, 255, 0.52);
+                    background-color: rgba(255, 255, 255, 0.54);
+                    color: black;
+                    padding: 8px;
+                    margin: 0.5rem 0;
+                    border-radius: 5px;
+                }
+            }
+
+            button {
+                width: calc(100% - 6rem);
+                margin: 0.5rem 3rem;
+            }
 
             .item {
                 text-align: center;
@@ -208,7 +341,7 @@
                 letter-spacing: 1.4px;
                 border-bottom: dashed 2px rgba(255, 255, 255, 0.2);
                 margin: 0 3rem;
-                padding: .2rem 0;
+                padding-bottom: .45rem;
 
                 &.positive {
                     color: #b6e57b;
@@ -230,6 +363,9 @@
                 }
 
                 &.no-link {
+                    border: none;
+                    opacity: 0.8;
+
                     &:hover {
                         color: white !important;
                         cursor: initial !important;

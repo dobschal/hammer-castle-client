@@ -130,6 +130,13 @@
                             @ERROR="error = $event"
                     ></BuildCastle>
 
+                    <g v-for="knight in knights"
+                       :key="'knight-' + knight.x + '' + knight.y">
+                        <Knight :position="{ x: knight.x, y: knight.y }"
+                                :knight="knight"
+                                :color="knight.color"></Knight>
+                    </g>
+
                     <g v-for="castle in castles"
                        :key="'castle-' + castle.x + '' + castle.y">
                         <Castle :position="{ x: castle.x, y: castle.y }"
@@ -176,8 +183,6 @@
 
             </svg>
         </div>
-        <DialogBox v-if="showDialog" @CLOSE="showDialog = false"
-                   :latest-clicked-castle="latestClickedCastle"></DialogBox>
         <NavigationBar :activeAction.sync="activeAction" @BUILD_IT="triggerCastleBuild"></NavigationBar>
         <TopNavigationBar @OPEN-MENU="menuOpen = true"></TopNavigationBar>
         <Menu v-if="menuOpen" @LOGOUT="logout"
@@ -217,8 +222,6 @@
     import NavigationBar from "./NavigationBar";
     import config from "../config";
     import BlockArea from "./BlockArea";
-    //  TODO: Remove dialog box...
-    import DialogBox from "./DialogBox";
     import TopNavigationBar from "./TopNavigationBar";
     import Menu from "./Menu";
     import ErrorToast from "./ErrorToast";
@@ -232,6 +235,7 @@
     import PageOverlay from "./PageOverlay";
     import InfoView from "./pages/Info";
     import Forum from "./pages/Forum";
+    import Knight from "./inGameElements/Knight";
 
     export default {
         name: "Game",
@@ -240,7 +244,6 @@
             Castle,
             BuildCastle,
             NavigationBar,
-            DialogBox,
             TopNavigationBar,
             Menu,
             ErrorToast,
@@ -252,7 +255,8 @@
             ZoomButtons,
             PageOverlay,
             InfoView,
-            Forum
+            Forum,
+            Knight
         },
         data() {
             return {
@@ -333,6 +337,10 @@
                 return this.$store.state.warehouses;
             },
 
+            knights() {
+                return this.$store.state.knights;
+            },
+
             catapults() {
                 return this.$store.state.catapults;
             },
@@ -396,6 +404,7 @@
             if (zoomFactor) this.zoomFactor = Number(zoomFactor);
 
             this.$store.dispatch("GET_USER").then(user => {
+                console.log("[Game] User: ", user);
                 this.moveMapTo({x: user.startX, y: user.startY});
                 this.load();
             }).catch(() => {
@@ -517,6 +526,7 @@
                     "UPDATE_USER",
                     "NEW_ACTION_LOG",
                     "DELETE_CASTLE", "NEW_CASTLE", "UPDATE_CASTLE",
+                    "DELETE_KNIGHT", "NEW_KNIGHT", "UPDATE_KNIGHT",
                     "DELETE_CATAPULT", "NEW_CATAPULT", "UPDATE_CATAPULT",
                     "DELETE_WAREHOUSE", "NEW_WAREHOUSE", "UPDATE_WAREHOUSE",
                     "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA",
@@ -591,6 +601,7 @@
                 console.log("[Game] Load...");
                 await Promise.all([
                     this.$store.dispatch("GET_CASTLES", this.loadPosition),
+                    this.$store.dispatch("GET_KNIGHTS", this.loadPosition),
                     this.$store.dispatch("GET_CATAPULTS", this.loadPosition),
                     this.$store.dispatch("GET_ACTION_LOG", this.loadPosition),
                     this.$store.dispatch("GET_WAREHOUSES", this.loadPosition),
@@ -685,6 +696,7 @@
     }
 
     .frame {
+        touch-action: manipulation;
         position: fixed;
         top: 0;
         left: 0;

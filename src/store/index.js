@@ -2,6 +2,7 @@ import {axios} from "../plugins/axios";
 import {userActions, userMutations, userState} from "./user";
 import {castleActions, castleMutations, castleState} from "./castle";
 import {catapultActions, catapultMutations, catapultState} from "./catapult";
+import {knightActions, knightMutations, knightState} from "./knight";
 import {warehouseActions, warehouseMutations, warehouseState} from "./warehouse";
 import {blockAreaActions, blockAreaMutations, blockAreaState} from "./blockArea";
 import {actionLogActions, actionLogMutations, actionLogState} from "./actionLog";
@@ -17,7 +18,8 @@ export default {
     ...catapultState,
     ...warehouseState,
     ...actionLogState,
-    ...forumState
+    ...forumState,
+    ...knightState
   },
   getters: {
     busy(state) {
@@ -37,7 +39,8 @@ export default {
     ...catapultMutations,
     ...warehouseMutations,
     ...actionLogMutations,
-    ...forumMutations
+    ...forumMutations,
+    ...knightMutations
   },
   actions: {
     async GET_SERVER_VERSION({ commit }) {
@@ -57,6 +60,7 @@ export default {
     ...catapultActions,
     ...warehouseActions,
     ...actionLogActions,
-    ...forumActions
+    ...forumActions,
+    ...knightActions
   }
 };

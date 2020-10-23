@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!authenticated" class="start-page">
+  <div v-if="!authenticated" class="start-page" ref="start-page">
     <div class="wrapper">
       <div class="container" v-if="!loading">
         <div class="logo"><img src="../assets/logo.svg" alt="Hammer Castle Logo"></div>
@@ -127,10 +127,22 @@
     },
     created() {
       window.localStorage.setItem("was-here-before", "yes");
+      this.loadBackgroundImage();
     },
     methods: {
+      loadBackgroundImage() {
+        const imageUrl = "/bg-image-castle.jpg";
+        let preloaderImg = document.createElement("img");
+        preloaderImg.src = imageUrl;
+        preloaderImg.addEventListener('load', () => {
+          if (this.$refs["start-page"]) {
+            this.$refs["start-page"].style.backgroundImage = `url(${imageUrl})`;
+            this.$refs["start-page"].style.backgroundPosition = "0";
+          }
+          preloaderImg = undefined;
+        });
+      },
       togglePrivacyAccept() {
-        console.log("[StartPage] yeah: ", this.privacyPolicyAccepted);
         this.privacyPolicyAccepted = !this.privacyPolicyAccepted;
       },
       openPrivacyPolicy() {
@@ -220,10 +232,13 @@
     left: 0;
     width: 100%;
     height: 100vh;
-    background-image: url("../assets/bg-image-castle.jpg");
+    //background-image: url("../assets/bg-image-castle.jpg");
+    background-position: center -100vh;
+    background-repeat: no-repeat;
     background-size: cover;
     font-family: 'Piazzolla', serif !important;
     letter-spacing: initial;
+    transition: background-position 1s ease-in;
 
     .cookie {
       font-size: 0.7rem;

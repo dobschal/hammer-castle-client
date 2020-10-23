@@ -36,6 +36,15 @@ export const userActions = {
     }
   },
 
+  async MARK_AS_HOME({commit}, position) {
+    try {
+      commit("PROGRESS", 1);
+      await axios.post("/user/mark-as-home", position);
+    } finally {
+      commit("PROGRESS", -1);
+    }
+  },
+
   async GET_USER({commit}) {
     try {
       commit("PROGRESS", 1);
