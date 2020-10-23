@@ -36,6 +36,10 @@
     overflow: hidden;
   }
 
+  * {
+    touch-action: manipulation !important;
+  }
+
   #app {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
