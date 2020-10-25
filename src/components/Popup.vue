@@ -44,7 +44,10 @@
             </div>
         </div>
         <div class="items" v-else-if="type === 'castle' && isMyCastle">
-            <div class="item" @click="buildKnight" :class="{ 'no-link': !canBuildKnight}">Build Knight</div>
+            <div class="item" @click="buildKnight" :class="{ 'no-link': !canBuildKnight}">
+                Build Knight<br><small>for {{ knightPrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
+                                                                     alt="Hammer"></small>
+            </div>
             <div class="item" @click="markAsHome">Mark as Home</div>
             <div class="item" @click="$emit('update:type', 'castle-change-name')">Change Name</div>
             <div class="item" @click="deleteCastle">Destroy</div>
@@ -97,6 +100,9 @@
             },
             catapultPrice() {
                 return this.$store.state.catapultPrice;
+            },
+            knightPrice() {
+                return this.$store.state.knightPrice;
             },
             user() {
                 return this.$store.state.user;
@@ -250,11 +256,15 @@
 
     .hammer-icon {
         display: inline-block;
-        margin-bottom: -9px;
+        margin-bottom: -7px;
         margin-right: -10px;
         width: 24px;
         background-color: rgba(0, 0, 0, 0.5);
         border-radius: 50%;
+    }
+
+    small > .hammer-icon {
+        width: 20px;
     }
 
     .popup {
@@ -341,7 +351,7 @@
                 letter-spacing: 1.4px;
                 border-bottom: dashed 2px rgba(255, 255, 255, 0.2);
                 margin: 0 3rem;
-                padding-bottom: .45rem;
+                padding-bottom: .3rem;
 
                 &.positive {
                     color: #b6e57b;

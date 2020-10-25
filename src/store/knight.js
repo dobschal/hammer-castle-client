@@ -18,11 +18,11 @@ export const knightMutations = {
     },
     DELETE_KNIGHT(state, knight) {
         console.log("[knight] Delete knight: ", knight);
-        state.knights = state.knights.filter(c => c.x !== knight.x || c.y !== knight.y);
+        state.knights = state.knights.filter(k => k.id !== knight.id);
     },
     UPDATE_KNIGHT(state, knight) { // injected from websocket
         state.knights = [
-            ...state.knights.filter(c => c.x !== knight.x || c.y !== knight.y),
+            ...state.knights.filter(k => k.id !== knight.id),
             knight
         ];
     }

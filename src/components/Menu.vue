@@ -5,7 +5,7 @@
                 <div class="close" @click="close"> {{ closeButtonText }}</div>
                 <div class="content">
                     <div class="items" v-if="type === 'menu'">
-                        <div class="item" @click="type = 'ranking'">Ranking</div>
+                        <div class="item" @click="type = 'ranking'">Players</div>
                         <div class="item" @click="type = 'history'">Show History</div>
                         <div class="item" @click="type = 'profile'">Profile</div>
                         <div class="item" @click="$emit('OPEN_PAGE', 'info')">Info</div>

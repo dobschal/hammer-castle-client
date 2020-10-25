@@ -225,7 +225,7 @@
     import TopNavigationBar from "./TopNavigationBar";
     import Menu from "./Menu";
     import ErrorToast from "./ErrorToast";
-    import Catapult from "./Catapult";
+    import Catapult from "./inGameElements/Catapult";
     import Popup from "./Popup";
     import Warehouse from "./Warehouse";
     import ActionLog from "./ActionLog";
