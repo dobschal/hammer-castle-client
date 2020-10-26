@@ -3,24 +3,19 @@ import {axios} from "../plugins/axios";
 export const warehouseState = {
     warehouses: [],
     warehousePrice: undefined,
-    warehouseAmount: undefined
+    warehouseAmount: undefined,
+    warehouseUpgradePrice: undefined
 };
 
 export const warehouseMutations = {
     SET_WAREHOUSES(state, warehouses) {
-        // console.log("[warehouse] Set warehouses: ", warehouses);
-        // if (state.warehouses.length === 0) {
         state.warehouses = warehouses;
-        // } else {
-        //     warehouses.forEach(c1 => {
-        //         if (!state.warehouses.some(c2 => c1.x === c2.x && c1.y === c2.y)) {
-        //             state.warehouses.push(c1);
-        //         }
-        //     });
-        // }
     },
     SET_WAREHOUSE_AMOUNT(state, {amount}) { // injected from websocket
         state.warehouseAmount = amount;
+    },
+    SET_WAREHOUSE_UPGRADE_PRICE(state, {price}) { // injected from websocket
+        state.warehouseUpgradePrice = price;
     },
     SET_WAREHOUSE_PRICE(state, {price}) { // injected from websocket
         state.warehousePrice = price;
@@ -72,6 +67,15 @@ export const warehouseActions = {
             commit("PROGRESS", 1);
             const response = await axios.get(`/warehouse/price`);
             commit("SET_WAREHOUSE_PRICE", response.data);
+        } finally {
+            commit("PROGRESS", -1);
+        }
+    },
+    async GET_WAREHOUSE_UPGRADE_PRICE({commit}) {
+        try {
+            commit("PROGRESS", 1);
+            const response = await axios.get(`/warehouse/upgrade-price`);
+            commit("SET_WAREHOUSE_UPGRADE_PRICE", response.data);
         } finally {
             commit("PROGRESS", -1);
         }

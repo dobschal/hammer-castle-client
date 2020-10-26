@@ -659,6 +659,7 @@
                     this.$store.dispatch("GET_WAREHOUSES", this.loadPosition),
                     this.$store.dispatch("GET_CASTLE_PRICE"),
                     this.$store.dispatch("GET_WAREHOUSE_PRICE"),
+                    this.$store.dispatch("GET_WAREHOUSE_UPGRADE_PRICE"),
                     this.$store.dispatch("GET_CATAPULT_PRICE"),
                     this.$store.dispatch("GET_KNIGHT_PRICE"),
                     this.$store.dispatch("GET_CONQUERS"),

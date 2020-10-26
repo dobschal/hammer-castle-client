@@ -65,7 +65,7 @@
                  class="item"
                  v-tooltip="'Warehouses level 2 allow you to store gold.'">
                 Upgrade Warehouse for<br>
-                {{ warehousePrice }}
+                {{ warehouseUpgradePrice }}
                 <img src="../../assets/icon-hammer.svg" class="hammer-icon" alt="Hammer">
             </div>
             <div v-else class="item inactive">The warehouse is already at the max level.</div>
@@ -106,6 +106,9 @@
             },
             warehousePrice() {
                 return this.$store.state.warehousePrice;
+            },
+            warehouseUpgradePrice() {
+                return this.$store.state.warehouseUpgradePrice;
             },
             warehouseAmount() {
                 return this.$store.state.warehouseAmount;
