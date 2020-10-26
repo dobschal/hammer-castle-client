@@ -137,7 +137,6 @@
                 let points = 0;
                 if (this.castle && typeof this.castle.points === "number") {
                     points = this.castle.points;
-                    if (this.castle.hasKnight) points++;
                 }
                 return points;
             },
