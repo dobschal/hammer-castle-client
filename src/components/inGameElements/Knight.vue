@@ -87,7 +87,6 @@
 </script>
 
 <style lang="scss" scoped>
-
     @keyframes rotate_sword {
         0% {
             transform: rotate(0deg);
