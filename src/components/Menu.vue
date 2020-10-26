@@ -40,7 +40,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="footer">{{ version }} | {{ clientCommitHash }}</div>
+                <div class="footer">{{ version }} | {{ clientCommitHash }}/{{serverCommitHash}}</div>
             </div>
         </div>
     </div>
@@ -59,6 +59,7 @@
         data() {
             return {
                 clientCommitHash: "",
+                serverCommitHash: "",
                 version,
                 type: "menu"
             }
@@ -87,6 +88,9 @@
         mounted() {
             fetch("/commit-hash.txt").then(r => r.text()).then(r => {
                 this.clientCommitHash = r;
+            });
+            fetch("/commit-hash-server.txt").then(r => r.text()).then(r => {
+                this.serverCommitHash = r;
             });
         },
         methods: {
