@@ -23,6 +23,7 @@
         },
         created() {
             this.intervalId = setInterval(() => {
+                if (!this.user) return;
                 let seconds = Math.max(0, Math.floor(((this.user.last_daily_reward_claim + 1000 * 60 * 60 * 24) - Date.now()) / 1000));
                 let minutes = Math.floor(seconds / 60) || 0;
                 const hours = Math.floor(minutes / 60) || 0;
