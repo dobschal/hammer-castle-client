@@ -181,7 +181,11 @@
           }
         } catch (e) {
           console.log("[Authenticator] Login error: ", e);
-          this.error = e.response.data.message;
+          try {
+            this.error = e.response.data.message;
+          } catch(e2) {
+            this.error = "Seems like the server is down...";
+          }
         }
       }
     }

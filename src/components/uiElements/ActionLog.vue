@@ -12,7 +12,7 @@
 </template>
 
 <script>
-    import DateView from "./DateView";
+    import DateView from "../DateView";
 
     export default {
         name: "ActionLog",

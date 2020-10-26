@@ -36,15 +36,23 @@
         </svg>
 
         <!-- Shield with level number -->
-        <g v-tooltip="'This number describes the amount of roads attached to the castle by the castles owner.'">
+        <g v-tooltip="'This number describes the amount of roads attached to the castle by the castles owner. A knight in the castle will increase this number by 1.'">
             <svg :x="145" :y="45" width="30" height="30" viewBox="0 0 48 58" fill="none"
                  xmlns="http://www.w3.org/2000/svg">
                 <path d="M1 13.4583C1 32.25 14.8 57 24 57C33.2 57 47 32.25 47 13.4583C47 13.4583 33.2 13.9167 24.92 2C14.8 13.9167 1 13.4583 1 13.4583Z"
-                      fill="#564942" stroke-opacity="0.5" :stroke="highlighted ? color : '#C0C0C0'"
+                      :fill="castle.hasKnight ? '#3a2e2e' : '#564942'"
+                      stroke-opacity="0.5"
+                      :stroke="highlighted ? color : '#C0C0C0'"
                       :stroke-width="highlighted ? 5 : 3"/>
             </svg>
-            <text :x="160" :y="68" class="points" :fill="highlighted ? 'white' : '#E0E0E0'" v-if="castle"
-                  text-anchor="middle">{{ points }}
+            <text :x="160"
+                  :y="68"
+                  class="points"
+                  :class="{ 'has-knight': castle.hasKnight }"
+                  :fill="castle.hasKnight ? color : (highlighted ? 'white' : '#E0E0E0')"
+                  v-if="castle"
+                  text-anchor="middle">
+                {{ points }}
             </text>
         </g>
 
@@ -91,13 +99,13 @@
 </template>
 
 <script>
-    import config from "../config";
-    import CastleLevel1 from "./castles/level1";
-    import CastleLevel2 from "./castles/level2";
-    import CastleLevel3 from "./castles/level3";
-    import CastleLevel4 from "./castles/level4";
-    import CastleLevel5 from "./castles/level5";
-    import CastleLevel6 from "./castles/level6";
+    import config from "../../config";
+    import CastleLevel1 from "../castles/level1";
+    import CastleLevel2 from "../castles/level2";
+    import CastleLevel3 from "../castles/level3";
+    import CastleLevel4 from "../castles/level4";
+    import CastleLevel5 from "../castles/level5";
+    import CastleLevel6 from "../castles/level6";
 
     export default {
         name: "Castle",
@@ -126,7 +134,12 @@
                 return this.castle && this.user && this.castle.userId === this.user.id && this.user.startX === this.castle.x && this.user.startY === this.castle.y;
             },
             points() {
-                return this.castle && typeof this.castle.points === "number" ? this.castle.points : 0;
+                let points = 0;
+                if (this.castle && typeof this.castle.points === "number") {
+                    points = this.castle.points;
+                    if (this.castle.hasKnight) points++;
+                }
+                return points;
             },
             flagPositions() {
                 if (this.points === "?") return [{x: 91, y: 54}];
@@ -235,9 +248,6 @@
         -moz-user-select: none; /* Old versions of Firefox */
         -ms-user-select: none; /* Internet Explorer/Edge */
         user-select: none;
-        /* Non-prefixed version, currently
-                                         supported by Chrome, Edge, Opera and Firefox */
-
     }
 
     .name {

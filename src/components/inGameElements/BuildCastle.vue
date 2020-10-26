@@ -1,13 +1,12 @@
 <template>
   <g :opacity="opacity">
-
     <Castle :position="newCastlePosition" :color="user.color"></Castle>
   </g>
 </template>
 
 <script>
   import Castle from "./Castle";
-  import config from "../config";
+  import config from "../../config";
 
   export default {
     name: "BuildCastle",
@@ -134,7 +133,6 @@
 
       onMouseUp(event) {
         if (Date.now() - this.mouseDownTimestamp < 300) {
-          console.log("[BuildCastle] Castle build click: ", this.isTouchDevice);
           this.onClick(event);
         }
       },

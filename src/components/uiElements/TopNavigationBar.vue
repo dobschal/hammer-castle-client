@@ -2,26 +2,26 @@
     <div class="wrapper">
         <div class="buttons">
             <div class="icon-value-pair">
-                <span class="icon" :class="{ animated: gotHammer }"><img src="../assets/icon-hammer.svg"
+                <span class="icon" :class="{ animated: gotHammer }"><img src="../../assets/icon-hammer.svg"
                                                                          alt="Hammer"></span>
                 <span class="value">{{ hammer }} <span class="small">/ {{ maxHammers }}</span></span>
                 <div class="nav-tooltip">
                     <div class="nav-tooltip-content">
-                        <span class="icon"><img src="../assets/icon-hammer-plus.svg" alt="Hammer Per Minute"></span>
+                        <span class="icon"><img src="../../assets/icon-hammer-plus.svg" alt="Hammer Per Minute"></span>
                         <p class="content">{{ hammerPerMinute }} <span class="small">/ min</span></p>
                     </div>
                 </div>
             </div>
             <div class="icon-value-pair">
-                <span class="icon"><img src="../assets/icon-beer.svg" alt="beer"></span>
+                <span class="icon"><img src="../../assets/icon-beer.svg" alt="beer"></span>
                 <span class="value">{{ beer }} <span class="small">/ {{ maxBeer }}</span></span>
             </div>
             <div class="icon-value-pair">
-                <span class="icon"><img src="../assets/icon-level.svg" alt="Level"></span>
+                <span class="icon"><img src="../../assets/icon-level.svg" alt="Level"></span>
                 <span class="value">{{ level }}</span>
             </div>
             <div class="icon-value-pair" @click="openMenu">
-                <span class="icon burger-button"><img src="../assets/icon-burger.svg" alt="Menu"></span>
+                <span class="icon burger-button"><img src="../../assets/icon-burger.svg" alt="Menu"></span>
             </div>
         </div>
     </div>

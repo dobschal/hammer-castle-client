@@ -134,6 +134,7 @@
                        :key="'knight-' + knight.x + '' + knight.y">
                         <Knight :position="{ x: knight.x, y: knight.y }"
                                 :knight="knight"
+                                @CLICK="knightClicked"
                                 :color="knight.color"></Knight>
                     </g>
 
@@ -183,6 +184,8 @@
 
             </svg>
         </div>
+
+        <!-- UI Elements -->
         <NavigationBar :activeAction.sync="activeAction" @BUILD_IT="triggerCastleBuild"></NavigationBar>
         <TopNavigationBar @OPEN-MENU="menuOpen = true"></TopNavigationBar>
         <Menu v-if="menuOpen" @LOGOUT="logout"
@@ -202,7 +205,10 @@
         <ActionLog></ActionLog>
         <div v-if="$store.state.progress > 0" class="loading"></div>
         <DailyReward></DailyReward>
+        <HomeButton @GO_HOME="goHome"></HomeButton>
         <ZoomButtons @ZOOM_IN="zoomIn" @ZOOM_OUT="zoomOut"></ZoomButtons>
+
+        <!-- Pages -->
         <PageOverlay v-if="pageOverlayOpen && pageOverlayType === 'info'"
                      title="What is Castles?"
                      @CLOSE="closePage">
@@ -217,46 +223,48 @@
 </template>
 
 <script>
-    import Castle from "./Castle";
-    import BuildCastle from "./BuildCastle";
-    import NavigationBar from "./NavigationBar";
-    import config from "../config";
-    import BlockArea from "./BlockArea";
-    import TopNavigationBar from "./TopNavigationBar";
     import Menu from "./Menu";
-    import ErrorToast from "./ErrorToast";
-    import Catapult from "./inGameElements/Catapult";
-    import Popup from "./Popup";
-    import Warehouse from "./Warehouse";
-    import ActionLog from "./ActionLog";
-    import DailyReward from "./DailyReward";
+    import Popup from "./uiElements/Popup";
+    import Castle from "./inGameElements/Castle";
+    import config from "../config";
     import cookie from "js-cookie";
-    import ZoomButtons from "./ZoomButtons";
-    import PageOverlay from "./PageOverlay";
-    import InfoView from "./pages/Info";
     import Forum from "./pages/Forum";
+    import Warehouse from "./Warehouse";
+    import BlockArea from "./inGameElements/BlockArea";
+    import ActionLog from "./uiElements/ActionLog";
+    import InfoView from "./pages/Info";
+    import ErrorToast from "./uiElements/ErrorToast";
+    import BuildCastle from "./inGameElements/BuildCastle";
+    import ZoomButtons from "./uiElements/ZoomButtons";
+    import PageOverlay from "./PageOverlay";
+    import NavigationBar from "./uiElements/NavigationBar";
     import Knight from "./inGameElements/Knight";
+    import Catapult from "./inGameElements/Catapult";
+    import TopNavigationBar from "./uiElements/TopNavigationBar";
+    import DailyReward from "./uiElements/DailyReward";
+    import HomeButton from "./uiElements/HomeButton";
 
     export default {
         name: "Game",
         components: {
-            BlockArea,
-            Castle,
-            BuildCastle,
-            NavigationBar,
-            TopNavigationBar,
             Menu,
-            ErrorToast,
-            Catapult,
+            Forum,
             Popup,
-            Warehouse,
+            Knight,
+            Castle,
+            Catapult,
+            InfoView,
+            BlockArea,
             ActionLog,
+            Warehouse,
+            ErrorToast,
+            HomeButton,
+            BuildCastle,
             DailyReward,
             ZoomButtons,
             PageOverlay,
-            InfoView,
-            Forum,
-            Knight
+            NavigationBar,
+            TopNavigationBar
         },
         data() {
             return {
@@ -288,7 +296,8 @@
                 fps: 0,
                 lastRenderTimestamp: undefined,
                 isLoading: false,
-                zoomLoadTimeout: undefined
+                zoomLoadTimeout: undefined,
+                storePositionInUrlWaiter: undefined
             };
         },
 
@@ -351,6 +360,10 @@
                         c.isInConquer = Boolean(conquer);
                         if (conquer)
                             c.attackHappensAt = conquer.timestamp + config.CONQUER_DELAY;
+
+                        const knight = this.$store.state.knights.find(knight => knight.x === c.x && knight.y === c.y);
+                        c.hasKnight = Boolean(knight);
+
                         return c;
                     });
             },
@@ -386,6 +399,7 @@
 
             "viewPosition.x"() {
                 this.closePopup();
+                this.storePositionInUrl();
             },
 
             error(val) {
@@ -403,27 +417,36 @@
             const zoomFactor = this.$util.getUrlParam("zoom");
             if (zoomFactor) this.zoomFactor = Number(zoomFactor);
 
+            const xPositionInUrl = Number(this.$util.getUrlParam("x"));
+            const yPositionInUrl = Number(this.$util.getUrlParam("y"));
+            const usePositionFromUrl = Boolean(yPositionInUrl && xPositionInUrl);
+            console.log("[Game] Position in URL: ", xPositionInUrl, yPositionInUrl, usePositionFromUrl);
+
             this.$store.dispatch("GET_USER").then(user => {
-                console.log("[Game] User: ", user);
-                this.moveMapTo({x: user.startX, y: user.startY});
-                this.load();
-            }).catch(() => {
+
+                // Move map to is calling load at the end!
+                this.moveMapTo({
+                    x: usePositionFromUrl ? xPositionInUrl : user.startX,
+                    y: usePositionFromUrl ? yPositionInUrl : user.startY
+                });
+            }).catch((e) => {
+                console.log("[game] Error on get user: ", e.response);
                 this.logout();
             });
-            this.$store.dispatch("GET_SERVER_VERSION");
             this.$store.dispatch("GET_BLOCK_AREAS");
-            this.gameHeight = this.$refs["game-container"].offsetHeight;
+            this.$store.dispatch("GET_SERVER_VERSION");
             this.gameWidth = this.$refs["game-container"].offsetWidth;
+            this.gameHeight = this.$refs["game-container"].offsetHeight;
 
-            window.addEventListener("resize", this.onWindowResize);
             window.addEventListener("focus", this.onWindowFocus);
+            window.addEventListener("resize", this.onWindowResize);
 
-            document.addEventListener("mousemove", this.onMouseMove);
-            document.addEventListener("touchmove", this.onTouchMove);
+            document.addEventListener("keyup", this.onKeyUp);
             document.addEventListener("mouseup", this.onMouseUp);
             document.addEventListener("touchend", this.onMouseUp);
-            document.addEventListener("keyup", this.onKeyUp);
             document.addEventListener("mousewheel", this.onScroll);
+            document.addEventListener("mousemove", this.onMouseMove);
+            document.addEventListener("touchmove", this.onTouchMove);
 
             this.$refs["game-container"].addEventListener("mousedown", this.onMouseDown);
             this.$refs["game-container"].addEventListener("touchstart", this.onTouchDown, {passive: true});
@@ -431,7 +454,7 @@
             this.attachWebsocketListener();
 
             const page = this.$util.getUrlParam("page");
-            if(page) this.openPage(page);
+            if (page) this.openPage(page);
         },
 
         beforeDestroy() {
@@ -448,6 +471,35 @@
         },
 
         methods: {
+
+            knightClicked(knight) {
+                if (Date.now() - this.mouseDownTimestamp > 300) return;
+                this.popupType = "knight";
+                this.popupItem = knight;
+                this.popupPosition = {x: knight.x, y: knight.y - 100};
+            },
+
+            goHome() {
+                this.moveMapTo({
+                    x: this.user.startX,
+                    y: this.user.startY
+                });
+            },
+
+            storePositionInUrl() {
+                if (this.storePositionInUrlWaiter) {
+                    clearTimeout(this.storePositionInUrlWaiter);
+                    this.storePositionInUrlWaiter = undefined;
+                }
+                this.storePositionInUrlWaiter = setTimeout(() => {
+                    const x = this.viewPosition.x + (window.innerWidth / 2 * this.zoomFactor);
+                    const y = this.viewPosition.y + (window.innerHeight / 2 * this.zoomFactor);
+                    this.$util.setUrlParam("x", x.toFixed(2));
+                    this.$util.setUrlParam("y", y.toFixed(2));
+                    clearTimeout(this.storePositionInUrlWaiter);
+                    this.storePositionInUrlWaiter = undefined;
+                }, 300)
+            },
 
             isInViewPosition({x, y}) {
                 const p = this.loadPosition;
@@ -515,8 +567,8 @@
             },
 
             moveMapTo(position) {
-                this.viewPosition.x = position.x - window.innerWidth / 2;
-                this.viewPosition.y = position.y - window.innerHeight / 2;
+                this.viewPosition.x = position.x - (window.innerWidth / 2 * this.zoomFactor);
+                this.viewPosition.y = position.y - (window.innerHeight / 2 * this.zoomFactor);
                 this.load();
             },
 
@@ -608,6 +660,7 @@
                     this.$store.dispatch("GET_CASTLE_PRICE"),
                     this.$store.dispatch("GET_WAREHOUSE_PRICE"),
                     this.$store.dispatch("GET_CATAPULT_PRICE"),
+                    this.$store.dispatch("GET_KNIGHT_PRICE"),
                     this.$store.dispatch("GET_CONQUERS"),
                     this.$store.dispatch("GET_SERVER_VERSION"),
                     this.$store.dispatch("GET_BLOCK_AREAS")

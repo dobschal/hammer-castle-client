@@ -28,7 +28,7 @@
         user-select: none;
 
         .zoom-in {
-            background-image: url("../assets/icon-zoom-in.svg");
+            background-image: url("../../assets/icon-zoom-in.svg");
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
@@ -44,7 +44,7 @@
         }
 
         .zoom-out {
-            background-image: url("../assets/icon-zoom-out.svg");
+            background-image: url("../../assets/icon-zoom-out.svg");
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;

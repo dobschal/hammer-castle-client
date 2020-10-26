@@ -41,7 +41,6 @@ export const knightActions = {
         try {
             commit("PROGRESS", 1);
             const response = await axios.get(`/knight?fromX=${fromX}&fromY=${fromY}&toX=${toX}&toY=${toY}`);
-            console.log("[knight] Here comes the knight: ", response.data);
             commit("SET_KNIGHTS", response.data);
         } finally {
             commit("PROGRESS", -1);

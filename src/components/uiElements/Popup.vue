@@ -16,14 +16,14 @@
         <div class="items" v-else-if="type === 'road'">
             <div v-if="canBuildCatapult" class="item" @click="buildCatapult"
                  v-tooltip="'A catapult is going to attack the opponents castle. There is a possibility that the opponents castle gets destroyed or the catapult remains unaffected.'">
-                Build Catapult for <br>{{ catapultPrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
+                Build Catapult for <br>{{ catapultPrice }} <img src="../../assets/icon-hammer.svg" class="hammer-icon"
                                                                 alt="Hammer">
             </div>
             <div v-else-if="canBuildWarehouse"
                  class="item"
                  @click="buildWarehouse"
                  v-tooltip="'A warehouse will increase the amount of hammers you can store.'">
-                Build Warehouse <br>for {{ warehousePrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
+                Build Warehouse <br>for {{ warehousePrice }} <img src="../../assets/icon-hammer.svg" class="hammer-icon"
                                                                   alt="Hammer">
             </div>
             <div v-else class="item inactive">Catapults need to be on a road next to an opponents Castle.</div>
@@ -45,26 +45,36 @@
         </div>
         <div class="items" v-else-if="type === 'castle' && isMyCastle">
             <div class="item" @click="buildKnight" :class="{ 'no-link': !canBuildKnight}">
-                Build Knight<br><small>for {{ knightPrice }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
-                                                                     alt="Hammer"></small>
+                Build Knight<br><small>for {{ knightPrice }} <img src="../../assets/icon-hammer.svg" class="hammer-icon"
+                                                                  alt="Hammer"></small>
             </div>
             <div class="item" @click="markAsHome">Mark as Home</div>
             <div class="item" @click="$emit('update:type', 'castle-change-name')">Change Name</div>
             <div class="item" @click="deleteCastle">Destroy</div>
         </div>
+        <div class="items" v-else-if="type === 'knight' && isMyKnight">
+            <div class="item">Move</div>
+            <div class="item">Level Up</div>
+            <div class="item">Change Name</div>
+            <div class="item">Destroy</div>
+        </div>
         <div class="items" v-else-if="type === 'warehouse'">
             <div class="item inactive">You have {{ warehouseAmount }} warehouses.</div>
-            <div v-if="item.level === 1" @click="upgradeWarehouse" class="item"
-                 v-tooltip="'Warehouses level 2 allow you to store gold.'">Upgrade Warehouse for<br> {{ warehousePrice
-                }} <img src="../assets/icon-hammer.svg" class="hammer-icon"
-                        alt="Hammer"></div>
+            <div v-if="item.level === 1"
+                 @click="upgradeWarehouse"
+                 class="item"
+                 v-tooltip="'Warehouses level 2 allow you to store gold.'">
+                Upgrade Warehouse for<br>
+                {{ warehousePrice }}
+                <img src="../../assets/icon-hammer.svg" class="hammer-icon" alt="Hammer">
+            </div>
             <div v-else class="item inactive">The warehouse is already at the max level.</div>
         </div>
     </div>
 </template>
 
 <script>
-    import DateView from "./DateView";
+    import DateView from "../DateView";
 
     export default {
         name: "Popup",
@@ -88,6 +98,8 @@
                         return "~ Castle ~<br><small>'" + this.item.name + "'</small>";
                     case "warehouse":
                         return "~ Warehouse ~<br><small>at " + Math.floor(this.position.x) + "/" + Math.floor(this.position.y) + "</small>";
+                    case "knight":
+                        return "~ Knight ~<br><small>level " + this.item.level + "</small>";
                     default:
                         return "";
                 }
@@ -109,6 +121,9 @@
             },
             isMyCastle() {
                 return this.type === "castle" && this.item.userId === this.user.id;
+            },
+            isMyKnight() {
+                return this.type === "knight" && this.item.userId === this.user.id;
             },
 
             //  the user can build a catapult on a road between an owned castle and an opponents castle...
@@ -137,7 +152,6 @@
                 this.newCastleName = this.item.name;
                 this.$store.dispatch("IS_ONLINE", this.item.username).then(isOnline => {
                     this.$set(this.item, "isOnline", isOnline);
-                    console.log("[Popup] Got online state: ", isOnline);
                 });
             } else if (this.type === "warehouse") {
                 this.$store.dispatch("GET_WAREHOUSE_AMOUNT", {x: this.item.x, y: this.item.y});
@@ -146,7 +160,6 @@
         methods: {
             async markAsHome() {
                 try {
-                    console.log("[Popup] Mark home: ", this.item);
                     await this.$store.dispatch("MARK_AS_HOME", {
                         x: this.item.x,
                         y: this.item.y
@@ -277,7 +290,7 @@
         width: 240px;
         height: 255px;
         z-index: 3;
-        background-image: url("../assets/popup-long.png");
+        background-image: url("../../assets/popup-long.png");
         background-size: 100% auto;
         background-position: center 0;
         background-repeat: no-repeat;
