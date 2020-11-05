@@ -192,8 +192,7 @@
             return {countDown: 0, intervalId: undefined, angle: 0};
         },
         created() {
-            this.angle = Math.floor(Math.atan2(this.catapult.user_castle_y - this.catapult.opponent_castle_y, this.catapult.user_castle_x - this.catapult.opponent_castle_x) * 180 / Math.PI) - 82;
-            console.log("[Catapult] Catapult: ", this.catapult, this.angle);
+            this.angle = Math.floor(Math.atan2(this.catapult.userCastleY - this.catapult.opponentCastleY, this.catapult.userCastleX - this.catapult.opponentCastleX) * 180 / Math.PI) - 82;
             this.intervalId = setInterval(() => {
                 let seconds = Math.max(0, Math.floor(((Date.parse(this.catapult.timestamp.replace(" ", "T") + ".000Z") + config.CATAPULT_LIFETIME) - Date.now()) / 1000));
                 const minutes = Math.floor(seconds / 60) || 0;

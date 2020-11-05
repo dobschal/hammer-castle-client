@@ -53,7 +53,7 @@
             <div class="item" @click="deleteCastle">Destroy</div>
         </div>
         <div class="items" v-else-if="type === 'knight' && isMyKnight">
-            <div class="item">Move</div>
+            <div class="item" @click="$emit('MOVE_KNIGHT', item)">Move</div>
             <div class="item">Level Up</div>
             <div class="item">Change Name</div>
             <div class="item">Destroy</div>

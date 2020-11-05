@@ -21,11 +21,11 @@
         <form @submit.prevent="authenticate" v-if="!loading">
           <p>
             <label for="username">Username</label>
-            <input type="text" v-model="username" id="username" autofocus autocomplete="username">
+            <input type="text" v-model="username" placeholder="Enter your username..." id="username" autofocus autocomplete="username">
           </p>
           <p>
             <label for="password">Password</label>
-            <input type="password" v-model="password" id="password" :autocomplete="showRegistration ? 'new-password' : 'current-password'">
+            <input type="password" v-model="password" placeholder="Enter your password..." id="password" :autocomplete="showRegistration ? 'new-password' : 'current-password'">
           </p>
           <p v-if="showRegistration">
           <label for="password-verify">Verify Password</label>
@@ -67,6 +67,7 @@
             <br> <b class="link" @click="openImprint">Imprint</b> | <b class="link" @click="openPrivacyPolicy">Privacy &
               Cookie
               Policy</b></p>
+          <br>.
         </div>
       </div>
       <div v-else>Loading...</div>
@@ -262,15 +263,25 @@
       overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
 
+      @media only screen and (max-width: 900px) {
+        padding: 0;
+      }
+
       .container {
         background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(5px);
         width: 100%;
-        max-width: 480px;
+        max-width: 620px;
         margin: 0 auto 5rem auto;
         padding: 2rem;
         border-radius: 0.5rem;
         box-sizing: border-box;
+
+        @media only screen and (max-width: 900px) {
+          border-radius: 0;
+          background: rgba(255, 255, 255, 1);
+          margin: 0 auto;
+        }
 
         hr {
           margin: 2rem -2rem;
@@ -292,7 +303,13 @@
 
         form p input {
           display: block;
-          width: 100%;
+          width: calc(100% + 0.5rem);
+          border: solid 1px #E0E0E0;
+          background-color: #f6f6f6;
+          padding: 0.5rem;
+          border-radius: 0.5rem;
+          margin-left: -0.25rem;
+          box-sizing: border-box;
         }
 
         #user-color {

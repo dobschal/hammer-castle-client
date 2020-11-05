@@ -105,7 +105,7 @@
                          viewBox="0 0 403 403"
                          fill="none"
                          xmlns="http://www.w3.org/2000/svg"
-                         @click="roadClicked(road)">
+                         @click="onRoadClick(road)">
                         <path class="road"
                               :class="{ 'is-my-road': road.isMyRoad }"
                               :style="{transform: 'rotate(' + road.angle + 'deg)', 'transform-origin': '50% 50%' }"
@@ -132,9 +132,11 @@
 
                     <g v-for="knight in knights"
                        :key="'knight-' + knight.x + '' + knight.y">
-                        <Knight :position="{ x: knight.x, y: knight.y }"
+                        <Knight :position="knightViewPosition(knight)"
                                 :knight="knight"
-                                @CLICK="knightClicked"
+                                :view-position="viewPosition"
+                                :is-active="activeAction === 'MOVE_KNIGHT' && activeKnight && activeKnight.id === knight.id"
+                                @CLICK="onKnightClick"
                                 :color="knight.color"></Knight>
                     </g>
 
@@ -144,15 +146,16 @@
                                 :castle="castle"
                                 :color="castle.color"
                                 :dragging="dragging"
+                                :is-possible-knight-destination="isPossibleKnightDestination(castle)"
                                 :pageOverlayOpen="pageOverlayOpen"
                                 :action-action="activeAction"
-                                @CLICK="castleClick($event)"
+                                @CLICK="onCastleClick($event)"
                                 @HIGHLIGHT-ON="highlightedCastle = castle"
                                 @HIGHLIGHT-OFF="highlightedCastle = undefined"></Castle>
                     </g>
 
                     <g v-for="catapult in catapults"
-                       :key="'catapult-' + catapult.x + '' + catapult.y + '' + catapult.user_id">
+                       :key="'catapult-' + catapult.x + '' + catapult.y + '' + catapult.userId">
                         <svg :x="catapult.x - minCastleDistance"
                              :y="catapult.y - minCastleDistance"
                              :width="minCastleDistance * 2"
@@ -171,13 +174,14 @@
                     </g>
 
                     <g v-for="warehouse in warehouses"
-                       :key="'warehouse-' + warehouse.x + '' + warehouse.y + '' + warehouse.user_id">
-                        <Warehouse :position="{ x: warehouse.x, y: warehouse.y }"
-                                   :dragging="dragging"
-                                   :pageOverlayOpen="pageOverlayOpen"
-                                   :warehouse="warehouse"
-                                   @CLICK="openWarehousePopup($event)"
-                                   :color="warehouse.color"></Warehouse>
+                       :key="'warehouse-' + warehouse.x + '' + warehouse.y + '' + warehouse.userId">
+                        <Warehouse
+                                :position="{ x: warehouse.x, y: warehouse.y }"
+                                :dragging="dragging"
+                                :pageOverlayOpen="pageOverlayOpen"
+                                :warehouse="warehouse"
+                                @CLICK="openWarehousePopup($event)"
+                                :color="warehouse.color"></Warehouse>
                     </g>
 
                 </g>
@@ -200,6 +204,7 @@
                :item="popupItem"
                :viewPosition="viewPosition"
                :position="popupPosition"
+               @MOVE_KNIGHT="moveKnight"
                @ERROR="error = $event"
                @CLOSE="closePopup"></Popup>
         <ActionLog></ActionLog>
@@ -243,6 +248,12 @@
     import TopNavigationBar from "./uiElements/TopNavigationBar";
     import DailyReward from "./uiElements/DailyReward";
     import HomeButton from "./uiElements/HomeButton";
+
+    /**
+     * @typedef GameComponent
+     * @type object
+     * @property {Knight} activeKnight
+     */
 
     export default {
         name: "Game",
@@ -297,7 +308,8 @@
                 lastRenderTimestamp: undefined,
                 isLoading: false,
                 zoomLoadTimeout: undefined,
-                storePositionInUrlWaiter: undefined
+                storePositionInUrlWaiter: undefined,
+                activeKnight: undefined
             };
         },
 
@@ -393,6 +405,11 @@
 
         watch: {
 
+            activeAction(val) {
+                if (val)
+                    this.closePopup();
+            },
+
             menuOpen() {
                 this.closePopup();
             },
@@ -472,12 +489,39 @@
 
         methods: {
 
-            knightClicked(knight) {
-                if (Date.now() - this.mouseDownTimestamp > 300) return;
-                this.popupType = "knight";
-                this.popupItem = knight;
-                this.popupPosition = {x: knight.x, y: knight.y - 100};
+            // - - - - - - - - - - - - - - - - - - - - - GENERAL - - - - - - - - - - - - - - - - - - - - - //
+
+            async load() {
+                if (this.isLoading) return;
+                this.isLoading = true;
+                console.log("[Game] Load...");
+                await Promise.all([
+                    this.$store.dispatch("GET_CASTLES", this.loadPosition),
+                    this.$store.dispatch("GET_KNIGHTS", this.loadPosition),
+                    this.$store.dispatch("GET_CATAPULTS", this.loadPosition),
+                    this.$store.dispatch("GET_ACTION_LOG", this.loadPosition),
+                    this.$store.dispatch("GET_WAREHOUSES", this.loadPosition),
+                    this.$store.dispatch("GET_CASTLE_PRICE"),
+                    this.$store.dispatch("GET_WAREHOUSE_PRICE"),
+                    this.$store.dispatch("GET_WAREHOUSE_UPGRADE_PRICE"),
+                    this.$store.dispatch("GET_CATAPULT_PRICE"),
+                    this.$store.dispatch("GET_KNIGHT_PRICE"),
+                    this.$store.dispatch("GET_CONQUERS"),
+                    this.$store.dispatch("GET_SERVER_VERSION"),
+                    this.$store.dispatch("GET_BLOCK_AREAS")
+                ]);
+                this.isLoading = false;
             },
+
+            logout() {
+                this.websocket.disconnect();
+                this.$store.commit("SET_AUTH_TOKEN", "");
+                this.$store.commit("SET_USER", undefined);
+                cookie.remove("auth-token");
+                window.location.reload(true);
+            },
+
+            // - - - - - - - - - - - - - - - - - - - - - MAP & POSITION - - - - - - - - - - - - - - - - - - - - - //
 
             goHome() {
                 this.moveMapTo({
@@ -506,6 +550,14 @@
                 return x < p.toX && x > p.fromX && y < p.toY && y > p.fromY;
             },
 
+            moveMapTo(position) {
+                this.viewPosition.x = position.x - (window.innerWidth / 2 * this.zoomFactor);
+                this.viewPosition.y = position.y - (window.innerHeight / 2 * this.zoomFactor);
+                this.load();
+            },
+
+            // - - - - - - - - - - - - - - - - - - - - - PAGES - - - - - - - - - - - - - - - - - - - - - //
+
             closePage() {
                 this.pageOverlayOpen = false;
                 this.$util.deleteUrlParam("page");
@@ -519,14 +571,18 @@
                 this.$util.setUrlParam("page", $event);
             },
 
-            async onWindowFocus() {
-                await this.$store.dispatch("GET_USER");
-                this.load();
-            },
+            // - - - - - - - - - - - - - - - - - - - - - POPUP - - - - - - - - - - - - - - - - - - - - - //
 
-            triggerCastleBuild() {
-                console.log("[Game] this.$refs.buildCastle.buildCastle: ", this.$refs.buildCastle.buildCastle);
-                this.$refs.buildCastle.buildCastle();
+            /**
+             * @param {Position} position
+             * @param {('knight'|'road'|'castle'|'warehouse')} type
+             * @param {*} item
+             */
+            openPopup(position, type, item) {
+                if (this.activeAction) return;
+                this.popupPosition = position;
+                this.popupType = type;
+                this.popupItem = item;
             },
 
             closePopup() {
@@ -535,42 +591,116 @@
                 this.popupItem = undefined;
             },
 
+            openWarehousePopup(warehouse) {
+                if (warehouse.userId === this.user.id) {
+                    this.openPopup({
+                        x: warehouse.x,
+                        y: warehouse.y - 40
+                    }, "warehouse", warehouse);
+                }
+            },
+
+            // - - - - - - - - - - - - - - - - - - - - - WINDOW - - - - - - - - - - - - - - - - - - - - - //
+
+            async onWindowFocus() {
+                await this.$store.dispatch("GET_USER");
+                this.load();
+            },
+
             onWindowResize() {
                 this.gameHeight = this.$refs["game-container"].offsetHeight;
                 this.gameWidth = this.$refs["game-container"].offsetWidth;
             },
 
-            roadClicked(road) {
+            onScroll(event) {
+                if (this.menuOpen || this.pageOverlayOpen) return;
+                const delta = event.deltaY * config.SCROLL_SENSITIVITY;
+                this.zoom(delta);
+            },
+
+            // - - - - - - - - - - - - - - - - - - - - - IN GAME LOGIC - - - - - - - - - - - - - - - - - - - - - //
+
+
+            /**
+             * @param {Knight} knight
+             */
+            knightViewPosition(knight) {
+                if (!knight.goToX || !knight.goToY)
+                    return {x: knight.x, y: knight.y};
+                return {
+                    x: (knight.x + knight.goToX) / 2,
+                    y: (knight.y + knight.goToY) / 2
+                };
+            },
+
+            /**
+             * @param {Knight} knight
+             */
+            onKnightClick(knight) {
+                if (Date.now() - this.mouseDownTimestamp > 300) return;
+                const position = this.knightViewPosition(knight);
+                position.y -= 100;
+                this.openPopup(position, "knight", knight);
+            },
+
+            onRoadClick(road) {
                 if (!road.isMyRoad || Date.now() - this.mouseDownTimestamp > 300) return;
                 console.log("[Game] Clicked road: ", road.middleBetweenCastles);
                 this.$nextTick(() => {
-                    this.popupType = "road";
-                    this.popupItem = road;
-                    this.popupPosition = road.middleBetweenCastles;
+                    this.openPopup(road.middleBetweenCastles, "road", road);
                 });
             },
 
-            openWarehousePopup(warehouse) {
-                if (warehouse.user_id === this.user.id) {
-                    this.popupType = "warehouse";
-                    this.popupItem = warehouse;
-                    this.popupPosition = {x: warehouse.x, y: warehouse.y - 40};
-                }
-            },
-
-            castleClick(castle) {
+            /**
+             * @param {Castle} castle
+             */
+            async onCastleClick(castle) {
                 if (Date.now() - this.mouseDownTimestamp > 300) return;
-                this.popupType = "castle";
-                this.popupItem = castle;
-                this.popupPosition = {x: castle.x, y: castle.y - 50};
+                if (this.activeAction === "MOVE_KNIGHT") {
+                    this.$store.dispatch("MOVE_KNIGHT", {
+                        knightId: this.activeKnight.id,
+                        x: castle.x,
+                        y: castle.y
+                    });
+                    this.cancelAction();
+                    return;
+                }
+                this.openPopup({
+                    x: castle.x,
+                    y: castle.y - 50
+                }, "castle", castle);
                 this.latestClickedCastle = castle;
             },
 
-            moveMapTo(position) {
-                this.viewPosition.x = position.x - (window.innerWidth / 2 * this.zoomFactor);
-                this.viewPosition.y = position.y - (window.innerHeight / 2 * this.zoomFactor);
-                this.load();
+            triggerCastleBuild() {
+                this.$refs.buildCastle.buildCastle();
             },
+
+            /**
+             * @param {Knight} knight
+             */
+            moveKnight(knight) {
+                this.activeAction = "MOVE_KNIGHT";
+                this.activeKnight = knight;
+            },
+
+            /**
+             * @param {Castle} castle
+             */
+            isPossibleKnightDestination(castle) {
+                if (this.activeAction !== "MOVE_KNIGHT") return false;
+                return this.$util.positionDistance({
+                    x: castle.x,
+                    y: castle.y
+                }, this.activeKnight) <= config.MAX_CASTLE_DISTANCE;
+            },
+
+            cancelAction() {
+                this.activeAction = "";
+                this.activeKnight = undefined;
+            },
+
+            // - - - - - - - - - - - - - - - - - - - - - WEBSOCKET - - - - - - - - - - - - - - - - - - - - - //
 
             attachWebsocketListener() {
                 this.websocket = this.$websocket.connect();
@@ -588,11 +718,7 @@
                 })
             },
 
-            onScroll(event) {
-                if (this.menuOpen || this.pageOverlayOpen) return;
-                const delta = event.deltaY * config.SCROLL_SENSITIVITY;
-                this.zoom(delta);
-            },
+            // - - - - - - - - - - - - - - - - - - - - - ZOOM - - - - - - - - - - - - - - - - - - - - - //
 
             zoomOut() {
                 this.zoom(0.15);
@@ -620,9 +746,11 @@
                 });
             },
 
+            // - - - - - - - - - - - - - - - - - - - - - INPUT HANDLERS - - - - - - - - - - - - - - - - - - - - - //
+
             onKeyUp(event) {
                 if (event.key === "Escape" || event.key === "Esc") {
-                    this.activeAction = "";
+                    this.cancelAction();
                     this.showDialog = false;
                     this.closePopup();
                 }
@@ -647,37 +775,18 @@
                 this.mouseDownTimestamp = Date.now();
             },
 
-            async load() {
-                if (this.isLoading) return;
-                this.isLoading = true;
-                console.log("[Game] Load...");
-                await Promise.all([
-                    this.$store.dispatch("GET_CASTLES", this.loadPosition),
-                    this.$store.dispatch("GET_KNIGHTS", this.loadPosition),
-                    this.$store.dispatch("GET_CATAPULTS", this.loadPosition),
-                    this.$store.dispatch("GET_ACTION_LOG", this.loadPosition),
-                    this.$store.dispatch("GET_WAREHOUSES", this.loadPosition),
-                    this.$store.dispatch("GET_CASTLE_PRICE"),
-                    this.$store.dispatch("GET_WAREHOUSE_PRICE"),
-                    this.$store.dispatch("GET_WAREHOUSE_UPGRADE_PRICE"),
-                    this.$store.dispatch("GET_CATAPULT_PRICE"),
-                    this.$store.dispatch("GET_KNIGHT_PRICE"),
-                    this.$store.dispatch("GET_CONQUERS"),
-                    this.$store.dispatch("GET_SERVER_VERSION"),
-                    this.$store.dispatch("GET_BLOCK_AREAS")
-                ]);
-                this.isLoading = false;
-            },
             onTouchMove(event) {
                 const x = event.touches[0].clientX;
                 const y = event.touches[0].clientY;
                 this.onPointerMove({x, y});
             },
+
             onMouseMove(event) {
                 const x = event.clientX;
                 const y = event.clientY;
                 this.onPointerMove({x, y});
             },
+
             onPointerMove({x, y}) {
                 if (!this.dragging/* || this.waitingForAnimationFrame*/) return;
                 // this.waitingForAnimationFrame = true;
@@ -690,11 +799,13 @@
                     this.updateMouseMoveDeltaTransform();
                 });
             },
+
             updateMouseMoveDeltaTransform() {
                 const transformStyle = 'translateX(' + (-this.mouseMoveDelta.x) + 'px) translateY(' + (-this.mouseMoveDelta.y) + 'px)';
                 this.$refs["game-container"].style.transform = transformStyle;
                 this.$refs["frame"].style.transform = transformStyle;
             },
+
             onMouseUp() {
                 if (this.dragging) {
                     if (this.mouseMoveDelta.x) {
@@ -708,13 +819,6 @@
                     if (this.popupType) this.closePopup();
                 }
                 this.dragging = false;
-            },
-            logout() {
-                this.websocket.disconnect();
-                this.$store.commit("SET_AUTH_TOKEN", "");
-                this.$store.commit("SET_USER", undefined);
-                cookie.remove("auth-token");
-                window.location.reload(true);
             }
         }
     };
@@ -795,17 +899,17 @@
 
     @keyframes pulsate_scale {
         0% {
-            transform: translateX(-50px) translateY(-50px) scale(1);
+            transform: scale(1);
             opacity: 1;
         }
 
         50% {
-            transform: translateX(-50px) translateY(-50px) scale(1.5);
+            transform: scale(1.5);
             opacity: 1;
         }
 
         100% {
-            transform: translateX(-50px) translateY(-50px) scale(1);
+            transform: scale(1);
             opacity: 1;
         }
     }
@@ -829,12 +933,11 @@
     .loading {
         position: fixed;
         z-index: 11;
-        top: 50%;
-        left: 50%;
+        bottom: 1.5rem;
+        right: 2rem;
         opacity: 0;
-        transform: translateX(-50px) translateY(-50px);
-        width: 100px;
-        height: 100px;
+        width: 50px;
+        height: 50px;
         background-color: rgba(255, 255, 255, 0.33);
         background-image: url("../assets/logo.svg");
         background-size: contain;
@@ -846,5 +949,9 @@
         animation-duration: 3.2s;
         animation-timing-function: ease-out;
         animation-delay: 0.5s;
+
+        @media only screen and (max-width: 600px) {
+            display: none;
+        }
     }
 </style>

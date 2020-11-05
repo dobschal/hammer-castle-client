@@ -10,6 +10,7 @@
          @click="$emit('CLICK', knight)"
          xmlns="http://www.w3.org/2000/svg"
          class="root-knight">
+
         <path d="M63.5903 28.5109C67.7595 25.9555 70.3148 29.7213 70.3148 29.7213L67.8939 56.3503L62.2454 64.6886L56.0588 61.1919C56.0588 61.1919 61.5729 52.8535 61.1695 48.4153C60.766 43.9772 59.4211 31.0662 63.5903 28.5109Z"
               fill="#956947"/>
         <path d="M48.9309 66.0335C49.3344 65.2265 54.714 62.5367 56.5968 61.3263C58.4797 60.1159 61.8419 64.4196 61.8419 64.4196C61.1695 67.5577 59.7439 74.1029 59.4211 75.1788C59.0983 76.2547 58.1211 75.6271 57.6728 75.1788L58.4797 69.2612C57.8521 71.2338 56.9465 74.3181 56.1933 75.1788C55.4402 76.0395 55.0278 74.5512 54.8484 73.8339L57.6728 67.9163L52.8311 73.8339L51.4862 72.8925L55.6554 66.3025L51.4862 71.2786L50.8138 70.0682L54.176 65.2265C54.176 65.2265 50.6793 67.6474 49.8723 67.5129C49.0654 67.3784 48.5274 66.8404 48.9309 66.0335Z"
@@ -61,27 +62,49 @@
         <path d="M68.7609 6.60847L72.8912 16.0491C72.8912 16.0491 77.2575 13.0989 85.8721 13.925C94.4867 14.7511 94.7227 28.7941 94.7227 28.7941L102.157 29.7381L100.033 28.7941L104.045 26.7879L100.623 24.6638H103.337L101.803 22.7756L103.337 22.1856L101.331 20.2974L103.337 19.5894L101.803 18.2913L103.337 17.3472L102.157 15.4591H104.045L101.803 12.6269H103.337L101.803 10.8568L103.337 10.3847L101.331 9.55868L102.157 8.02457H100.623L101.331 6.60847H98.971V3.77627C98.2236 4.16963 96.6108 4.95635 96.1388 4.95635C95.6668 4.95635 97.1222 3.77627 97.9089 3.18623L94.7227 3.77627L96.1388 2.36017H92.4806L93.6606 1.53411L90.0024 2.36017V0.826059L87.8782 2.36017V0.826059L85.8721 2.36017L85.282 0L83.5119 1.53411L82.3318 0.826059L81.3878 2.36017L80.4437 1.53411L79.0276 3.77627L77.9655 2.36017L76.7854 4.95635L74.5433 3.18623V4.95635L72.8912 3.77627C72.6945 4.16963 72.2539 5.09796 72.0651 5.6644C71.8763 6.23084 70.885 5.42839 70.413 4.95635V6.60847H68.7609Z"
               :fill="color"/>
         <defs>
-            <linearGradient id="paint0_linear" x1="97.7506" y1="44.5598" x2="97.7506" y2="110.012"
+            <linearGradient id="paint0_linear" x1="97.7506" y1="44.5598"
+                            x2="97.7506" y2="110.012"
                             gradientUnits="userSpaceOnUse">
                 <stop/>
                 <stop offset="1" stop-opacity="0"/>
             </linearGradient>
         </defs>
+
+        <text v-if="countDown" x="84" y="77" class="count-down" fill="white"
+              text-anchor="middle">{{ countDown }}
+        </text>
     </svg>
 </template>
 
 <script>
+
     export default {
         name: "Knight",
         props: {
             position: Object,
             color: String,
-            knight: Object
+            knight: Object,
+            isActive: Boolean,
+            viewPosition: Object
         },
         data() {
             return {
-                highlighted: false
+                highlighted: false,
+                countDown: undefined,
+                intervalId: undefined
             };
+        },
+        created() {
+            this.intervalId = setInterval(() => {
+                if (!this.knight.arrivesAt) return;
+                let seconds = Math.max(0, Math.floor((this.knight.arrivesAt - Date.now()) / 1000));
+                const minutes = Math.floor(seconds / 60) || 0;
+                seconds = seconds % 60;
+                this.countDown = `${minutes < 10 ? ('0' + minutes) : minutes}:${seconds < 10 ? ('0' + seconds) : seconds}`;
+            }, 1000);
+        },
+        beforeDestroy() {
+            if (this.intervalId) clearInterval(this.intervalId);
         }
     };
 </script>
@@ -111,5 +134,16 @@
         animation-iteration-count: infinite;
         animation-timing-function: linear;
         transform-origin: 50% 50%;
+    }
+
+    .count-down {
+        font: 12px 'MedievalSharp';
+        font-weight: bold;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
     }
 </style>

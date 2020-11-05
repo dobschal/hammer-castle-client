@@ -18,6 +18,7 @@ axios.interceptors.request.use(function(config) {
 
 axios.interceptors.response.use(
   function(response) {
+    response.data = propsToCamelCase(response.data);
     return response;
   },
   function(error) {
@@ -32,6 +33,42 @@ axios.interceptors.response.use(
     }
   }
 );
+
+/**
+ * It converts the property keys to camelCase:
+ * E.g.: user_id --> userId
+ * @param {object} data
+ * @return {object}
+ */
+function propsToCamelCase(data) {
+  if (!data || typeof data !== "object") return data;
+  Object.keys(data).forEach(key => {
+    if (data[key] && typeof data[key] === "object") {
+      data[key] = propsToCamelCase(data[key]);
+    } else if (data[key] && Array.isArray(data[key])) {
+      data[key] = data[key].map(propsToCamelCase);
+    }
+    if (key.includes("_")) {
+      const newKey = convertSnakeCaseToCamelCase(key);
+      data[newKey] = data[key];
+      delete data[key];
+    }
+  });
+  return data;
+}
+
+/**
+ * @param {string} text
+ * @return {string}
+ */
+function convertSnakeCaseToCamelCase(text) {
+  return text.replace(
+      /([-_][a-z0-9])/g,
+      (group) => group.toUpperCase()
+          .replace('-', '')
+          .replace('_', '')
+  );
+}
 
 export default {
   install(Vue) {

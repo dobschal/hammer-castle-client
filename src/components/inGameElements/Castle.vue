@@ -1,8 +1,19 @@
 <template>
-    <svg :x="position.x - 125" :y="position.y - 125" @click="$emit('CLICK', castle)" @mouseover="highlighted = true"
+    <svg :x="position.x - 125" :y="position.y - 125"
+         @click="$emit('CLICK', castle)" @mouseover="highlighted = true"
          @mouseout="highlighted = false">
 
-        <circle cx="125" cy="125" r="35" :fill="actionAction === 'BUILD_CASTLE' ? '#c6cc71' : 'rgb(181,230,123)'" stroke="none"/>
+        <image v-if="isPossibleKnightDestination"
+               href="../../assets/arrow.svg"
+               :height="50"
+               :width="50"
+               :x="-80"
+               :y="40"
+               class="destination-arrow"/>
+
+        <circle cx="125" cy="125" r="35"
+                :fill="actionAction === 'BUILD_CASTLE' ? '#c6cc71' : 'rgb(181,230,123)'"
+                stroke="none"/>
         <!--      <circle cx="125" cy="125" r="200" fill="rgba(181,230,123, 0.5)"  stroke-width="3" :stroke="color"/>-->
 
         <CastleLevel1 v-if="!castle || points <= 1"></CastleLevel1>
@@ -111,6 +122,7 @@
         name: "Castle",
         components: {CastleLevel1, CastleLevel2, CastleLevel3, CastleLevel4, CastleLevel5, CastleLevel6},
         props: {
+            isPossibleKnightDestination: Boolean,
             color: String,
             castle: {
                 type: Object,
@@ -339,5 +351,28 @@
         -moz-user-select: none; /* Old versions of Firefox */
         -ms-user-select: none; /* Internet Explorer/Edge */
         user-select: none;
+    }
+
+    @keyframes move_arrow {
+        0% {
+            transform: rotate(180deg) translateY(0);
+        }
+
+        50% {
+            transform: rotate(180deg) translateY(20px);
+        }
+
+        100% {
+            transform: rotate(180deg) translateY(0);
+        }
+    }
+
+    .destination-arrow {
+        transform-origin: 10% 10%;
+        transform: rotate(180deg);
+        animation: move_arrow;
+        animation-iteration-count: infinite;
+        animation-duration: 1s;
+        animation-timing-function: ease-in-out;
     }
 </style>

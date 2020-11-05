@@ -35,10 +35,10 @@
                 return this.$store.state.user ? this.$store.state.user.hammer : 0;
             },
             maxHammers() {
-                return this.$store.state.user ? this.$store.state.user.max_hammers : 0;
+                return this.$store.state.user ? this.$store.state.user.maxHammers : 0;
             },
             hammerPerMinute() {
-                return this.$store.state.user ? this.$store.state.user.hammer_per_minute : 0;
+                return this.$store.state.user ? this.$store.state.user.hammerPerMinute : 0;
             },
             level() {
                 return this.$store.state.user ? this.$store.state.user.level : 0;
@@ -50,7 +50,7 @@
                 return this.$store.state.user ? this.$store.state.user.beer : 0;
             },
             maxBeer() {
-                return this.$store.state.user ? this.$store.state.user.max_beer : 0;
+                return this.$store.state.user ? this.$store.state.user.maxBeer : 0;
             }
         },
         watch: {

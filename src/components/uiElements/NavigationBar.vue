@@ -4,7 +4,7 @@
 
     <div class="wrapper">
         <div class="buttons">
-            <button v-if="activeAction && isTouchDevice" type="button" @click="buildIt">Build It</button>
+            <button v-if="activeAction === 'BUILD_CASTLE' && isTouchDevice" type="button" @click="buildIt">Build It</button>
             <button v-if="activeAction" type="button" class="negative" @click="cancel">Cancel</button>
             <button v-else type="button" @click="buildCastle">Build Castle for {{ $store.state.castlePrice }} <img
                     src="../../assets/icon-hammer.svg" class="hammer-icon" alt="Hammer"></button>
