@@ -3,10 +3,23 @@ import {userActions, userMutations, userState} from "./user";
 import {castleActions, castleMutations, castleState} from "./castle";
 import {catapultActions, catapultMutations, catapultState} from "./catapult";
 import {knightActions, knightMutations, knightState} from "./knight";
-import {warehouseActions, warehouseMutations, warehouseState} from "./warehouse";
-import {blockAreaActions, blockAreaMutations, blockAreaState} from "./blockArea";
-import {actionLogActions, actionLogMutations, actionLogState} from "./actionLog";
+import {
+  warehouseActions,
+  warehouseMutations,
+  warehouseState
+} from "./warehouse";
+import {
+  blockAreaActions,
+  blockAreaMutations,
+  blockAreaState
+} from "./blockArea";
+import {
+  actionLogActions,
+  actionLogMutations,
+  actionLogState
+} from "./actionLog";
 import {forumActions, forumMutations, forumState} from "./forum";
+import {friendActions, friendMutations, friendState} from "./friend";
 
 export default {
   state: {
@@ -19,7 +32,8 @@ export default {
     ...warehouseState,
     ...actionLogState,
     ...forumState,
-    ...knightState
+    ...knightState,
+    ...friendState
   },
   getters: {
     busy(state) {
@@ -40,7 +54,8 @@ export default {
     ...warehouseMutations,
     ...actionLogMutations,
     ...forumMutations,
-    ...knightMutations
+    ...knightMutations,
+    ...friendMutations
   },
   actions: {
     async GET_SERVER_VERSION({ commit }) {
@@ -61,6 +76,7 @@ export default {
     ...warehouseActions,
     ...actionLogActions,
     ...forumActions,
-    ...knightActions
+    ...knightActions,
+    ...friendActions
   }
 };

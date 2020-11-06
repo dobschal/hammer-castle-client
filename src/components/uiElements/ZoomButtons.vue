@@ -8,14 +8,14 @@
 <style lang="scss" scoped>
     .zoom-buttons {
         position: fixed;
-        right: 1.5rem;
-        top: 5rem;
+        right: 1rem;
+        top: 4rem;
         z-index: 3;
         /*background-image: url("../assets/icon-gift.png");*/
         /*background-size: contain;*/
         /*background-position: center;*/
         /*background-repeat: no-repeat;*/
-        background-color: rgba(8, 49, 57, 0.15);
+        background-color: rgba(8, 49, 57, 0.3);
         backdrop-filter: blur(5px);
         border-radius: 1rem;
         width: calc(32px + 0.8rem);

@@ -63,8 +63,8 @@
 
     .daily-reward {
         position: fixed;
-        right: 1rem;
-        top: 19.5rem;
+        right: 0.6rem;
+        top: 21rem;
         z-index: 3;
         background-image: url("../../assets/icon-gift.png");
         background-size: contain;
@@ -72,8 +72,8 @@
         background-repeat: no-repeat;
         background-color: rgba(255, 109, 105, 0.35);
         border-radius: 50%;
-        width: 60px;
-        height: 60px;
+        width: 56px;
+        height: 56px;
         opacity: 0.8;
 
         &.active {

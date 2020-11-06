@@ -36,4 +36,13 @@
  * @property {number} y
  */
 
+/**
+ * @typedef Friend
+ * @type object
+ * @property {string} username
+ * @property {number} id
+ * @property {number} level
+ * @property {number} lastActiveAt
+ */
+
 export default {};

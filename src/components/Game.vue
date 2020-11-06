@@ -190,12 +190,15 @@
         </div>
 
         <!-- UI Elements -->
-        <NavigationBar :activeAction.sync="activeAction" @BUILD_IT="triggerCastleBuild"></NavigationBar>
-        <TopNavigationBar @OPEN-MENU="menuOpen = true"></TopNavigationBar>
-        <Menu v-if="menuOpen" @LOGOUT="logout"
-              @CLOSE-MENU="menuOpen = false"
-              @GO_TO="moveMapTo($event)"
-              @OPEN_PAGE="openPage($event)"></Menu>
+        <NavigationBar :activeAction.sync="activeAction"
+                       @BUILD_IT="triggerCastleBuild"></NavigationBar>
+        <TopNavigationBar @OPEN-MENU="openOverlay"></TopNavigationBar>
+        <Overlay v-if="overlayOpen"
+                 :type.sync="overlayType"
+                 @LOGOUT="logout"
+                 @CLOSE-OVERLAY="closeOverlay"
+                 @GO_TO="moveMapTo($event)"
+                 @OPEN_PAGE="openPage($event)"></Overlay>
         <ErrorToast v-if="error" @CLICK="error = ''">{{ error }}</ErrorToast>
         <Popup :zoomFactor="zoomFactor"
                :mouseMoveDelta="mouseMoveDelta"
@@ -211,6 +214,12 @@
         <div v-if="$store.state.progress > 0" class="loading"></div>
         <DailyReward></DailyReward>
         <HomeButton @GO_HOME="goHome"></HomeButton>
+
+        <FriendsList :open.sync="friendsListOpen"
+                     @ADD_FRIEND="openOverlay('add-friend')"
+                     @OPEN_PLAYERS_LIST="openOverlay('ranking')">
+        </FriendsList>
+
         <ZoomButtons @ZOOM_IN="zoomIn" @ZOOM_OUT="zoomOut"></ZoomButtons>
 
         <!-- Pages -->
@@ -228,26 +237,27 @@
 </template>
 
 <script>
-    import Menu from "./Menu";
-    import Popup from "./uiElements/Popup";
-    import Castle from "./inGameElements/Castle";
     import config from "../config";
     import cookie from "js-cookie";
     import Forum from "./pages/Forum";
-    import Warehouse from "./Warehouse";
-    import BlockArea from "./inGameElements/BlockArea";
-    import ActionLog from "./uiElements/ActionLog";
     import InfoView from "./pages/Info";
-    import ErrorToast from "./uiElements/ErrorToast";
-    import BuildCastle from "./inGameElements/BuildCastle";
-    import ZoomButtons from "./uiElements/ZoomButtons";
+    import Warehouse from "./Warehouse";
+    import Overlay from "./uiElements/Overlay.vue";
+    import Popup from "./uiElements/Popup";
     import PageOverlay from "./PageOverlay";
-    import NavigationBar from "./uiElements/NavigationBar";
     import Knight from "./inGameElements/Knight";
+    import Castle from "./inGameElements/Castle";
+    import ActionLog from "./uiElements/ActionLog";
     import Catapult from "./inGameElements/Catapult";
-    import TopNavigationBar from "./uiElements/TopNavigationBar";
-    import DailyReward from "./uiElements/DailyReward";
+    import ErrorToast from "./uiElements/ErrorToast";
     import HomeButton from "./uiElements/HomeButton";
+    import ZoomButtons from "./uiElements/ZoomButtons";
+    import BlockArea from "./inGameElements/BlockArea";
+    import DailyReward from "./uiElements/DailyReward";
+    import NavigationBar from "./uiElements/NavigationBar";
+    import BuildCastle from "./inGameElements/BuildCastle";
+    import FriendsList from "./uiElements/FriendsList.vue";
+    import TopNavigationBar from "./uiElements/TopNavigationBar";
 
     /**
      * @typedef GameComponent
@@ -258,11 +268,11 @@
     export default {
         name: "Game",
         components: {
-            Menu,
             Forum,
             Popup,
             Knight,
             Castle,
+            Overlay,
             Catapult,
             InfoView,
             BlockArea,
@@ -273,43 +283,46 @@
             BuildCastle,
             DailyReward,
             ZoomButtons,
+            FriendsList,
             PageOverlay,
             NavigationBar,
             TopNavigationBar
         },
         data() {
             return {
-                dragging: false,
-                waitingForAnimationFrame: false,
-                gameHeight: 0,
-                gameWidth: 0,
-                zoomFactor: 1,
-                mouseDownTimestamp: 0,
-                viewPosition: {x: 0, y: 0},
-                lastMousePosition: {x: 0, y: 0},
-                mouseMoveDelta: {x: 0, y: 0},
-                showDialog: false,
-                websocket: undefined,
-                activeAction: "",
-                latestClickedCastle: undefined,
-                menuOpen: false,
-                highlightedCastle: undefined,
-                error: "",
-                popupType: "",
-                popupItem: undefined,
-                popupPosition: undefined,
-                minCastleDistance: config.MIN_CASTLE_DISTANCE,
-                maxCastleDistance: config.MAX_CASTLE_DISTANCE,
-                blockAreaSize: config.BLOCK_AREA_SIZE,
-                newCastlePosition: undefined,
-                pageOverlayOpen: false,
-                pageOverlayType: "",
                 fps: 0,
-                lastRenderTimestamp: undefined,
+                error: "",
+                gameWidth: 0,
+                gameHeight: 0,
+                popupType: "",
+                zoomFactor: 1,
+                dragging: false,
                 isLoading: false,
+                activeAction: "",
+                showDialog: false,
+                overlayOpen: false,
+                overlayType: "menu",
+                pageOverlayType: "",
+                websocket: undefined,
+                popupItem: undefined,
+                mouseDownTimestamp: 0,
+                pageOverlayOpen: false,
+                friendsListOpen: false,
+                activeKnight: undefined,
+                popupPosition: undefined,
+                viewPosition: {x: 0, y: 0},
                 zoomLoadTimeout: undefined,
+                highlightedCastle: undefined,
+                newCastlePosition: undefined,
+                mouseMoveDelta: {x: 0, y: 0},
+                latestClickedCastle: undefined,
+                lastRenderTimestamp: undefined,
+                lastMousePosition: {x: 0, y: 0},
+                waitingForAnimationFrame: false,
                 storePositionInUrlWaiter: undefined,
-                activeKnight: undefined
+                blockAreaSize: config.BLOCK_AREA_SIZE,
+                minCastleDistance: config.MIN_CASTLE_DISTANCE,
+                maxCastleDistance: config.MAX_CASTLE_DISTANCE
             };
         },
 
@@ -410,12 +423,9 @@
                     this.closePopup();
             },
 
-            menuOpen() {
-                this.closePopup();
-            },
-
             "viewPosition.x"() {
                 this.closePopup();
+                this.closeFriendsList();
                 this.storePositionInUrl();
             },
 
@@ -471,7 +481,12 @@
             this.attachWebsocketListener();
 
             const page = this.$util.getUrlParam("page");
-            if (page) this.openPage(page);
+            const overlayType = this.$util.getUrlParam("overlay-type");
+            if (page) {
+                this.openPage(page);
+            } else if (overlayType) {
+                this.openOverlay(overlayType);
+            }
         },
 
         beforeDestroy() {
@@ -556,7 +571,29 @@
                 this.load();
             },
 
-            // - - - - - - - - - - - - - - - - - - - - - PAGES - - - - - - - - - - - - - - - - - - - - - //
+            // - - - - - - - - - - - - - - - - - - - - - OVERLAYS - - - - - - - - - - - - - - - - - - - - - //
+
+            closeFriendsList() {
+                this.friendsListOpen = false;
+            },
+
+            /**
+             * @param {string} type
+             */
+            openOverlay(type) {
+                this.closePopup();
+                this.closePage();
+                this.closeFriendsList();
+                this.overlayType = type || "menu";
+                this.overlayOpen = true;
+                this.$util.setUrlParam("overlay-type", this.overlayType);
+            },
+
+            closeOverlay() {
+                this.overlayOpen = false;
+                this.overlayType = "menu";
+                this.$util.deleteUrlParam("overlay-type");
+            },
 
             closePage() {
                 this.pageOverlayOpen = false;
@@ -565,13 +602,11 @@
 
             openPage($event) {
                 this.closePopup();
-                this.menuOpen = false;
+                this.overlayOpen = false;
                 this.pageOverlayOpen = true;
                 this.pageOverlayType = $event;
                 this.$util.setUrlParam("page", $event);
             },
-
-            // - - - - - - - - - - - - - - - - - - - - - POPUP - - - - - - - - - - - - - - - - - - - - - //
 
             /**
              * @param {Position} position
@@ -613,7 +648,7 @@
             },
 
             onScroll(event) {
-                if (this.menuOpen || this.pageOverlayOpen) return;
+                if (this.overlayOpen || this.pageOverlayOpen) return;
                 const delta = event.deltaY * config.SCROLL_SENSITIVITY;
                 this.zoom(delta);
             },
