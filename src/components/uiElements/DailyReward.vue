@@ -90,16 +90,21 @@
         }
 
         .count-down {
+            position: fixed;
+            right: 0.6rem;
+            top: 22rem;
+            z-index: 4;
             color: white;
             font-family: 'Piazzolla', serif;
             font-size: 0.8rem;
-            margin-top: -22px;
             display: block;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.3);
             border-radius: 5px;
             box-sizing: border-box;
             letter-spacing: 0;
             text-align: center;
+            padding: 0.05rem 0.2rem;
+            transform: rotate(5deg);
         }
     }
 </style>
