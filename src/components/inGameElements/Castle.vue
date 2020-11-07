@@ -3,13 +3,16 @@
          @click="$emit('CLICK', castle)" @mouseover="highlighted = true"
          @mouseout="highlighted = false">
 
-        <image v-if="isPossibleKnightDestination"
-               href="../../assets/arrow.svg"
-               :height="50"
-               :width="50"
-               :x="-80"
-               :y="40"
-               class="destination-arrow"/>
+        <svg x="75" y="15" viewBox="0 -50 50 150" width="100" height="100">
+            <image v-if="isPossibleKnightDestination"
+                   href="../../assets/arrow.svg"
+                   :height="50"
+                   class="destination-arrow"
+                   :width="50"
+                   :x="0"
+                   :y="0"
+            />
+        </svg>
 
         <circle cx="125" cy="125" r="35"
                 :fill="actionAction === 'BUILD_CASTLE' ? '#c6cc71' : 'rgb(181,230,123)'"
@@ -355,21 +358,21 @@
 
     @keyframes move_arrow {
         0% {
-            transform: rotate(180deg) translateY(0);
+            transform: scale(1, -1) translateY(0);
         }
 
         50% {
-            transform: rotate(180deg) translateY(20px);
+            transform: scale(1, -1) translateY(20px);
         }
 
         100% {
-            transform: rotate(180deg) translateY(0);
+            transform: scale(1, -1) translateY(0);
         }
     }
 
     .destination-arrow {
-        transform-origin: 10% 10%;
-        transform: rotate(180deg);
+        transform-origin: 0% 10%;
+        transform: scale(1, -1);
         animation: move_arrow;
         animation-iteration-count: infinite;
         animation-duration: 1s;
