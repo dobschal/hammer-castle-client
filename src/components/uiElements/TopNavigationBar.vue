@@ -4,21 +4,51 @@
             <div class="icon-value-pair">
                 <span class="icon" :class="{ animated: gotHammer }"><img src="../../assets/icon-hammer.svg"
                                                                          alt="Hammer"></span>
-                <span class="value">{{ hammer }} <span class="small">/ {{ maxHammers }}</span></span>
+                <span class="value">{{ hammer }}<span class="small">/{{ maxHammers }}</span></span>
                 <div class="nav-tooltip">
                     <div class="nav-tooltip-content">
-                        <span class="icon"><img src="../../assets/icon-hammer-plus.svg" alt="Hammer Per Minute"></span>
-                        <p class="content">{{ hammerPerMinute }} <span class="small">/ min</span></p>
+                        <div class="key-value-pair">
+                            <span class="icon"><img
+                                    src="../../assets/icon-hammer-plus.svg"
+                                    alt="Hammer Per Minute"></span>
+                            <p class="content">{{ hammerPerMinute }}<span
+                                    class="small">/min</span></p>
+                        </div>
+                        <div class="text">Hammer are produced by castles and
+                            stored in warehouses.
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="icon-value-pair">
-                <span class="icon"><img src="../../assets/icon-beer.svg" alt="beer"></span>
-                <span class="value">{{ beer }} <span class="small">/ {{ maxBeer }}</span></span>
+                <span class="icon"><img src="../../assets/icon-beer.svg"
+                                        alt="beer"></span>
+                <span class="value">{{ beer }}<span
+                        class="small">/{{ maxBeer }}</span></span>
+                <div class="nav-tooltip">
+                    <div class="nav-tooltip-content">
+                        <div class="key-value-pair">
+                            <span class="icon"><img
+                                    src="../../assets/icon-hammer-plus.svg"
+                                    alt="Beer Per Minute"></span>
+                            <p class="content">{{ hammerPerMinute }}<span
+                                    class="small">/min</span></p>
+                        </div>
+                        <div class="text">Beer is produced by castles level 5+
+                            and consumed by knights. Do always have enough beer!
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="icon-value-pair">
                 <span class="icon"><img src="../../assets/icon-level.svg" alt="Level"></span>
                 <span class="value">{{ level }}</span>
+                <div class="nav-tooltip">
+                    <div class="nav-tooltip-content">
+                        <div class="text">Your level. Base for the hammer castle player ranking.
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="icon-value-pair" @click="openMenu">
                 <span class="icon burger-button"><img src="../../assets/icon-burger.svg" alt="Menu"></span>
@@ -93,7 +123,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        z-index: 2;
+        z-index: 4;
         width: 100vw;
         margin-left: 0;
         text-align: center;
@@ -177,7 +207,7 @@
                     letter-spacing: 0;
 
                     .small {
-                        font-size: 66%;
+                        font-size: 50%;
                         letter-spacing: 1px;
                     }
                 }
@@ -200,11 +230,10 @@
 
                 .nav-tooltip {
                     position: absolute;
-                    top: 41px;
+                    top: 50px;
                     left: 50%;
-                    width: 120px;
+                    width: 140px;
                     transform: translateX(-60px);
-                    height: 2rem;
                     line-height: 0;
                     display: none;
 
@@ -217,7 +246,7 @@
                         font-size: 0;
                         line-height: 0;
                         border: solid 10px transparent;
-                        border-bottom-color: rgba(10, 29, 39, 0.8);
+                        border-bottom-color: rgba(11, 90, 102, 0.5);
                         background-color: transparent;
                         position: absolute;
                         top: -20px;
@@ -227,40 +256,55 @@
 
                     .nav-tooltip-content {
                         width: 100%;
-                        background-color: rgba(10, 29, 39, 0.8);
-                        backdrop-filter: blur(15px);
+                        background-color: rgba(11, 90, 102, 0.7);
+                        backdrop-filter: blur(5px);
                         font-family: 'Piazzolla', serif;
-                        box-shadow: 0 25px 25px -20px black;
+                        box-shadow: 0 10px 25px -10px black;
                         border-radius: 0.5rem;
                         padding: 8px;
                         box-sizing: border-box;
-                        height: 2rem;
-                        display: flex;
-                        flex-direction: row;
-                        justify-content: space-around;
-                        align-items: center;
                         color: white;
 
-                        p.content {
-                            font-weight: bold;
-                            letter-spacing: 0.5px;
-                            font-size: 0.8rem;
-                            line-height: calc(2rem - 16px);
-                            margin: 0;
-                            flex: 1;
+                        .key-value-pair {
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: space-around;
+                            align-items: center;
 
-                            .small {
-                                font-size: 0.66rem;
-                                line-height: calc(2rem - 16px);
+                            p.content {
+                                font-weight: bold;
+                                letter-spacing: 0.5px;
+                                font-size: 0.8rem;
+                                line-height: 32px;
+                                margin: 0;
+                                flex: 1;
+                                transform: translateY(-3px);
+
+                                .small {
+                                    font-size: 0.66rem;
+                                    line-height: calc(2rem - 16px);
+                                }
+                            }
+
+                            .icon {
+                                width: 30px;
+                                height: 30px;
+                                display: block;
+                                transform: translateY(-4px);
+                                padding: 0 4px 0 0;
                             }
                         }
 
-                        .icon {
-                            width: 30px;
-                            height: 30px;
-                            display: block;
-                            transform: translateY(-8px);
-                            padding: 0 4px 0 0;
+                        .text {
+                            font-size: 0.7rem;
+                            line-height: 1.2;
+                            width: 100%;
+                            white-space: normal;
+                            text-align: left;
+                            letter-spacing: 0;
+                            font-weight: bold;
+                            /*font-style: italic;*/
+                            color: rgba(255, 255, 255, 0.66);
                         }
                     }
                 }

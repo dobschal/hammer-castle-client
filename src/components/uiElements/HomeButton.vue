@@ -19,7 +19,7 @@
         background-size: 32px 32px;
         background-position: center;
         background-repeat: no-repeat;
-        background-color: rgba(8, 49, 57, 0.3);
+        background-color: rgba(11, 90, 102, 0.5);
         backdrop-filter: blur(5px);
         border-radius: 1rem;
         width: calc(32px + 0.8rem);

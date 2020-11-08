@@ -56,20 +56,20 @@
 
         &.open {
             transform: translateX(0);
-            background-color: rgba(8, 49, 57, 0.5);
+            background-color: rgba(11, 90, 102, 0.5);
             backdrop-filter: blur(5px);
             padding: 0.5rem;
             box-shadow: 0 25px 25px -25px black;
             right: 0;
 
             .toggle {
-                background-color: rgba(8, 49, 57, 0);
+                background-color: rgba(11, 90, 102, 0);
                 backdrop-filter: none;
             }
         }
 
         .toggle {
-            background-color: rgba(8, 49, 57, 0.3);
+            background-color: rgba(11, 90, 102, 0.5);
             backdrop-filter: blur(5px);
             background-image: url("../../assets/icon-friends.svg");
             background-repeat: no-repeat;
