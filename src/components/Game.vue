@@ -115,6 +115,20 @@
                               stroke-width="5"/>
                     </svg>
 
+                    <g v-for="castle in castles"
+                       :key="'build-castle-' + castle.x + '' + castle.y">
+                        <svg :x="castle.x - minCastleDistance"
+                             :y="castle.y - minCastleDistance"
+                             :width="minCastleDistance * 2"
+                             :height="minCastleDistance * 2">
+                            <circle :cx="minCastleDistance"
+                                    :cy="minCastleDistance"
+                                    :r="35"
+                                    :fill="actionAction === 'BUILD_CASTLE' ? '#c6cc71' : 'rgb(181,230,123)'"
+                                    stroke="none"/>
+                        </svg>
+                    </g>
+
                     <BuildCastle
                             v-if="activeAction === 'BUILD_CASTLE'"
                             :user="user"

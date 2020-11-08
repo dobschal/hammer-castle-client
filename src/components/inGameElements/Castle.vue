@@ -14,9 +14,9 @@
             />
         </svg>
 
-        <circle cx="125" cy="125" r="35"
-                :fill="actionAction === 'BUILD_CASTLE' ? '#c6cc71' : 'rgb(181,230,123)'"
-                stroke="none"/>
+<!--        <circle cx="125" cy="125" r="35"-->
+<!--                :fill="actionAction === 'BUILD_CASTLE' ? '#c6cc71' : 'rgb(181,230,123)'"-->
+<!--                stroke="none"/>-->
         <!--      <circle cx="125" cy="125" r="200" fill="rgba(181,230,123, 0.5)"  stroke-width="3" :stroke="color"/>-->
 
         <CastleLevel1 v-if="!castle || points <= 1"></CastleLevel1>
