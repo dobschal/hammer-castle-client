@@ -19,8 +19,17 @@
       authenticated() {
         return this.$store.state.authToken;
       }
+    },
+    mounted() {
+      console.log("[App] V2");
+      document.addEventListener('touchmove', function (event) {
+        console.log("[App] Uuuuh: ");
+        if (event.scale !== 1) {
+          event.preventDefault();
+        }
+      }, {passive: false});
     }
-};
+  };
 </script>
 
 <style lang="scss">

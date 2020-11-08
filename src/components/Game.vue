@@ -798,6 +798,7 @@
             },
 
             onTouchDown(event) {
+                event.preventDefault();
                 const x = event.touches[0].clientX;
                 const y = event.touches[0].clientY;
                 this.onPointerDown({x, y});
@@ -811,6 +812,7 @@
             },
 
             onTouchMove(event) {
+                event.preventDefault();
                 const x = event.touches[0].clientX;
                 const y = event.touches[0].clientY;
                 this.onPointerMove({x, y});
