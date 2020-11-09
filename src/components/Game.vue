@@ -854,7 +854,11 @@
                     "NEW_CONQUER", "UPDATE_CONQUER", "DELETE_CONQUER"
                 ].forEach(eventName => {
                     this.websocket.on(eventName, data => this.$store.commit(eventName, data));
-                })
+                });
+
+                this.websocket.on("ACTIONS_DURING_OFFLINE", actions => {
+                    console.log("[Game] Actions happened during offline: ", actions);
+                });
             },
 
             // - - - - - - - - - - - - - - - - - - - - - ZOOM - - - - - - - - - - - - - - - - - - - - - //
