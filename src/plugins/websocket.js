@@ -1,7 +1,6 @@
 import config from "../config";
 import io from "socket.io-client";
 import cookie from "js-cookie";
-const event = require("./event.js");
 
 let socket;
 let lastHeartbeatTimstamp = undefined;
