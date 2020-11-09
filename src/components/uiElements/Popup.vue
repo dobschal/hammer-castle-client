@@ -226,8 +226,8 @@
                         opponentCastleY: opponentCastle.y,
                         userCastleX: userCastle.x,
                         userCastleY: userCastle.y,
-                        x: this.item.middleBetweenCastles.x,
-                        y: this.item.middleBetweenCastles.y
+                        x: this.item.x,
+                        y: this.item.y
                     });
                     await this.$store.dispatch("GET_CATAPULT_PRICE");
                     this.$emit("CLOSE");
@@ -243,8 +243,8 @@
                         castle1Y: this.item.c1.y,
                         castle2X: this.item.c2.x,
                         castle2Y: this.item.c2.y,
-                        x: this.item.middleBetweenCastles.x,
-                        y: this.item.middleBetweenCastles.y
+                        x: this.item.x,
+                        y: this.item.y
                     });
                     await this.$store.dispatch("GET_WAREHOUSE_PRICE");
                     this.$emit("CLOSE");
