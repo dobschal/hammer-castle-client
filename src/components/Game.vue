@@ -570,7 +570,7 @@
             document.addEventListener("touchmove", this.onTouchMove);
 
             this.$refs["game-container"].addEventListener("mousedown", this.onMouseDown);
-            this.$refs["game-container"].addEventListener("touchstart", this.onTouchDown);
+            this.$refs["game-container"].addEventListener("touchstart", this.onTouchDown, {passive: true});
 
             this.attachWebsocketListener();
 
