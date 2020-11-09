@@ -6,7 +6,7 @@
                  :key="friend.id"
                  class="friend"
                  @click="$emit('OPEN_PLAYERS_LIST')">
-                <span>{{ friend.level }}</span><span> {{ friend.username }}</span>
+                <span>{{ friend.level }}</span><span>{{ friend.username }}</span>
             </div>
             <div class="add-friend" @click="$emit('ADD_FRIEND')">+ Add Friend
             </div>
@@ -48,10 +48,10 @@
         border-radius: 1rem 0 0 1rem;
         will-change: transform;
         transition: transform 0.3s ease-in-out;
-        transform: translateX(min(calc(320px - 32px - 1rem), calc(50vw - 32px - 1rem)));
+        transform: translateX(min(calc(320px - 32px - 1rem), calc(80vw - 32px - 1rem)));
         color: white;
         font-weight: bold;
-        width: 50vw;
+        width: 80vw;
         max-width: 320px;
 
         &.open {
@@ -97,10 +97,15 @@
             }
 
             .friend {
+                white-space: nowrap;
                 span:first-child {
-                    width: 30px;
+                    font-family: 'Piazzolla', serif;
+                    width: 50px;
                     display: inline-block;
                     text-align: right;
+                }
+                span:nth-child(2) {
+                    padding-left: 10px;
                 }
             }
 

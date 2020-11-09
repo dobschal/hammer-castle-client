@@ -100,7 +100,7 @@
 
         <g v-if="countDown">
             <text x="135" y="510" class="count-down" fill="white"
-                  text-anchor="middle">Moves:
+                  text-anchor="middle">Moves
             </text>
             <text x="142" y="543"
                   class="count-down" fill="white"
@@ -108,11 +108,11 @@
             </text>
         </g>
         <g v-else>
-            <text x="135" y="510" class="count-down"
+            <text x="150" y="510" class="count-down"
                   fill="rgba(255,255,255,0.8)"
                   text-anchor="middle">{{ knight.name.split(" ")[0].substring(0,8) }}
             </text>
-            <text v-if="knight.name.split(' ')[1]" x="142" y="543"
+            <text v-if="knight.name.split(' ')[1]" x="160" y="543"
                   class="count-down" fill="rgba(255,255,255,0.8)"
                   text-anchor="middle">{{ knight.name.split(' ')[1].substring(0,7) }}
             </text>

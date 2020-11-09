@@ -45,4 +45,16 @@
  * @property {number} lastActiveAt
  */
 
+/**
+ * @typedef ActionLog
+ * @type object
+ * @property {string} content - "You build a knight."
+ * @property {number} id - 92
+ * @property {number} timestamp - 1604776136996
+ * @property {number} userId - 3
+ * @property {number} x - 12.5
+ * @property {number} y - 3.555
+ * @property {string} type - "UNKNOWN"
+ */
+
 export default {};

@@ -194,22 +194,45 @@
                             @ERROR="error = $event"
                     ></BuildCastle>
 
+                    <svg v-if="showActionItemArrow"
+                         :x="actionItemArrowX - 50"
+                         :y="actionItemArrowY - 100"
+                         viewBox="0 -50 50 150"
+                         width="100"
+                         height="100">
+                        <image href="../assets/arrow.svg"
+                               :height="50"
+                               class="destination-arrow"
+                               :width="50"
+                               :x="0"
+                               :y="0"
+                        />
+                    </svg>
+
                 </g>
+
 
             </svg>
         </div>
 
-        <!-- UI Elements -->
+        <!-- -- -- -- -- -- -- -- -- UI Elements -- -- -- -- -- -- -- -- -->
+
         <NavigationBar :activeAction.sync="activeAction"
                        @BUILD_IT="triggerCastleBuild"></NavigationBar>
+
         <TopNavigationBar @OPEN-MENU="openOverlay"></TopNavigationBar>
+
         <Overlay v-if="overlayOpen"
                  :type.sync="overlayType"
                  @LOGOUT="logout"
+                 @ERROR="error = $event"
                  @CLOSE-OVERLAY="closeOverlay"
                  @GO_TO="moveMapTo($event)"
+                 @SHOW-ACTION-On-MAP="showActionOnMap($event)"
                  @OPEN_PAGE="openPage($event)"></Overlay>
+
         <ErrorToast v-if="error" @CLICK="error = ''">{{ error }}</ErrorToast>
+
         <Popup :zoomFactor="zoomFactor"
                :mouseMoveDelta="mouseMoveDelta"
                v-if="!dragging && popupType && popupPosition"
@@ -220,9 +243,13 @@
                @MOVE_KNIGHT="moveKnight"
                @ERROR="error = $event"
                @CLOSE="closePopup"></Popup>
+
         <ActionLog></ActionLog>
+
         <div v-if="$store.state.progress > 0" class="loading"></div>
+
         <DailyReward></DailyReward>
+
         <HomeButton @GO_HOME="goHome"></HomeButton>
 
         <FriendsList :open.sync="friendsListOpen"
@@ -322,6 +349,9 @@
                 popupPosition: undefined,
                 viewPosition: {x: 0, y: 0},
                 zoomLoadTimeout: undefined,
+                showActionItemArrow: false,
+                actionItemArrowX: undefined,
+                actionItemArrowY: undefined,
                 highlightedCastle: undefined,
                 newCastlePosition: undefined,
                 mouseMoveDelta: {x: 0, y: 0},
@@ -329,6 +359,7 @@
                 lastRenderTimestamp: undefined,
                 lastMousePosition: {x: 0, y: 0},
                 waitingForAnimationFrame: false,
+                actionItemArrowTimer: undefined,
                 storePositionInUrlWaiter: undefined,
                 blockAreaSize: config.BLOCK_AREA_SIZE,
                 minCastleDistance: config.MIN_CASTLE_DISTANCE,
@@ -472,6 +503,15 @@
 
         watch: {
 
+            showActionItemArrow(val) {
+                if (val) {
+                    if (this.actionItemArrowTimer) clearTimeout(this.actionItemArrowTimer);
+                    this.actionItemArrowTimer = setTimeout(() => {
+                        this.showActionItemArrow = false;
+                    }, 3000);
+                }
+            },
+
             activeAction(val) {
                 if (val)
                     this.closePopup();
@@ -530,7 +570,7 @@
             document.addEventListener("touchmove", this.onTouchMove);
 
             this.$refs["game-container"].addEventListener("mousedown", this.onMouseDown);
-            this.$refs["game-container"].addEventListener("touchstart", this.onTouchDown, {passive: true});
+            this.$refs["game-container"].addEventListener("touchstart", this.onTouchDown);
 
             this.attachWebsocketListener();
 
@@ -623,6 +663,16 @@
                 this.viewPosition.x = position.x - (window.innerWidth / 2 * this.zoomFactor);
                 this.viewPosition.y = position.y - (window.innerHeight / 2 * this.zoomFactor);
                 this.load();
+            },
+
+            /**
+             * @param {ActionLog} actionItem
+             */
+            showActionOnMap(actionItem) {
+                this.actionItemArrowX = actionItem.x;
+                this.actionItemArrowY = actionItem.y;
+                this.showActionItemArrow = true;
+                this.moveMapTo(actionItem);
             },
 
             // - - - - - - - - - - - - - - - - - - - - - OVERLAYS - - - - - - - - - - - - - - - - - - - - - //
@@ -1044,5 +1094,28 @@
         @media only screen and (max-width: 600px) {
             display: none;
         }
+    }
+
+    @keyframes move_arrow {
+        0% {
+            transform: scale(1, -1) translateY(0);
+        }
+
+        50% {
+            transform: scale(1, -1) translateY(20px);
+        }
+
+        100% {
+            transform: scale(1, -1) translateY(0);
+        }
+    }
+
+    .destination-arrow {
+        transform-origin: 0% 10%;
+        transform: scale(1, -1);
+        animation: move_arrow;
+        animation-iteration-count: infinite;
+        animation-duration: 1s;
+        animation-timing-function: ease-in-out;
     }
 </style>

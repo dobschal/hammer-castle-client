@@ -8,7 +8,7 @@
                     Back
                 </div>
                 <div class="close" @click="close">Close</div>
-                <h3>{{ title }}</h3>
+                <h3>~ {{ title }} ~</h3>
                 <div class="content">
                     <div class="items" v-if="type === 'menu'">
                         <div class="item"
@@ -42,7 +42,8 @@
                         </div>
                     </div>
                     <div v-else-if="type === 'history'" class="items history">
-                        <div v-for="item in actionLog" :key="item.id" class="item">
+                        <div v-for="item in actionLog" :key="item.id"
+                             class="item" @click="showActionLogOnMap(item)">
                             <DateView :timestamp="item.timestamp"></DateView>
                             <span class="text">{{ item.content }}</span>
                         </div>
@@ -148,8 +149,14 @@
             user() {
                 return this.$store.state.user;
             },
+
+            /**
+             * @return {ActionLog[]}
+             */
             actionLog() {
-                return [...this.$store.state.actionLog].sort((a, b) => b.timestamp - a.timestamp);
+                const actionLog = [...this.$store.state.actionLog].sort((a, b) => b.timestamp - a.timestamp);
+                console.log("[Overlay] Action log: ", actionLog);
+                return actionLog;
             }
         },
         watch: {
@@ -242,6 +249,19 @@
             async addAsFriend(username) {
                 await this.$store.dispatch("ADD_FRIEND", username);
                 await this.$store.dispatch("GET_FRIENDS");
+            },
+
+            /**
+             * @param {ActionLog} item
+             */
+            showActionLogOnMap(item) {
+                console.log("[Overlay] Clicked action log item: ", item);
+                if (item.x !== -1 && item.y !== -1) {
+                    this.$emit("SHOW-ACTION-On-MAP", item);
+                    this.$emit("CLOSE-OVERLAY");
+                } else {
+                    this.$emit("ERROR", "Sorry! This history entry does not contain a position.");
+                }
             }
         }
     };
@@ -320,6 +340,7 @@
                     padding-top: 1.2rem;
                     text-align: center;
                     font-size: 1.1rem;
+                    font-weight: 900;
                 }
 
                 .content {
@@ -350,8 +371,14 @@
                             .item {
                                 padding: 0.5rem 0.3rem;
                                 font-size: 0.9rem;
+                                background-image: url("../../assets/icon-chevron-right.svg");
+                                background-position: center right;
+                                background-repeat: no-repeat;
+                                text-align: left;
+                                background-size: 16px;
 
                                 .date-view {
+                                    font-family: 'Piazzolla', serif;
                                     font-size: 0.7rem;
                                     text-align: left;
                                 }

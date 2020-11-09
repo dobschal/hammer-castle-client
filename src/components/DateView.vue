@@ -7,7 +7,9 @@
         name: "DateView",
         data() {
             return {
-                twentyFourHours: 1000 * 60 * 60 * 24
+                twentyFourHours: 1000 * 60 * 60 * 24,
+                sevenDays: 1000 * 60 * 60 * 24 * 7,
+                weekDays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
             };
         },
         props: {
@@ -24,6 +26,9 @@
                 }
                 if (isYesterday) {
                     return "Yesterday at " + timeString;
+                }
+                if (now - this.timestamp < this.sevenDays) {
+                    return `${this.weekDays[d.getDay()]} at ${timeString}`;
                 }
                 const dateString = `${d.getFullYear()}/${this.twoDigits(d.getMonth() + 1)}/${this.twoDigits(d.getDate())}`;
                 return dateString + " " + timeString;
