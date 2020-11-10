@@ -148,6 +148,7 @@
         const position = this.newCastlePosition;
         if (this.hasCastleValidDistance(position)) {
           try {
+            this.$emit("DONE"); // need to do that before create cause of a race condition
             await this.$store.dispatch("CREATE_CASTLE", position);
             await this.$store.dispatch("GET_CASTLE_PRICE");
             await this.$store.dispatch("GET_CATAPULT_PRICE");
@@ -155,7 +156,6 @@
             console.log("[BuildCastle] Cannot build castle: ", e, e.response);
             this.$emit("ERROR", e.response.data.message);
           }
-          this.$emit("DONE");
         } else {
           console.log("[BuildCastle] Invalid castle position: ", position);
         }

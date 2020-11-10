@@ -34,7 +34,6 @@ export const knightMutations = {
      * @param {Knight} knight
      */
     NEW_KNIGHT(state, knight) { // injected from websocket
-        console.log("[knight] Got new knight: ", knight);
         state.knights.push(knight);
     },
 

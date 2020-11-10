@@ -347,6 +347,7 @@
                 friendsListOpen: false,
                 activeKnight: undefined,
                 popupPosition: undefined,
+                renderWaiterId: undefined,
                 viewPosition: {x: 0, y: 0},
                 zoomLoadTimeout: undefined,
                 showActionItemArrow: false,
@@ -363,26 +364,12 @@
                 storePositionInUrlWaiter: undefined,
                 blockAreaSize: config.BLOCK_AREA_SIZE,
                 minCastleDistance: config.MIN_CASTLE_DISTANCE,
-                maxCastleDistance: config.MAX_CASTLE_DISTANCE
+                maxCastleDistance: config.MAX_CASTLE_DISTANCE,
+                renderItems: []
             };
         },
 
         computed: {
-
-            /**
-             * Get all items to render and sort them by y.
-             */
-            renderItems() {
-
-                // TODO: NOT PERFORMANT ENOUGH...
-
-                return this.roads.concat([
-                    ...this.knights,
-                    ...this.castles,
-                    ...this.blockAreas,
-                    ...this.warehouses
-                ].sort((i1, i2) => i1.y - i2.y));
-            },
 
             roads() {
                 const roads = [];
@@ -503,6 +490,48 @@
 
         watch: {
 
+            roads: {
+                deep: true,
+                handler() {
+                    this.updateRenderItems("roads");
+                }
+            },
+
+            castles: {
+                deep: true,
+                handler() {
+                    this.updateRenderItems("castles");
+                }
+            },
+
+            blockAreas: {
+                deep: true,
+                handler() {
+                    this.updateRenderItems("blockAreas");
+                }
+            },
+
+            catapults: {
+                deep: true,
+                handler() {
+                    this.updateRenderItems("catapults");
+                }
+            },
+
+            knights: {
+                deep: true,
+                handler() {
+                    this.updateRenderItems("knights");
+                }
+            },
+
+            warehouses: {
+                deep: true,
+                handler() {
+                    this.updateRenderItems("warehouses");
+                }
+            },
+
             showActionItemArrow(val) {
                 if (val) {
                     if (this.actionItemArrowTimer) clearTimeout(this.actionItemArrowTimer);
@@ -600,10 +629,31 @@
 
             // - - - - - - - - - - - - - - - - - - - - - GENERAL - - - - - - - - - - - - - - - - - - - - - //
 
+            /**
+             * Get all items to render and sort them by y.
+             * @param {string} type - "castles", "knights", "warehousese", ...
+             */
+            updateRenderItems(type) {
+                console.log("[Game] Try rerender cause of changed " + type);
+                if (this.renderWaiterId) {
+                    clearTimeout(this.renderWaiterId);
+                    this.renderWaiterId = undefined;
+                }
+                this.renderWaiterId = setTimeout(() => {
+                    console.log("[Game] Rerender cause of changed " + type);
+                    this.renderItems = this.roads.concat([
+                        ...this.knights,
+                        ...this.castles,
+                        ...this.blockAreas,
+                        ...this.catapults,
+                        ...this.warehouses
+                    ].sort((i1, i2) => i1.y - i2.y));
+                }, 40);
+            },
+
             async load() {
                 if (this.isLoading) return;
                 this.isLoading = true;
-                console.log("[Game] Load...");
                 await Promise.all([
                     this.$store.dispatch("GET_CASTLES", this.loadPosition),
                     this.$store.dispatch("GET_KNIGHTS", this.loadPosition),
@@ -906,7 +956,7 @@
             },
 
             onTouchDown(event) {
-                event.preventDefault();
+                //event.preventDefault();
                 const x = event.touches[0].clientX;
                 const y = event.touches[0].clientY;
                 this.onPointerDown({x, y});
