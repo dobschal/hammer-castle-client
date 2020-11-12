@@ -1,7 +1,8 @@
 import {axios} from "../plugins/axios";
 
 export const actionLogState = {
-    actionLog: []
+    actionLog: [],
+    actionsSinceLastVisit: []
 };
 
 export const actionLogMutations = {
@@ -13,6 +14,14 @@ export const actionLogMutations = {
             ...state.actionLog.filter(a => a.id !== actionLog.id),
             actionLog
         ];
+    },
+
+    /**
+     * @param state
+     * @param {ActionLog[]} actions
+     */
+    ACTIONS_DURING_OFFLINE(state, actions) {
+        state.actionsSinceLastVisit = actions;
     }
 };
 

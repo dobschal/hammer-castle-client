@@ -1,5 +1,7 @@
 <template>
     <svg :x="position.x - 125" :y="position.y - 125"
+         width="500"
+         height="500"
          @click="$emit('CLICK', castle)" @mouseover="highlighted = true"
          @mouseout="highlighted = false">
 

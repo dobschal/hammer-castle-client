@@ -231,6 +231,9 @@
                  @SHOW-ACTION-On-MAP="showActionOnMap($event)"
                  @OPEN_PAGE="openPage($event)"></Overlay>
 
+        <InfoOverlay v-if="infoOverlayOpen"
+                     @CLOSE-OVERLAY="closeInfoOverlay"></InfoOverlay>
+
         <ErrorToast v-if="error" @CLICK="error = ''">{{ error }}</ErrorToast>
 
         <Popup :zoomFactor="zoomFactor"
@@ -295,6 +298,7 @@
     import BuildCastle from "./inGameElements/BuildCastle";
     import FriendsList from "./uiElements/FriendsList.vue";
     import TopNavigationBar from "./uiElements/TopNavigationBar";
+    import InfoOverlay from "./uiElements/InfoOverlay";
 
     /**
      * @typedef GameComponent
@@ -305,6 +309,7 @@
     export default {
         name: "Game",
         components: {
+            InfoOverlay,
             Forum,
             Popup,
             Knight,
@@ -345,6 +350,7 @@
                 mouseDownTimestamp: 0,
                 pageOverlayOpen: false,
                 friendsListOpen: false,
+                infoOverlayOpen: false,
                 activeKnight: undefined,
                 popupPosition: undefined,
                 renderWaiterId: undefined,
@@ -727,6 +733,14 @@
 
             // - - - - - - - - - - - - - - - - - - - - - OVERLAYS - - - - - - - - - - - - - - - - - - - - - //
 
+            closeInfoOverlay() {
+                this.infoOverlayOpen = false;
+            },
+
+            openInfoOverlay() {
+                this.infoOverlayOpen = true;
+            },
+
             closeFriendsList() {
                 this.friendsListOpen = false;
             },
@@ -907,7 +921,10 @@
                 });
 
                 this.websocket.on("ACTIONS_DURING_OFFLINE", actions => {
-                    console.log("[Game] Actions happened during offline: ", actions);
+                    if (actions.length > 0) {
+                        this.$store.commit("ACTIONS_DURING_OFFLINE", actions);
+                        this.openInfoOverlay();
+                    }
                 });
             },
 
@@ -921,21 +938,18 @@
             },
 
             zoom(delta) {
-                // if (this.waitingForAnimationFrame) return console.log("WAIT FOR FRAME ZOOM");
-                // this.waitingForAnimationFrame = true;
                 window.requestAnimationFrame(() => {
-                    const oldFactor = this.zoomFactor;
-                    this.zoomFactor = Math.min(1.8, Math.max(0.35, this.zoomFactor + delta));
-                    if (oldFactor > 0.35 && oldFactor < 1.8) {
-                        this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
-                        this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
-                        if (this.zoomLoadTimeout) clearTimeout(this.zoomLoadTimeout);
-                        this.zoomLoadTimeout = setTimeout(() => {
-                            this.load();
-                            this.$util.setUrlParam("zoom", this.zoomFactor.toFixed(2));
-                        }, 500);
-                    }
-                    // this.waitingForAnimationFrame = false;
+                    const screenWidth = Math.max(this.gameHeight, this.gameWidth) * this.zoomFactor;
+                    if (delta > 0 && screenWidth > 1920) return;
+                    if (delta < 0 && screenWidth < 200) return;
+                    this.zoomFactor = this.zoomFactor + delta;
+                    this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
+                    this.viewPosition.y -= Math.round(delta * this.gameHeight / 2);
+                    if (this.zoomLoadTimeout) clearTimeout(this.zoomLoadTimeout);
+                    this.zoomLoadTimeout = setTimeout(() => {
+                        this.load();
+                        this.$util.setUrlParam("zoom", this.zoomFactor.toFixed(2));
+                    }, 500);
                 });
             },
 
