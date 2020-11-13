@@ -735,6 +735,10 @@
             },
 
             openInfoOverlay() {
+                this.closeOverlay();
+                this.closePopup();
+                this.closePage();
+                this.closeFriendsList();
                 this.infoOverlayOpen = true;
             },
 
