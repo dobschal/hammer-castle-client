@@ -195,17 +195,17 @@
                     ></BuildCastle>
 
                     <svg v-if="showActionItemArrow"
-                         :x="actionItemArrowX - 50"
-                         :y="actionItemArrowY - 100"
-                         viewBox="0 -50 50 150"
-                         width="100"
-                         height="100">
+                         :x="activeActionItem.x - 75"
+                         :y="activeActionItem.y - 150"
+                         viewBox="0 0 150 150"
+                         width="150"
+                         height="150">
                         <image href="../assets/arrow.svg"
                                :height="50"
                                class="destination-arrow"
                                :width="50"
-                               :x="0"
-                               :y="0"
+                               :x="50"
+                               :y="-60"
                         />
                     </svg>
 
@@ -232,6 +232,7 @@
                  @OPEN_PAGE="openPage($event)"></Overlay>
 
         <InfoOverlay v-if="infoOverlayOpen"
+                     @SHOW-ON-MAP="showActionOnMap($event)"
                      @CLOSE-OVERLAY="closeInfoOverlay"></InfoOverlay>
 
         <ErrorToast v-if="error" @CLICK="error = ''">{{ error }}</ErrorToast>
@@ -339,10 +340,12 @@
                 popupType: "",
                 zoomFactor: 1,
                 dragging: false,
+                renderItems: [],
                 isLoading: false,
                 activeAction: "",
                 showDialog: false,
                 overlayOpen: false,
+                touchPositions: [],
                 overlayType: "menu",
                 pageOverlayType: "",
                 websocket: undefined,
@@ -357,8 +360,7 @@
                 viewPosition: {x: 0, y: 0},
                 zoomLoadTimeout: undefined,
                 showActionItemArrow: false,
-                actionItemArrowX: undefined,
-                actionItemArrowY: undefined,
+                activeActionItem: undefined,
                 highlightedCastle: undefined,
                 newCastlePosition: undefined,
                 mouseMoveDelta: {x: 0, y: 0},
@@ -370,8 +372,7 @@
                 storePositionInUrlWaiter: undefined,
                 blockAreaSize: config.BLOCK_AREA_SIZE,
                 minCastleDistance: config.MIN_CASTLE_DISTANCE,
-                maxCastleDistance: config.MAX_CASTLE_DISTANCE,
-                renderItems: []
+                maxCastleDistance: config.MAX_CASTLE_DISTANCE
             };
         },
 
@@ -637,16 +638,13 @@
 
             /**
              * Get all items to render and sort them by y.
-             * @param {string} type - "castles", "knights", "warehousese", ...
              */
-            updateRenderItems(type) {
-                console.log("[Game] Try rerender cause of changed " + type);
+            updateRenderItems() {
                 if (this.renderWaiterId) {
                     clearTimeout(this.renderWaiterId);
                     this.renderWaiterId = undefined;
                 }
                 this.renderWaiterId = setTimeout(() => {
-                    console.log("[Game] Rerender cause of changed " + type);
                     this.renderItems = this.roads.concat([
                         ...this.knights,
                         ...this.castles,
@@ -725,8 +723,7 @@
              * @param {ActionLog} actionItem
              */
             showActionOnMap(actionItem) {
-                this.actionItemArrowX = actionItem.x;
-                this.actionItemArrowY = actionItem.y;
+                this.activeActionItem = actionItem;
                 this.showActionItemArrow = true;
                 this.moveMapTo(actionItem);
             },
@@ -860,11 +857,15 @@
             async onCastleClick(castle) {
                 if (Date.now() - this.mouseDownTimestamp > 300) return;
                 if (this.activeAction === "MOVE_KNIGHT") {
-                    this.$store.dispatch("MOVE_KNIGHT", {
-                        knightId: this.activeKnight.id,
-                        x: castle.x,
-                        y: castle.y
-                    });
+                    try {
+                        await this.$store.dispatch("MOVE_KNIGHT", {
+                            knightId: this.activeKnight.id,
+                            x: castle.x,
+                            y: castle.y
+                        });
+                    } catch (e) {
+                        this.error = e.response.data.message;
+                    }
                     this.cancelAction();
                     return;
                 }
@@ -970,9 +971,14 @@
             },
 
             onTouchDown(event) {
-                //event.preventDefault();
                 const x = event.touches[0].clientX;
                 const y = event.touches[0].clientY;
+                if (event.touches.length === 2) {
+                    this.touchPositions = [
+                        {x: event.touches[0].clientX, y: event.touches[0].clientY},
+                        {x: event.touches[1].clientX, y: event.touches[1].clientY}
+                    ];
+                }
                 this.onPointerDown({x, y});
             },
 
@@ -987,20 +993,26 @@
                 event.preventDefault();
                 const x = event.touches[0].clientX;
                 const y = event.touches[0].clientY;
-                this.onPointerMove({x, y});
+                this.onPointerMove({x, y}, event);
             },
 
             onMouseMove(event) {
                 const x = event.clientX;
                 const y = event.clientY;
-                this.onPointerMove({x, y});
+                this.onPointerMove({x, y}, event);
             },
 
-            onPointerMove({x, y}) {
-                if (!this.dragging/* || this.waitingForAnimationFrame*/) return;
-                // this.waitingForAnimationFrame = true;
+            onPointerMove({x, y}, event) {
+                if (!this.dragging) return;
                 window.requestAnimationFrame(() => {
-                    // this.waitingForAnimationFrame = false;
+                    if (this.touchPositions.length === 2) { // is pinch
+                        const lastDiff = Math.abs(this.touchPositions[0].x - this.touchPositions[1].x);
+                        this.touchPositions[0] = {x: event.touches[0].clientX, y: event.touches[0].clientY};
+                        this.touchPositions[1] = {x: event.touches[1].clientX, y: event.touches[1].clientY};
+                        const curDiff = Math.abs(this.touchPositions[0].x - this.touchPositions[1].x);
+                        const diff = (lastDiff - curDiff) / (this.gameWidth / 3);
+                        if (diff) this.zoom(diff);
+                    }  // is drag
                     this.mouseMoveDelta.x += (this.lastMousePosition.x - x);
                     this.mouseMoveDelta.y += (this.lastMousePosition.y - y);
                     this.lastMousePosition.x = x;
@@ -1016,6 +1028,9 @@
             },
 
             onMouseUp() {
+                if (this.touchPositions.length === 2) {
+                    this.touchPositions.length = 0;
+                }
                 if (this.dragging) {
                     if (this.mouseMoveDelta.x) {
                         this.viewPosition.x += Math.round(this.mouseMoveDelta.x * this.zoomFactor);
@@ -1186,4 +1201,5 @@
         animation-duration: 1s;
         animation-timing-function: ease-in-out;
     }
+
 </style>

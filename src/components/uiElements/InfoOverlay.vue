@@ -5,7 +5,7 @@
                 <div class="close" @click="close">Close</div>
                 <div class="content">
                     <h3>Good to see you!<br><small>That happened since your last visit:</small></h3>
-                    <div class="item" v-for="action in actions" :key="action.id">
+                    <div class="item" v-for="action in actions" :key="action.id" @click="showOnMap(action)">
                         <span class="message">{{ action.content }}</span>
                     </div>
 
@@ -29,6 +29,14 @@
         },
         methods: {
             close() {
+                this.$emit('CLOSE-OVERLAY');
+            },
+
+            /**
+             * @param {ActionLog} action
+             */
+            showOnMap(action) {
+                this.$emit('SHOW-ON-MAP', action);
                 this.$emit('CLOSE-OVERLAY');
             }
         }

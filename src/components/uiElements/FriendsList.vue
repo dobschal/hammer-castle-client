@@ -53,6 +53,12 @@
         font-weight: bold;
         width: 80vw;
         max-width: 320px;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
 
         &.open {
             transform: translateX(0);
@@ -81,6 +87,12 @@
             width: calc(32px + 0.9rem);
             height: 54px;
             box-sizing: border-box;
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
         }
 
         .list {

@@ -38,7 +38,7 @@
             transition: transform 0.3s ease-out;
 
             &:hover, &:active {
-                transform: scale(1.4);
+                transform: scale(1.1);
                 cursor: pointer;
             }
         }
@@ -55,7 +55,7 @@
 
             &:hover, &:active {
                 cursor: pointer;
-                transform: scale(1.4);
+                transform: scale(1.1);
             }
         }
     }

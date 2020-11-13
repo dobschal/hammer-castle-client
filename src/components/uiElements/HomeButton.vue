@@ -25,9 +25,15 @@
         width: calc(32px + 0.8rem);
         height: 54px;
         transition: transform 0.3s ease-out;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
 
         &:hover, &:active {
-            transform: scale(1.4);
+            transform: scale(1.1);
             cursor: pointer;
         }
     }

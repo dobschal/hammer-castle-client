@@ -161,6 +161,7 @@
             }
         },
         methods: {
+
             async markAsHome() {
                 try {
                     await this.$store.dispatch("MARK_AS_HOME", {
@@ -172,6 +173,7 @@
                     this.$emit("ERROR", e.response.data.message);
                 }
             },
+
             async buildKnight() {
                 if (!this.canBuildKnight) return this.$emit("ERROR", "Knights can be build in castles level 5 or greater.");
                 try {
@@ -185,6 +187,7 @@
                     this.$emit("ERROR", e.response.data.message);
                 }
             },
+
             async changeCastleName() {
                 if (!this.newCastleName || this.newCastleName.length > 12) {
                     this.$emit("ERROR", "Please insert a valid castle name! Max length is 12 characters.");
@@ -202,6 +205,7 @@
                     this.$emit("ERROR", e.response.data.message);
                 }
             },
+
             async deleteCastle() {
                 try {
                     await this.$store.dispatch("DELETE_CASTLE", {
@@ -216,6 +220,7 @@
                     this.$emit("ERROR", e.response.data.message);
                 }
             },
+
             async buildCatapult() {
                 if (!this.canBuildCatapult) return this.$emit("ERROR", "Wrong position for a catapult...");
                 try {
@@ -235,6 +240,7 @@
                     this.$emit("ERROR", e.response.data.message);
                 }
             },
+
             async buildWarehouse() {
                 if (!this.canBuildWarehouse) return this.$emit("ERROR", "Wrong position for a warehouse...");
                 try {
@@ -252,6 +258,7 @@
                     this.$emit("ERROR", e.response.data.message);
                 }
             },
+
             async upgradeWarehouse() {
                 try {
                     await this.$store.dispatch("UPGRADE_WAREHOUSE", {
