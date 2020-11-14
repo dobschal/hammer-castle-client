@@ -1,12 +1,15 @@
 <template>
     <div class="overlay-wrapper" @click="$emit('CLOSE-OVERLAY')">
         <div class="overlay-container">
-            <div class="overlay-content" @click.stop>
+            <div class="overlay-content" @click.stop @scroll.stop>
                 <div class="close" @click="close">Close</div>
                 <div class="content">
-                    <h3>Good to see you!<br><small>That happened since your last visit:</small></h3>
-                    <div class="item" v-for="action in actions" :key="action.id" @click="showOnMap(action)">
-                        <span class="message">{{ action.content }}</span>
+                    <h3>Good to see you!<br><small>That happened since your last visit...</small></h3>
+                    <div class="item"
+                         v-for="action in actions"
+                         :key="action.id"
+                         @click="showOnMap(action)">
+                        <span class="message" :class="action.type">{{ action.content }}</span>
                     </div>
 
                 </div>
@@ -114,11 +117,31 @@
                     }
 
                     .item {
-                        margin-bottom: 1rem;
+                        margin-bottom: 0.66rem;
                         background-image: url("../../assets/icon-chevron-right.svg");
-                        background-position: right 0.25rem center;
+                        background-position: center right;
                         background-repeat: no-repeat;
                         background-size: 16px;
+                        padding-bottom: 0.66rem;
+                        border-bottom: dashed 2px rgba(0, 0, 0, 0.3);
+
+                        .message {
+                            display: block;
+                            padding-left: 40px;
+                            padding-right: 24px;
+                            background-position: center left;
+                            background-repeat: no-repeat;
+                            background-size: 32px;
+
+                            &.OPPONENT_BUILD_CASTLE {
+                                background-image: url("../../assets/icon-castle-negative.svg");
+                            }
+
+                            &.BUILD_CASTLE {
+                                background-image: url("../../assets/icon-castle-positive.svg");
+                            }
+
+                        }
                     }
 
                     &::-webkit-scrollbar {
