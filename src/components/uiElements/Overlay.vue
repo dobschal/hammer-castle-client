@@ -42,10 +42,15 @@
                         </div>
                     </div>
                     <div v-else-if="type === 'history'" class="items history">
-                        <div v-for="item in actionLog" :key="item.id"
-                             class="item" @click="showActionLogOnMap(item)">
+                        <div v-for="item in actionLog"
+                             :key="item.id"
+                             class="item"
+                             @click="showActionLogOnMap(item)">
+                            <span class="icon" :class="item.type"></span>
                             <DateView :timestamp="item.timestamp"></DateView>
-                            <span class="text">{{ item.content }}</span>
+                            <span class="text">
+                                {{ item.content }}
+                            </span>
                         </div>
                     </div>
                     <div v-else-if="type === 'profile'" class="items user">
@@ -391,6 +396,50 @@
                                     font-size: 1rem;
                                     line-height: 1.2rem;
                                     letter-spacing: 0.3px;
+                                }
+
+                                .icon {
+                                    background-position: top left;
+                                    background-repeat: no-repeat;
+                                    background-size: 24px;
+                                    display: block;
+                                    height: 24px;
+                                    width: 24px;
+                                    float: right;
+                                    margin-right: 0.5rem;
+
+                                    &.OPPONENT_BUILD_CASTLE,
+                                    &.CASTLE_DESTROYED {
+                                        background-image: url("../../assets/icon-castle-negative.svg");
+                                    }
+
+                                    &.BUILD_CASTLE {
+                                        background-image: url("../../assets/icon-castle-positive.svg");
+                                    }
+
+                                    &.CATAPULT_FAILED {
+                                        background-image: url("../../assets/icon-catapult-negative.svg");
+                                    }
+
+                                    &.CATAPULT_SUCCESS, &.BUILD_CATAPULT {
+                                        background-image: url("../../assets/icon-catapult-positive.svg");
+                                    }
+
+                                    &.LOST_KNIGHT, &.OPPONENT_BUILD_KNIGHT, &.OPPONENT_MOVES_KNIGHT {
+                                        background-image: url("../../assets/icon-knight-negative.svg");
+                                    }
+
+                                    &.OPPONENT_LOST_KNIGHT, &.BUILD_KNIGHT {
+                                        background-image: url("../../assets/icon-knight-positive.svg");
+                                    }
+
+                                    &.OPPONENT_BUILD_WAREHOUSE, &.OPPONENT_UPGRADED_WAREHOUSE {
+                                        background-image: url("../../assets/icon-warehouse-negative.svg");
+                                    }
+
+                                    &.BUILD_WAREHOUSE, &.UPGRADE_WAREHOUSE {
+                                        background-image: url("../../assets/icon-warehouse-positive.svg");
+                                    }
                                 }
 
                             }

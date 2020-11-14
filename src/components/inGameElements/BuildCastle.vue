@@ -148,8 +148,8 @@
         const position = this.newCastlePosition;
         if (this.hasCastleValidDistance(position)) {
           try {
-            this.$emit("DONE"); // need to do that before create cause of a race condition
             await this.$store.dispatch("CREATE_CASTLE", position);
+            this.$emit("DONE"); // need to do that before create cause of a race condition
             await this.$store.dispatch("GET_CASTLE_PRICE");
             await this.$store.dispatch("GET_CATAPULT_PRICE");
           } catch (e) {

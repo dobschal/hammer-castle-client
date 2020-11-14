@@ -21,7 +21,6 @@ export const actionLogMutations = {
      * @param {ActionLog[]} actions
      */
     ACTIONS_DURING_OFFLINE(state, actions) {
-        console.log("[actionLog] actions: ", actions);
         state.actionsSinceLastVisit = actions;
     }
 };

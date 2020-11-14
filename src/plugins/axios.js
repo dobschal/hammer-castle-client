@@ -40,7 +40,7 @@ axios.interceptors.response.use(
  * @param {object} data
  * @return {object}
  */
-function propsToCamelCase(data) {
+export function propsToCamelCase(data) {
   if (!data || typeof data !== "object") return data;
   Object.keys(data).forEach(key => {
     if (data[key] && typeof data[key] === "object") {

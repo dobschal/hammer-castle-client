@@ -300,6 +300,7 @@
     import FriendsList from "./uiElements/FriendsList.vue";
     import TopNavigationBar from "./uiElements/TopNavigationBar";
     import InfoOverlay from "./uiElements/InfoOverlay";
+    import {propsToCamelCase} from "../plugins/axios";
 
     /**
      * @typedef GameComponent
@@ -577,7 +578,6 @@
             const xPositionInUrl = Number(this.$util.getUrlParam("x"));
             const yPositionInUrl = Number(this.$util.getUrlParam("y"));
             const usePositionFromUrl = Boolean(yPositionInUrl && xPositionInUrl);
-            console.log("[Game] Position in URL: ", xPositionInUrl, yPositionInUrl, usePositionFromUrl);
 
             this.$store.dispatch("GET_USER").then(user => {
 
@@ -922,7 +922,9 @@
                     "NEW_BLOCK_AREA", "UPDATE_BLOCK_AREA",
                     "NEW_CONQUER", "UPDATE_CONQUER", "DELETE_CONQUER"
                 ].forEach(eventName => {
-                    this.websocket.on(eventName, data => this.$store.commit(eventName, data));
+                    this.websocket.on(eventName, data => {
+                        this.$store.commit(eventName, propsToCamelCase(data))
+                    });
                 });
 
                 this.websocket.on("ACTIONS_DURING_OFFLINE", actions => {
