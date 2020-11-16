@@ -14,6 +14,7 @@
 
                 </div>
             </div>
+            <span class="info-footer">Click on an item to see where it happened.</span>
         </div>
     </div>
 </template>
@@ -57,6 +58,7 @@
 
         .overlay-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 100vw;
@@ -69,7 +71,7 @@
                 background-position: 50% 50%;
                 width: 302px;
                 height: 394px;
-                margin: -4rem auto 0 auto;
+                margin: -1rem auto 0 auto;
 
                 .close {
                     background-image: url("../../assets/icon-cancel.svg");
@@ -97,6 +99,7 @@
                     height: 330px;
                     margin: 1rem 3rem;
                     overflow-y: auto;
+                    overflow-x: hidden;
                     -ms-overflow-style: none; /* IE and Edge */
                     scrollbar-width: none;
                     -webkit-overflow-scrolling: touch;
@@ -142,7 +145,7 @@
                                 background-image: url("../../assets/icon-castle-positive.svg");
                             }
 
-                            &.CATAPULT_FAILED {
+                            &.CATAPULT_FAILED, &.OPPONENT_BUILD_CATAPULT {
                                 background-image: url("../../assets/icon-catapult-negative.svg");
                             }
 
@@ -158,11 +161,11 @@
                                 background-image: url("../../assets/icon-knight-positive.svg");
                             }
 
-                            &.OPPONENT_BUILD_WAREHOUSE, &.OPPONENT_UPGRADED_WAREHOUSE {
+                            &.OPPONENT_BUILD_WAREHOUSE, &.OPPONENT_UPGRADED_WAREHOUSE, &.WAREHOUSE_DESTROYED {
                                 background-image: url("../../assets/icon-warehouse-negative.svg");
                             }
 
-                            &.BUILD_WAREHOUSE, &.UPGRADE_WAREHOUSE {
+                            &.BUILD_WAREHOUSE, &.UPGRADE_WAREHOUSE, &.OPPONENT_LOST_WAREHOUSE {
                                 background-image: url("../../assets/icon-warehouse-positive.svg");
                             }
 
@@ -175,6 +178,24 @@
                     }
                 }
             }
+
+            .info-footer {
+                display: block;
+                height: 20px;
+                line-height: 12px;
+                font-size: 12px;
+                color: white;
+                letter-spacing: 0.66px;
+                font-family: 'Piazzolla', serif;
+                font-style: italic;
+                opacity: 0.9;
+                background-image: url("../../assets/icon-info.svg");
+                background-repeat: no-repeat;
+                background-size: 20px;
+                padding: 4px 0 4px 24px;
+                box-sizing: border-box;
+            }
+
         }
 
         // end .overlay-container

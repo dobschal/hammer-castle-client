@@ -817,7 +817,7 @@
             },
 
             onScroll(event) {
-                if (this.overlayOpen || this.pageOverlayOpen) return;
+                if (this.overlayOpen || this.pageOverlayOpen || this.infoOverlayOpen) return;
                 const delta = event.deltaY * config.SCROLL_SENSITIVITY;
                 this.zoom(delta);
             },
@@ -938,10 +938,10 @@
             // - - - - - - - - - - - - - - - - - - - - - ZOOM - - - - - - - - - - - - - - - - - - - - - //
 
             zoomOut() {
-                this.zoom(0.15);
+                this.zoom(0.3);
             },
             zoomIn() {
-                this.zoom(-0.15);
+                this.zoom(-0.3);
             },
 
             zoom(delta) {

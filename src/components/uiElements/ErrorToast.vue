@@ -24,6 +24,12 @@
         text-align: center;
         transform: translateY(-50px) translateX(-120px);
         box-sizing: border-box;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
 
         &:hover {
             cursor: pointer;

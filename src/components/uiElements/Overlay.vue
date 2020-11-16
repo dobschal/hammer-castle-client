@@ -417,7 +417,7 @@
                                         background-image: url("../../assets/icon-castle-positive.svg");
                                     }
 
-                                    &.CATAPULT_FAILED {
+                                    &.CATAPULT_FAILED, &.OPPONENT_BUILD_CATAPULT {
                                         background-image: url("../../assets/icon-catapult-negative.svg");
                                     }
 
@@ -433,11 +433,11 @@
                                         background-image: url("../../assets/icon-knight-positive.svg");
                                     }
 
-                                    &.OPPONENT_BUILD_WAREHOUSE, &.OPPONENT_UPGRADED_WAREHOUSE {
+                                    &.OPPONENT_BUILD_WAREHOUSE, &.OPPONENT_UPGRADED_WAREHOUSE, &.WAREHOUSE_DESTROYED {
                                         background-image: url("../../assets/icon-warehouse-negative.svg");
                                     }
 
-                                    &.BUILD_WAREHOUSE, &.UPGRADE_WAREHOUSE {
+                                    &.BUILD_WAREHOUSE, &.UPGRADE_WAREHOUSE, &.OPPONENT_LOST_WAREHOUSE {
                                         background-image: url("../../assets/icon-warehouse-positive.svg");
                                     }
                                 }

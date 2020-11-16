@@ -8,15 +8,7 @@ export const castleState = {
 
 export const castleMutations = {
   SET_CASTLES(state, castles) {
-    // if (state.castles.length === 0) {
     state.castles = castles;
-    // } else {
-    //   castles.forEach(c1 => {
-    //     if (!state.castles.some(c2 => c1.x === c2.x && c1.y === c2.y)) {
-    //       state.castles.push(c1);
-    //     }
-    //   });
-    // }
   },
   SET_CASTLE_PRICE(state, {price}) { // injected from websocket
     state.castlePrice = price;
@@ -104,7 +96,7 @@ export const castleActions = {
   async GET_CONQUERS({commit}) {
     try {
       commit("PROGRESS", 1);
-      const response = await axios.get(`/castle/conquers`);
+      const response = await axios.get(`/conquer`);
       commit("SET_CONQUERS", response.data);
     } finally {
       commit("PROGRESS", -1);

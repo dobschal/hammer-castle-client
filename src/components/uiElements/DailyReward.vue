@@ -15,7 +15,6 @@
                 return this.$store.state.user;
             },
             active() {
-                console.log("[DailyReward] User: ", this.user);
                 return this.user && this.user.lastDailyRewardClaim < Date.now() - 1000 * 60 * 60 * 24;
             }
         },
