@@ -1,6 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
-import axiosPlugin from "./plugins/axios";
+import axiosPlugin, {axios} from "./plugins/axios";
 import websocketPlugin from "./plugins/websocket";
 import utilPlugin from "./plugins/util";
 import Vuex from "vuex";
@@ -9,6 +9,13 @@ import VTooltip from "v-tooltip";
 import VueI18n from "vue-i18n";
 import landDe from "./lang/de";
 import landEn from "./lang/en";
+
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+  axios.post("/error", {
+    msg, url, lineNo, columnNo, stack: error.stack
+  }).then(() => console.log("[main] Reported error."));
+  return false;
+}
 
 Vue.config.productionTip = false;
 
