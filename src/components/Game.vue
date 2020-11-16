@@ -433,7 +433,7 @@
             knights() {
                 return this.$store.state.knights.map(k => {
                     k.isKnight = true;
-                    k._id = "knight-" + k.x + "-" + k.y;
+                    k._id = "knight-" + k.x + "-" + k.y + "-" + k.id;
                     return k;
                 });
             },
@@ -645,17 +645,13 @@
                     this.renderWaiterId = undefined;
                 }
                 this.renderWaiterId = setTimeout(() => {
-                    try {
-                        this.renderItems = this.roads.concat([
-                            ...this.knights,
-                            ...this.castles,
-                            ...this.blockAreas,
-                            ...this.catapults,
-                            ...this.warehouses
-                        ].sort((i1, i2) => i1.y - i2.y));
-                    } catch (e) {
-                        console.error("[Game] Error on updating render items: ", e);
-                    }
+                    this.renderItems = this.roads.concat([
+                        ...this.knights,
+                        ...this.castles,
+                        ...this.blockAreas,
+                        ...this.catapults,
+                        ...this.warehouses
+                    ].sort((i1, i2) => i1.y - i2.y));
                 }, 40);
             },
 
