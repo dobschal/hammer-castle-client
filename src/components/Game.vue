@@ -645,13 +645,17 @@
                     this.renderWaiterId = undefined;
                 }
                 this.renderWaiterId = setTimeout(() => {
-                    this.renderItems = this.roads.concat([
-                        ...this.knights,
-                        ...this.castles,
-                        ...this.blockAreas,
-                        ...this.catapults,
-                        ...this.warehouses
-                    ].sort((i1, i2) => i1.y - i2.y));
+                    try {
+                        this.renderItems = this.roads.concat([
+                            ...this.knights,
+                            ...this.castles,
+                            ...this.blockAreas,
+                            ...this.catapults,
+                            ...this.warehouses
+                        ].sort((i1, i2) => i1.y - i2.y));
+                    } catch (e) {
+                        console.error("[Game] Error on updating render items: ", e);
+                    }
                 }, 40);
             },
 
