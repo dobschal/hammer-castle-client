@@ -149,14 +149,14 @@
         this.$emit("NEW_CASTLE_POSITION", undefined);
         if (this.hasCastleValidDistance(position)) {
           try {
-            await this.$store.dispatch("CREATE_CASTLE", position);
+            this.$store.dispatch("CREATE_CASTLE", position);
+            this.$emit("DONE"); // need to do that before create cause of a race condition
             await this.$store.dispatch("GET_CASTLE_PRICE");
             await this.$store.dispatch("GET_CATAPULT_PRICE");
           } catch (e) {
             console.log("[BuildCastle] Cannot build castle: ", e, e.response);
             this.$emit("ERROR", e.response.data.message);
           }
-          this.$emit("DONE"); // need to do that before create cause of a race condition
         } else {
           console.log("[BuildCastle] Invalid castle position: ", position);
         }
