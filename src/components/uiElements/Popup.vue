@@ -53,10 +53,9 @@
             <div class="item" @click="deleteCastle">Destroy</div>
         </div>
         <div class="items" v-else-if="type === 'knight' && isMyKnight">
-            <div class="item" @click="$emit('MOVE_KNIGHT', item)">Move</div>
-            <div class="item">Level Up</div>
-            <div class="item">Change Name</div>
-            <div class="item">Destroy</div>
+            <div class="item inactive">{{ $t("knight.shortInfo") }}</div>
+            <div class="item" @click="$emit('MOVE_KNIGHT', item)">{{ $t("knight.move") }}</div>
+            <div class="item" @click="deleteKnight">{{ $t("knight.destroy") }}</div>
         </div>
         <div class="items" v-else-if="type === 'warehouse'">
             <div class="item inactive">You have {{ warehouseAmount }} warehouses.</div>
@@ -266,6 +265,18 @@
                         y: this.item.y
                     });
                     await this.$store.dispatch("GET_WAREHOUSE_PRICE");
+                    this.$emit("CLOSE");
+                } catch (e) {
+                    this.$emit("ERROR", e.response.data.message);
+                }
+            },
+
+            async deleteKnight() {
+                try {
+                    await this.$store.dispatch("DELETE_KNIGHT", {
+                        x: this.item.x,
+                        y: this.item.y
+                    });
                     this.$emit("CLOSE");
                 } catch (e) {
                     this.$emit("ERROR", e.response.data.message);

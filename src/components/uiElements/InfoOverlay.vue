@@ -135,6 +135,10 @@
                             background-position: center left;
                             background-repeat: no-repeat;
                             background-size: 32px;
+                            font-family: 'Piazzolla', serif;
+                            font-size: 1rem;
+                            line-height: 1.2rem;
+                            letter-spacing: 1px;
 
                             &.OPPONENT_BUILD_CASTLE,
                             &.CASTLE_DESTROYED {

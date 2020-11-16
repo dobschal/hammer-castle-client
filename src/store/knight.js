@@ -86,6 +86,7 @@ export const knightActions = {
             commit("PROGRESS", -1);
         }
     },
+
     async GET_KNIGHTS({commit}, {fromX, fromY, toX, toY}) {
         try {
             commit("PROGRESS", 1);
@@ -95,6 +96,7 @@ export const knightActions = {
             commit("PROGRESS", -1);
         }
     },
+
     async GET_KNIGHT_PRICE({commit}) {
         try {
             commit("PROGRESS", 1);
@@ -103,5 +105,14 @@ export const knightActions = {
         } finally {
             commit("PROGRESS", -1);
         }
-    }
+    },
+
+    async DELETE_KNIGHT({commit}, position) {
+        try {
+            commit("PROGRESS", 1);
+            await axios.delete("/knight?x=" + position.x + "&y=" + position.y);
+        } finally {
+            commit("PROGRESS", -1);
+        }
+    },
 };
