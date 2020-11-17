@@ -38,7 +38,7 @@
 <style lang="scss" scoped>
     .friends-list {
         position: fixed;
-        top: 16.5rem;
+        top: 21.4rem;
         right: 0.9rem;
         z-index: 3;
         display: flex;
@@ -59,6 +59,9 @@
         -moz-user-select: none; /* Old versions of Firefox */
         -ms-user-select: none; /* Internet Explorer/Edge */
         user-select: none;
+        @media only screen and (max-width: 900px) {
+            top: 17.4rem;
+        }
 
         &.open {
             transform: translateX(0);

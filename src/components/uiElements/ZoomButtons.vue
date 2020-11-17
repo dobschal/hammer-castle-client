@@ -27,6 +27,10 @@
         -ms-user-select: none; /* Internet Explorer/Edge */
         user-select: none;
 
+        @media only screen and (max-width: 900px) {
+            top: 3rem;
+        }
+
         .zoom-in {
             background-image: url("../../assets/icon-zoom-in.svg");
             background-size: contain;

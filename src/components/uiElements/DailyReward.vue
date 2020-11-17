@@ -63,7 +63,7 @@
     .daily-reward {
         position: fixed;
         right: 0.6rem;
-        top: 21rem;
+        top: 26.2rem;
         z-index: 3;
         background-image: url("../../assets/icon-gift.png");
         background-size: contain;
@@ -74,6 +74,10 @@
         width: 56px;
         height: 56px;
         opacity: 0.8;
+        @media only screen and (max-width: 900px) {
+            top: 21.2rem;
+        }
+
 
         &.active {
             opacity: 1.0;
@@ -91,7 +95,7 @@
         .count-down {
             position: fixed;
             right: 0.6rem;
-            top: 22rem;
+            top: 26.2rem;
             z-index: 4;
             color: white;
             font-family: 'Piazzolla', serif;
@@ -110,6 +114,9 @@
             -moz-user-select: none; /* Old versions of Firefox */
             -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none;
+            @media only screen and (max-width: 900px) {
+                top: 21.2rem;
+            }
         }
     }
 </style>

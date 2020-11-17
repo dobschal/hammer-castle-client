@@ -1,21 +1,21 @@
 <template>
-    <div class="home-button" @click="$emit('GO_HOME')">
+    <div class="open-quest-button" @click="$emit('OPEN')">
     </div>
 </template>
 
 <script>
     export default {
-        name: "HomeButton"
+        name: "OpenQuestButton"
     };
 </script>
 
 <style lang="scss" scoped>
-    .home-button {
+    .open-quest-button {
         position: fixed;
         right: 1rem;
-        top: 11.7rem;
+        top: 16.5rem;
         z-index: 3;
-        background-image: url("../../assets/icon-home.svg");
+        background-image: url("../../assets/icon-tied-scroll.svg");
         background-size: 32px 32px;
         background-position: center;
         background-repeat: no-repeat;
@@ -33,7 +33,7 @@
         user-select: none;
 
         @media only screen and (max-width: 900px) {
-            top: 9.7rem;;
+            top: 13.5rem;
         }
 
         &:hover, &:active {

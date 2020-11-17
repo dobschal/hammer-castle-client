@@ -1,6 +1,9 @@
 export default {
     general: {
-        cancel: "Abbrechen"
+        cancel: "Abbrechen",
+        error: {
+            load: "Konnte die Spieldaten nicht laden. Entweder deine Internetverbindung ist unterbrochen oder der Server ist down :("
+        }
     },
     knight: {
         movesIn: "Bewegt sich in",

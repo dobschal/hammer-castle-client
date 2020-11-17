@@ -3,6 +3,7 @@ import {userActions, userMutations, userState} from "./user";
 import {castleActions, castleMutations, castleState} from "./castle";
 import {catapultActions, catapultMutations, catapultState} from "./catapult";
 import {knightActions, knightMutations, knightState} from "./knight";
+
 import {
   warehouseActions,
   warehouseMutations,
@@ -20,6 +21,7 @@ import {
 } from "./actionLog";
 import {forumActions, forumMutations, forumState} from "./forum";
 import {friendActions, friendMutations, friendState} from "./friend";
+import {questActions, questMutations, questState} from "./quest";
 
 export default {
   state: {
@@ -33,7 +35,8 @@ export default {
     ...actionLogState,
     ...forumState,
     ...knightState,
-    ...friendState
+    ...friendState,
+    ...questState
   },
   getters: {
     busy(state) {
@@ -55,7 +58,8 @@ export default {
     ...actionLogMutations,
     ...forumMutations,
     ...knightMutations,
-    ...friendMutations
+    ...friendMutations,
+    ...questMutations
   },
   actions: {
     async GET_SERVER_VERSION({ commit }) {
@@ -77,6 +81,7 @@ export default {
     ...actionLogActions,
     ...forumActions,
     ...knightActions,
-    ...friendActions
+    ...friendActions,
+    ...questActions
   }
 };

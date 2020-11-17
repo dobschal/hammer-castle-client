@@ -11,7 +11,6 @@
                          @click="showOnMap(action)">
                         <span class="message" :class="action.type">{{ action.content }}</span>
                     </div>
-
                 </div>
             </div>
             <span class="info-footer">Click on an item to see where it happened.</span>

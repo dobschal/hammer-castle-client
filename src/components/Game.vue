@@ -255,6 +255,7 @@
         <DailyReward></DailyReward>
 
         <HomeButton @GO_HOME="goHome"></HomeButton>
+        <OpenQuestButton></OpenQuestButton>
 
         <FriendsList :open.sync="friendsListOpen"
                      @ADD_FRIEND="openOverlay('add-friend')"
@@ -301,6 +302,7 @@
     import TopNavigationBar from "./uiElements/TopNavigationBar";
     import InfoOverlay from "./uiElements/InfoOverlay";
     import {propsToCamelCase} from "../plugins/axios";
+    import OpenQuestButton from "./uiElements/OpenQuestButton";
 
     /**
      * @typedef GameComponent
@@ -330,6 +332,7 @@
             FriendsList,
             PageOverlay,
             NavigationBar,
+            OpenQuestButton,
             TopNavigationBar
         },
         data() {
@@ -658,21 +661,26 @@
             async load() {
                 if (this.isLoading) return;
                 this.isLoading = true;
-                await Promise.all([
-                    this.$store.dispatch("GET_CASTLES", this.loadPosition),
-                    this.$store.dispatch("GET_KNIGHTS", this.loadPosition),
-                    this.$store.dispatch("GET_CATAPULTS", this.loadPosition),
-                    this.$store.dispatch("GET_ACTION_LOG", this.loadPosition),
-                    this.$store.dispatch("GET_WAREHOUSES", this.loadPosition),
-                    this.$store.dispatch("GET_CASTLE_PRICE"),
-                    this.$store.dispatch("GET_WAREHOUSE_PRICE"),
-                    this.$store.dispatch("GET_WAREHOUSE_UPGRADE_PRICE"),
-                    this.$store.dispatch("GET_CATAPULT_PRICE"),
-                    this.$store.dispatch("GET_KNIGHT_PRICE"),
-                    this.$store.dispatch("GET_CONQUERS"),
-                    this.$store.dispatch("GET_SERVER_VERSION"),
-                    this.$store.dispatch("GET_BLOCK_AREAS")
-                ]);
+                try {
+                    await Promise.all([
+                        this.$store.dispatch("GET_CASTLES", this.loadPosition),
+                        this.$store.dispatch("GET_KNIGHTS", this.loadPosition),
+                        this.$store.dispatch("GET_CATAPULTS", this.loadPosition),
+                        this.$store.dispatch("GET_ACTION_LOG", this.loadPosition),
+                        this.$store.dispatch("GET_WAREHOUSES", this.loadPosition),
+                        this.$store.dispatch("GET_CASTLE_PRICE"),
+                        this.$store.dispatch("GET_WAREHOUSE_PRICE"),
+                        this.$store.dispatch("GET_WAREHOUSE_UPGRADE_PRICE"),
+                        this.$store.dispatch("GET_CATAPULT_PRICE"),
+                        this.$store.dispatch("GET_KNIGHT_PRICE"),
+                        this.$store.dispatch("GET_CONQUERS"),
+                        this.$store.dispatch("GET_SERVER_VERSION"),
+                        this.$store.dispatch("GET_BLOCK_AREAS"),
+                        this.$store.dispatch("GET_QUESTS")
+                    ]);
+                } catch (e) {
+                    this.error = this.$t("general.error.load");
+                }
                 this.isLoading = false;
             },
 

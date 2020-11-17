@@ -1,6 +1,9 @@
 export default {
     general: {
-        cancel: "Cancel"
+        cancel: "Cancel",
+        error: {
+            load: "Could not load data. Please check your internet connection else the server might be down :( ..."
+        }
     },
     knight: {
         movesIn: "Moves in",
