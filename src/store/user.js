@@ -4,7 +4,8 @@ import cookie from "js-cookie";
 export const userState = {
   authToken: cookie.get("auth-token"),
   user: undefined,
-  ranking: []
+  ranking: [],
+  beerStats: undefined
 };
 
 export const userMutations = {
@@ -22,10 +23,26 @@ export const userMutations = {
   },
   SET_RANKING(state, ranking) {
     state.ranking = ranking;
+  },
+  SET_BEER_STATS(state, beerStats) {
+    console.log("[user] Got beer stats: ", beerStats);
+    state.beerStats = beerStats;
   }
 };
 
 export const userActions = {
+
+  async GET_BEER_STATS({commit}) {
+    try {
+      commit("PROGRESS", 1);
+      const {
+        data
+      } = await axios.get("/beer/stats");
+      commit("SET_BEER_STATS", data);
+    } finally {
+      commit("PROGRESS", -1);
+    }
+  },
 
   async CLAIM_DAILY_REWARD({commit}) {
     try {

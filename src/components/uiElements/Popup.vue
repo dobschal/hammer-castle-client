@@ -45,8 +45,10 @@
         </div>
         <div class="items" v-else-if="type === 'castle' && isMyCastle">
             <div class="item" @click="buildKnight" :class="{ 'no-link': !canBuildKnight}">
-                Build Knight<br><small>for {{ knightPrice }} <img src="../../assets/icon-hammer.svg" class="hammer-icon"
-                                                                  alt="Hammer"></small>
+                {{ $t("knight.build")}}<br>
+                <small>{{ $t("general.for") }} {{ knightPrice }}
+                <img src="../../assets/icon-beer.svg" class="beer-icon" alt="Beer">
+                </small>
             </div>
             <div class="item" @click="markAsHome">Mark as Home</div>
             <div class="item" @click="$emit('update:type', 'castle-change-name')">Change Name</div>
@@ -288,17 +290,28 @@
 
 <style lang="scss" scoped>
 
-    .hammer-icon {
+    .hammer-icon{
         display: inline-block;
         margin-bottom: -7px;
         margin-right: -10px;
         width: 24px;
+        height: 24px;
         background-color: rgba(0, 0, 0, 0.5);
         border-radius: 50%;
+        box-sizing: border-box;
+        background-size: contain;
     }
 
-    small > .hammer-icon {
+    small > .hammer-icon{
         width: 20px;
+        height: 20px;
+    }
+
+    .beer-icon {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        margin-bottom: -2px;
     }
 
     .popup {

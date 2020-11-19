@@ -1,58 +1,51 @@
 <template>
     <div class="wrapper">
-        <div class="buttons">
+        <div class="buttons" @click="showDropDown" :class="{open: dropDownShown}">
             <div class="icon-value-pair">
                 <span class="icon" :class="{ animated: gotHammer }"><img src="../../assets/icon-hammer.svg"
                                                                          alt="Hammer"></span>
                 <span class="value">{{ hammer }}<span class="small">/{{ maxHammers }}</span></span>
-                <div class="nav-tooltip">
-                    <div class="nav-tooltip-content">
-                        <div class="key-value-pair">
-                            <span class="icon"><img
-                                    src="../../assets/icon-hammer-plus.svg"
-                                    alt="Hammer Per Minute"></span>
-                            <p class="content">{{ hammerPerMinute }}<span
-                                    class="small">/min</span></p>
-                        </div>
-                        <div class="text">Hammer are produced by castles and
-                            stored in warehouses.
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="icon-value-pair">
                 <span class="icon"><img src="../../assets/icon-beer.svg"
                                         alt="beer"></span>
                 <span class="value">{{ beer }}<span
                         class="small">/{{ maxBeer }}</span></span>
-                <div class="nav-tooltip">
-                    <div class="nav-tooltip-content">
-                        <div class="key-value-pair">
-                            <span class="icon"><img
-                                    src="../../assets/icon-hammer-plus.svg"
-                                    alt="Beer Per Minute"></span>
-                            <p class="content">{{ hammerPerMinute }}<span
-                                    class="small">/min</span></p>
-                        </div>
-                        <div class="text">Beer is produced by castles level 5+
-                            and consumed by knights. Do always have enough beer!
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="icon-value-pair">
                 <span class="icon"><img src="../../assets/icon-level.svg" alt="Level"></span>
                 <span class="value">{{ level }}</span>
-                <div class="nav-tooltip">
-                    <div class="nav-tooltip-content">
-                        <div class="text">Your level. Base for the hammer castle player ranking.
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="icon-value-pair" @click="openMenu">
                 <span class="icon burger-button"><img src="../../assets/icon-burger.svg" alt="Menu"></span>
             </div>
+        </div>
+        <div class="drop-down" v-if="dropDownShown" @click="hideDropDown">
+            <div class="container">
+                <div class="col">
+                    <div class="icon-content-pair">
+                        <img src="../../assets/icon-hammer-plus.svg" alt="Hammer Per Minute" class="icon">
+                        <p class="content">
+                            {{ hammerPerMinute }}<small>/min</small>
+                        </p>
+                    </div>
+                    <div class="text">
+                        {{ $t("topNavigation.hammerDescription")}}
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="icon-content-pair">
+                        <img src="../../assets/icon-beer-plus.svg" alt="Beer Per Minute" class="icon beer-icon">
+                        <p class="content" :class="{ negative: beerPerMinute < 0 }">
+                            {{ beerPerMinute }}<small>/min</small>
+                        </p>
+                    </div>
+                    <div class="text">
+                        {{ $t("topNavigation.beerDescription")}}
+                    </div>
+                </div>
+            </div>
+            <div class="close"></div>
         </div>
     </div>
 </template>
@@ -60,6 +53,9 @@
 <script>
     export default {
         name: "TopNavigationBar",
+        props: {
+            dropDownShown: Boolean
+        },
         computed: {
             hammer() {
                 return this.$store.state.user ? this.$store.state.user.hammer : 0;
@@ -81,9 +77,30 @@
             },
             maxBeer() {
                 return this.$store.state.user ? this.$store.state.user.maxBeer : 0;
+            },
+
+            /**
+             * @return {BeerStats}
+             */
+            beerStats() {
+                return this.$store.state.beerStats;
+            },
+
+            /**
+             * @return {number}
+             */
+            beerPerMinute() {
+                if (!this.beerStats) return 0;
+                return this.beerStats.beerPerMinute - this.beerStats.beerCostsPerMinute;
             }
         },
         watch: {
+            dropDownShown(val) {
+                if (val) {
+                    console.log("[TopNavigationBar] Load beer stats: ");
+                    this.$store.dispatch("GET_BEER_STATS");
+                }
+            },
             hammer() {
                 if (this.timeoutId) clearTimeout(this.timeoutId);
                 this.gotHammer = true;
@@ -101,6 +118,12 @@
         methods: {
             openMenu() {
                 this.$emit("OPEN-MENU");
+            },
+            showDropDown() {
+                this.$emit("update:dropDownShown", true);
+            },
+            hideDropDown() {
+                this.$emit("update:dropDownShown", false);
             }
         }
     };
@@ -127,7 +150,7 @@
         width: 100vw;
         margin-left: 0;
         text-align: center;
-        background: rgba(11, 90, 102, 0.7);
+        background: rgba(11, 90, 102, 0.8);
         backdrop-filter: blur(5px);
 
         .buttons {
@@ -138,6 +161,10 @@
             margin: 0 auto;
             max-width: 400px;
             padding: 0 1rem;
+
+            &.open {
+                border-bottom: solid 3px rgba(0, 0, 0, 0.1);
+            }
 
             .icon-value-pair {
                 position: relative;
@@ -163,9 +190,9 @@
 
                 &:nth-child(2) {
                     .icon {
-                        width: 32px;
-                        margin-right: 4px;
-                        margin-top: 6px;
+                        width: 24px;
+                        margin-right: 5px;
+                        margin-top: 7px;
                     }
                 }
 
@@ -311,5 +338,99 @@
             }
         }
 
+    }
+
+    @keyframes drive_in {
+        0% {
+            height: 0;
+        }
+        100% {
+            height: 180px;
+        }
+    }
+
+    .drop-down {
+        height: 180px;
+        display: flex;
+        flex-direction: column;
+        animation: drive_in;
+        animation-duration: 0.3s;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-out;
+        overflow-y: hidden;
+        box-shadow: 0 10px 20px -10px black;
+
+        .container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+
+            .col {
+                box-sizing: border-box;
+                padding: 0.5rem 0 0 1rem;
+                width: 50vw;
+                max-width: 200px;
+                //border-right: dashed 2px rgba(255, 255, 255, 1);
+                color: white;
+                text-align: left;
+
+                &:last-child {
+                    border: none;
+                    padding-right: 1rem;
+                }
+
+                .icon-content-pair {
+                    display: flex;
+                    flex-direction: row;
+
+                    .icon {
+                        width: 32px;
+                        height: 32px;
+                        margin-top: -4px;
+                        display: block;
+                        margin-right: 5px;
+
+                        &.beer-icon {
+                            margin-top: -2px;
+                            height: 30px;
+                        }
+                    }
+
+                    .content {
+                        line-height: 32px;
+                        margin: 0;
+
+                        &.negative {
+                            color: #ff4211;
+                            font-weight: bold;
+                        }
+
+                        small {
+                            font-size: 0.66rem;
+                        }
+                    }
+                }
+
+                .text {
+                    font-family: 'Piazzolla', serif;
+                    font-size: 0.85rem;
+                    line-height: 1.2rem;
+                    letter-spacing: 0.5px;
+                    opacity: 0.9;
+                }
+            }
+        }
+
+        .close {
+            display: block;
+            width: 100vw;
+            height: 24px;
+            background-image: url("../../assets/icon-chevron-up.svg");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            margin-bottom: 0.3rem;
+        }
     }
 </style>

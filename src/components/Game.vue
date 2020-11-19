@@ -220,7 +220,7 @@
         <NavigationBar :activeAction.sync="activeAction"
                        @BUILD_IT="triggerCastleBuild"></NavigationBar>
 
-        <TopNavigationBar @OPEN-MENU="openOverlay"></TopNavigationBar>
+        <TopNavigationBar @OPEN-MENU="openOverlay" :dropDownShown.sync="topNavigationLargeOpen"></TopNavigationBar>
 
         <Overlay v-if="overlayOpen"
                  :type.sync="overlayType"
@@ -232,6 +232,7 @@
                  @OPEN_PAGE="openPage($event)"></Overlay>
 
         <InfoOverlay v-if="infoOverlayOpen"
+                     :type="infoOverlayType"
                      @SHOW-ON-MAP="showActionOnMap($event)"
                      @CLOSE-OVERLAY="closeInfoOverlay"></InfoOverlay>
 
@@ -255,7 +256,7 @@
         <DailyReward></DailyReward>
 
         <HomeButton @GO_HOME="goHome"></HomeButton>
-        <OpenQuestButton></OpenQuestButton>
+        <OpenQuestButton @OPEN="openInfoOverlay('QUESTS')"></OpenQuestButton>
 
         <FriendsList :open.sync="friendsListOpen"
                      @ADD_FRIEND="openOverlay('add-friend')"
@@ -358,6 +359,7 @@
                 pageOverlayOpen: false,
                 friendsListOpen: false,
                 infoOverlayOpen: false,
+                infoOverlayType: "",
                 activeKnight: undefined,
                 popupPosition: undefined,
                 renderWaiterId: undefined,
@@ -368,6 +370,7 @@
                 highlightedCastle: undefined,
                 newCastlePosition: undefined,
                 mouseMoveDelta: {x: 0, y: 0},
+                topNavigationLargeOpen: false,
                 latestClickedCastle: undefined,
                 lastRenderTimestamp: undefined,
                 lastMousePosition: {x: 0, y: 0},
@@ -561,6 +564,7 @@
                 this.closePopup();
                 this.closeFriendsList();
                 this.storePositionInUrl();
+                this.topNavigationLargeOpen = false;
             },
 
             error(val) {
@@ -740,14 +744,17 @@
 
             closeInfoOverlay() {
                 this.infoOverlayOpen = false;
+                this.infoOverlayType = "";
             },
 
-            openInfoOverlay() {
+            openInfoOverlay(type) {
                 this.closeOverlay();
                 this.closePopup();
                 this.closePage();
                 this.closeFriendsList();
+                this.topNavigationLargeOpen = false;
                 this.infoOverlayOpen = true;
+                this.infoOverlayType = type;
             },
 
             closeFriendsList() {
@@ -761,6 +768,7 @@
                 this.closePopup();
                 this.closePage();
                 this.closeFriendsList();
+                this.topNavigationLargeOpen = false;
                 this.overlayType = type || "menu";
                 this.overlayOpen = true;
                 this.$util.setUrlParam("overlay-type", this.overlayType);
@@ -783,6 +791,7 @@
                 this.pageOverlayOpen = true;
                 this.pageOverlayType = $event;
                 this.$util.setUrlParam("page", $event);
+                this.topNavigationLargeOpen = false;
             },
 
             /**
@@ -795,6 +804,7 @@
                 this.popupPosition = position;
                 this.popupType = type;
                 this.popupItem = item;
+                this.topNavigationLargeOpen = false;
             },
 
             closePopup() {
@@ -938,7 +948,7 @@
                 this.websocket.on("ACTIONS_DURING_OFFLINE", actions => {
                     if (actions.length > 0) {
                         this.$store.commit("ACTIONS_DURING_OFFLINE", actions);
-                        this.openInfoOverlay();
+                        this.openInfoOverlay("OFFLINE_HISTORY");
                     }
                 });
             },
@@ -1019,7 +1029,7 @@
             onPointerMove({x, y}, event) {
                 if (!this.dragging) return;
                 window.requestAnimationFrame(() => {
-                    if (this.touchPositions.length === 2) { // is pinch
+                    if (this.touchPositions.length === 2 && event.touches[1]) { // is pinch
                         const lastDiff = Math.abs(this.touchPositions[0].x - this.touchPositions[1].x);
                         this.touchPositions[0] = {x: event.touches[0].clientX, y: event.touches[0].clientY};
                         this.touchPositions[1] = {x: event.touches[1].clientX, y: event.touches[1].clientY};

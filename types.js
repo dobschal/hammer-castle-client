@@ -57,4 +57,26 @@
  * @property {string} type - "UNKNOWN"
  */
 
+/**
+ * @typedef Quest
+ * @type {object}
+ * @property {number} id
+ * @property {number} prevQuestId
+ * @property {number} isRecurring
+ * @property {string} recurringInterval
+ * @property {string} titleKey
+ * @property {string} messageKey
+ * @property {string} imageName
+ * @property {string} benefitType
+ * @property {number} benefitValue
+ */
+
+/**
+ * @typedef BeerStats
+ * @type object
+ * @property {number} beerCostsPerMinute - 24
+ * @property {number} beerPerMinute - 51
+ * @property {number} maxBeer - 500
+ */
+
 export default {};

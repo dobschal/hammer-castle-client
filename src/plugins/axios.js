@@ -10,8 +10,13 @@ const axiosConfig = {
 export const axios = Axios.create(axiosConfig);
 
 axios.interceptors.request.use(function(config) {
-  if (cookie.get("auth-token")) {
-    config.headers.Authorization = "Bearer " + cookie.get("auth-token");
+  try {
+    config.headers.Locale = (window.navigator.userLanguage || window.navigator.language).substring(0, 2).toLowerCase();
+    if (cookie.get("auth-token")) {
+      config.headers.Authorization = "Bearer " + cookie.get("auth-token");
+    }
+  } catch (e) {
+    console.error("[axios] Error on setting custom headers: ", e);
   }
   return config;
 });

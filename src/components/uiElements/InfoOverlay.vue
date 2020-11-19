@@ -3,7 +3,7 @@
         <div class="overlay-container">
             <div class="overlay-content" @click.stop @scroll.stop>
                 <div class="close" @click="close">Close</div>
-                <div class="content">
+                <div class="content offline-history" v-if="type === 'OFFLINE_HISTORY'">
                     <h3>Good to see you!<br><small>That happened since your last visit...</small></h3>
                     <div class="item"
                          v-for="action in actions"
@@ -12,8 +12,14 @@
                         <span class="message" :class="action.type">{{ action.content }}</span>
                     </div>
                 </div>
+                <div class="content quests" v-else-if="type === 'QUESTS'">
+                    <h3>{{ $t("quests.overlay.title") }}<br><small>{{ $t("quests.overlay.subTitle") }}</small></h3>
+                    <div v-for="quest in quests" :key="quest.id">
+                        {{ quest.titleKey }}
+                    </div>
+                </div>
             </div>
-            <span class="info-footer">Click on an item to see where it happened.</span>
+            <span class="info-footer" v-if="type === 'OFFLINE_HISTORY'">Click on an item to see where it happened.</span>
         </div>
     </div>
 </template>
@@ -21,7 +27,22 @@
 <script>
     export default {
         name: "InfoOverlay",
+        props: {
+            type: {
+                type: String,
+                validator(val) {
+                    return ["OFFLINE_HISTORY", "QUESTS"].includes(val);
+                }
+            },
+        },
         computed: {
+
+            /**
+             * @return {Quest[]}
+             */
+            quests() {
+                return this.$store.state.quests;
+            },
 
             /**
              * @return {ActionLog[]}
