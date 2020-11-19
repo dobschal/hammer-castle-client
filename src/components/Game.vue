@@ -398,7 +398,7 @@
                     for (let j = i + 1; j < castles.length; j++) {
                         const c2 = castles[j];
                         const distanceBetweenCastles = this.$util.positionDistance(c1, c2);
-                        if (distanceBetweenCastles < config.MAX_CASTLE_DISTANCE) {
+                        if (distanceBetweenCastles <= config.MAX_CASTLE_DISTANCE) {
                             const angle = Math.floor(Math.atan2(c2.y - c1.y, c2.x - c1.x) * 180 / Math.PI) - 82;
                             const isMyRoad = c1.userId === this.user.id || c2.userId === this.user.id;
                             const x = (c1.x + c2.x) / 2;

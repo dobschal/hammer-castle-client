@@ -16,7 +16,7 @@
                 <span class="icon"><img src="../../assets/icon-level.svg" alt="Level"></span>
                 <span class="value">{{ level }}</span>
             </div>
-            <div class="icon-value-pair" @click="openMenu">
+            <div class="icon-value-pair" @click.stop="openMenu">
                 <span class="icon burger-button"><img src="../../assets/icon-burger.svg" alt="Menu"></span>
             </div>
         </div>
