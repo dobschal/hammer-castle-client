@@ -19,9 +19,22 @@ export default {
             subTitle: "Löse die Aufgaben und erhalte tollste Geschenke!"
         }
     },
+    friend: {
+        add: "Freund Hinzufügen"
+    },
     topNavigation: {
         hammerDescription: "Hämmer werden in Burgen produziert und in Lagerhäusern gespeichert.",
         beerDescription: "Bier wird von Burgen Level 5+ produziert und von Rittern verbraucht. Habe immer genug Bier!"
+    },
+    overlay: {
+        title: {
+            players: "Spieler",
+            friends: "Freunde",
+            findPlayers: "Finde Spieler",
+            history: "Geschichte",
+            profile: "Profil",
+            ranking: "Ranking"
+        }
     }
 
 };

@@ -257,11 +257,7 @@
 
         <HomeButton @GO_HOME="goHome"></HomeButton>
         <OpenQuestButton @OPEN="openInfoOverlay('QUESTS')"></OpenQuestButton>
-
-        <FriendsList :open.sync="friendsListOpen"
-                     @ADD_FRIEND="openOverlay('add-friend')"
-                     @OPEN_PLAYERS_LIST="openOverlay('ranking')">
-        </FriendsList>
+        <OpenFriendsButton @OPEN="openOverlay('friends')"></OpenFriendsButton>
 
         <ZoomButtons @ZOOM_IN="zoomIn" @ZOOM_OUT="zoomOut"></ZoomButtons>
 
@@ -299,11 +295,11 @@
     import DailyReward from "./uiElements/DailyReward";
     import NavigationBar from "./uiElements/NavigationBar";
     import BuildCastle from "./inGameElements/BuildCastle";
-    import FriendsList from "./uiElements/FriendsList.vue";
     import TopNavigationBar from "./uiElements/TopNavigationBar";
     import InfoOverlay from "./uiElements/InfoOverlay";
     import {propsToCamelCase} from "../plugins/axios";
     import OpenQuestButton from "./uiElements/OpenQuestButton";
+    import OpenFriendsButton from "./uiElements/OpenFriendsButton";
 
     /**
      * @typedef GameComponent
@@ -314,6 +310,7 @@
     export default {
         name: "Game",
         components: {
+            OpenFriendsButton,
             InfoOverlay,
             Forum,
             Popup,
@@ -330,7 +327,6 @@
             BuildCastle,
             DailyReward,
             ZoomButtons,
-            FriendsList,
             PageOverlay,
             NavigationBar,
             OpenQuestButton,
@@ -357,7 +353,6 @@
                 popupItem: undefined,
                 mouseDownTimestamp: 0,
                 pageOverlayOpen: false,
-                friendsListOpen: false,
                 infoOverlayOpen: false,
                 infoOverlayType: "",
                 activeKnight: undefined,
@@ -562,7 +557,6 @@
 
             "viewPosition.x"() {
                 this.closePopup();
-                this.closeFriendsList();
                 this.storePositionInUrl();
                 this.topNavigationLargeOpen = false;
             },
@@ -751,14 +745,9 @@
                 this.closeOverlay();
                 this.closePopup();
                 this.closePage();
-                this.closeFriendsList();
                 this.topNavigationLargeOpen = false;
                 this.infoOverlayOpen = true;
                 this.infoOverlayType = type;
-            },
-
-            closeFriendsList() {
-                this.friendsListOpen = false;
             },
 
             /**
@@ -767,7 +756,6 @@
             openOverlay(type) {
                 this.closePopup();
                 this.closePage();
-                this.closeFriendsList();
                 this.topNavigationLargeOpen = false;
                 this.overlayType = type || "menu";
                 this.overlayOpen = true;

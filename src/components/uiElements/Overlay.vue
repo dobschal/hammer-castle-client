@@ -12,14 +12,20 @@
                 <div class="content">
                     <div class="items" v-if="type === 'menu'">
                         <div class="item"
-                             @click="$emit('update:type', 'ranking')">Players
+                             @click="showOwnProfile">
+                            {{ $t("overlay.title.profile") }}
                         </div>
                         <div class="item"
-                             @click="$emit('update:type', 'history')">Show
-                            History
+                             @click="$emit('update:type', 'friends')">
+                            {{ $t("overlay.title.friends") }}
                         </div>
                         <div class="item"
-                             @click="showOwnProfile">Profile
+                             @click="$emit('update:type', 'ranking')">
+                            {{ $t("overlay.title.ranking") }}
+                        </div>
+                        <div class="item"
+                             @click="$emit('update:type', 'history')">
+                            {{ $t("overlay.title.history") }}
                         </div>
                         <div class="item" @click="$emit('OPEN_PAGE', 'info')">
                             Info
@@ -39,6 +45,20 @@
                             <span class="rank">{{ index + 1 }}.</span>
                             <span class="level">{{ rank.level }}</span>
                             <span class="username">{{ rank.username }}</span>
+                        </div>
+                    </div>
+                    <div v-else-if="type === 'friends'" class="ranking items" @click.stop>
+                        <div v-for="(player, index) in friends"
+                             class="item"
+                             :key="player.username"
+                             :class="{ highlight: player.id === user.id }"
+                             @click="showPlayersProfile(player)">
+                            <span class="rank">{{ index + 1 }}.</span>
+                            <span class="level">{{ player.level }}</span>
+                            <span class="username">{{ player.username }}</span>
+                        </div>
+                        <div class="item button" @click="$emit('update:type', 'add-friend')">
+                            + {{ $t("friend.add") }}
                         </div>
                     </div>
                     <div v-else-if="type === 'history'" class="items history">
@@ -135,7 +155,9 @@
             title() {
                 switch (this.type) {
                     case "ranking":
-                        return "Players";
+                        return this.$t("overlay.title.players");
+                    case "friends":
+                        return this.$t("overlay.title.friends");
                     case "menu":
                         return "Menu";
                     case "history":
@@ -143,14 +165,20 @@
                     case "profile":
                         return "Profile";
                     case "add-friend":
-                        return "Find Friends";
+                        return this.$t("overlay.title.findPlayers");
                     default:
                         return "";
                 }
             },
+
+            friends() {
+                return this.$store.state.friends;
+            },
+
             ranking() {
                 return this.$store.state.ranking;
             },
+
             user() {
                 return this.$store.state.user;
             },
@@ -170,6 +198,9 @@
                 if (val === "ranking") {
                     this.$store.dispatch("GET_RANKING");
                 }
+                if (val === "friends") {
+                    this.$store.dispatch("GET_FRIENDS");
+                }
             }
         },
         created() {
@@ -179,6 +210,9 @@
             this.typeHistory.push(this.type);
             if (this.type === "ranking") {
                 this.$store.dispatch("GET_RANKING");
+            }
+            if (this.type === "friends") {
+                this.$store.dispatch("GET_FRIENDS");
             }
         },
         mounted() {

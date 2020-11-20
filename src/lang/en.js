@@ -19,8 +19,21 @@ export default {
             subTitle: "Solve the quests to earn greatest benefits!"
         }
     },
+    friend: {
+      add: "Add Friend"
+    },
     topNavigation: {
         hammerDescription: "Hammer are produced by castles and stored in warehouses.",
         beerDescription: "Beer is produced by castles level 5+ and consumed by knights. Do always have enough beer!"
+    },
+    overlay: {
+        title: {
+            players: "Players",
+            friends: "Friends",
+            findPlayers: "Find Players",
+            history: "History",
+            profile: "Profile",
+            ranking: "Ranking"
+        }
     }
 };
