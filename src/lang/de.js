@@ -2,6 +2,7 @@ export default {
     general: {
         cancel: "Abbrechen",
         for: "für",
+        moreInfo: "Mehr Infos",
         error: {
             load: "Konnte die Spieldaten nicht laden. Entweder deine Internetverbindung ist unterbrochen oder der Server ist down :("
         }
@@ -13,10 +14,12 @@ export default {
         destroy: "Zerstören",
         build: "Baue Ritter"
     },
-    quests: {
+    quest: {
         overlay: {
-            title: "Quests",
-            subTitle: "Löse die Aufgaben und erhalte tollste Geschenke!"
+            title: "Quests"
+        },
+        firstCastle: {
+            title: "Baue deine erste Burg um die Reise zu beginne..."
         }
     },
     friend: {

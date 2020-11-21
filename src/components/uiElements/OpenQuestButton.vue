@@ -1,11 +1,17 @@
 <template>
     <div class="open-quest-button" @click="$emit('OPEN')">
+        <span v-if="hasBadge" class="badge">1</span>
     </div>
 </template>
 
 <script>
     export default {
-        name: "OpenQuestButton"
+        name: "OpenQuestButton",
+        computed: {
+            hasBadge() {
+                return this.$store.state.quests.some(quest => quest.status.includes("NEW"));
+            }
+        }
     };
 </script>
 
@@ -39,6 +45,21 @@
         &:hover, &:active {
             transform: scale(1.1);
             cursor: pointer;
+        }
+
+        .badge {
+            width: 20px;
+            height: 20px;
+            display: block;
+            background: rgba(255, 30, 15, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            margin: -5px 0 0 -5px;
+            color: white;
+            text-align: center;
+            line-height: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.33);
         }
     }
 </style>

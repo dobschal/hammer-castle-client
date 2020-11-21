@@ -232,7 +232,7 @@
                  @OPEN_PAGE="openPage($event)"></Overlay>
 
         <InfoOverlay v-if="infoOverlayOpen"
-                     :type="infoOverlayType"
+                     :type.sync="infoOverlayType"
                      @SHOW-ON-MAP="showActionOnMap($event)"
                      @CLOSE-OVERLAY="closeInfoOverlay"></InfoOverlay>
 

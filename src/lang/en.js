@@ -2,6 +2,7 @@ export default {
     general: {
         cancel: "Cancel",
         for: "for",
+        moreInfo: "More Info",
         error: {
             load: "Could not load data. Please check your internet connection else the server might be down :( ..."
         }
@@ -13,10 +14,12 @@ export default {
         destroy: "Destroy Knight",
         build: "Build Knight"
     },
-    quests: {
+    quest: {
         overlay: {
-            title: "Quests",
-            subTitle: "Solve the quests to earn greatest benefits!"
+            title: "Quests"
+        },
+        firstCastle: {
+            title: "Build your first Castle and start your journey..."
         }
     },
     friend: {
