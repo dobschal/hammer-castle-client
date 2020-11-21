@@ -122,12 +122,12 @@
                 background-position: 50% 50%;
                 width: 302px;
                 height: 394px;
-                margin: 0 auto 0 auto;
+                margin: -1rem auto 0 auto;
 
                 &.QUESTS {
                     background-image: url("../../assets/open-scroll.svg");
-                    width: 325px;
-                    height: 380px;
+                    width: 320px;
+                    height: 400px;
 
                     .content {
                         height: 240px;
@@ -137,13 +137,13 @@
                         -ms-overflow-style: none; /* IE and Edge */
                         scrollbar-width: none;
                         -webkit-overflow-scrolling: touch;
-                        padding: 1rem;
+                        padding: 0.5rem 0.3rem;
                         box-sizing: border-box;
 
                         h3 {
                             color: #BC631C;
                             text-align: center;
-                            margin: 0;
+                            margin: 0 0 1rem 0;
                             font-weight: bold;
                         }
 
@@ -152,8 +152,8 @@
                             background-repeat: no-repeat;
                             background-size: 26px;
                             padding: 0 0 0 34px;
-                            font-size: 0.85rem;
-                            margin-top: 1rem;
+                            font-size: 0.9rem;
+                            margin-top: 0.5rem;
                             letter-spacing: 0.5px;
 
                             &.can-be-claimed {
@@ -174,7 +174,7 @@
                                 height: 30px;
                                 width: 123px;
                                 padding: 0;
-                                margin: 0.5rem -0.5rem 0 0;
+                                margin: 1rem -0.5rem 0 0;
                             }
                         }
                     }
