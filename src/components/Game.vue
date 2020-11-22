@@ -94,8 +94,19 @@
 
                     <g v-for="item in renderItems" :key="item._id">
 
-                        <BlockArea v-if="item.isBlockArea"
+                        <BlockArea v-if="item.isBlockArea && !isFarZoom"
                                    :position="{ x: item.x, y: item.y }"></BlockArea>
+                        <svg v-else-if="item.isBlockArea && isFarZoom"
+                             :x="item.x - 200"
+                             :y="item.y - 200"
+                             :width="400"
+                             :height="400">
+                            <circle :cx="200"
+                                    :cy="200"
+                                    :r="200"
+                                    :fill="'rgba(97,156,46,0.3)'"
+                                    stroke="none"/>
+                        </svg>
 
                         <svg v-else-if="item.isRoad"
                              :x="item.x - item.distanceBetweenCastles * 0.4"
@@ -106,13 +117,16 @@
                              fill="none"
                              xmlns="http://www.w3.org/2000/svg"
                              @click="onRoadClick(item)">
-                            <path class="road"
+                            <path v-if="!isFarZoom"
+                                  class="road"
                                   :class="{ 'is-my-road': item.isMyRoad }"
                                   :style="{transform: 'rotate(' + item.angle + 'deg)', 'transform-origin': '50% 50%' }"
                                   d="M222.195 504.255L223.33 504.232L223.617 503.135C228.888 482.983 234.822 446.034 234.976 406.023C235.13 366.043 229.515 322.786 211.509 290.172C205.231 278.8 199.772 269.673 195.225 262.07C193.31 258.87 191.557 255.94 189.973 253.226C184.595 244.013 181.191 237.342 179.761 230.88C178.347 224.491 178.84 218.187 181.54 209.694C184.257 201.15 189.172 190.496 196.53 175.425C199.445 169.455 202.086 164.384 204.431 159.88C204.671 159.419 204.908 158.964 205.142 158.515C207.655 153.685 209.819 149.479 211.569 145.512C215.095 137.522 216.958 130.462 216.773 120.962C216.59 111.537 214.393 99.7574 209.929 82.3212C205.702 65.8103 199.414 44.1202 190.803 14.417C190.313 12.726 189.815 11.009 189.309 9.26554L188.632 6.92665L186.848 8.58431L174.535 20.0257L173.878 20.6369L174.106 21.5054C177.23 33.4069 181.697 44.8679 186.08 56.0521L186.293 56.5967C190.613 67.6199 194.825 78.3675 197.661 89.1468C203.4 110.963 203.478 132.793 187.102 156.725C166.164 187.323 160.443 206.064 163.087 225.416C164.398 235.01 167.755 244.67 172.151 255.88C173.344 258.921 174.613 262.077 175.943 265.383C179.53 274.302 183.553 284.305 187.68 296.059C192.048 308.503 196.618 319.17 200.902 329.171C202.104 331.976 203.283 334.729 204.429 337.453C209.668 349.909 214.231 361.82 217.203 375.688C223.141 403.396 222.77 439.134 208.26 502.668L207.833 504.539L209.752 504.501L222.195 504.255Z"
                                   fill="#6F4E37"
                                   stroke="#867350"
                                   stroke-width="5"/>
+                            <line v-else x1="201" y1="0" x2="201" y2="403" stroke-width="10"
+                                  :stroke="'rgb(87,59,43)'" :style="{transform: 'rotate(' + item.angle + 'deg)', 'transform-origin': '50% 50%' }" class="road"/>
                         </svg>
 
                         <g v-else-if="item.isCastle">
@@ -129,7 +143,8 @@
                         </g>
 
                         <g v-else-if="item.isKnight">
-                            <Knight :position="knightViewPosition(item)"
+                            <Knight v-if="!isFarZoom"
+                                    :position="knightViewPosition(item)"
                                     :knight="item"
                                     :view-position="viewPosition"
                                     :is-active="activeAction === 'MOVE_KNIGHT' && activeKnight && activeKnight.id === item.id"
@@ -138,7 +153,8 @@
                         </g>
 
                         <g v-if="item.isCastle">
-                            <Castle :position="{ x: item.x, y: item.y }"
+                            <Castle v-if="!isFarZoom"
+                                    :position="{ x: item.x, y: item.y }"
                                     :castle="item"
                                     :color="item.color"
                                     :dragging="dragging"
@@ -148,10 +164,23 @@
                                     @CLICK="onCastleClick($event)"
                                     @HIGHLIGHT-ON="highlightedCastle = item"
                                     @HIGHLIGHT-OFF="highlightedCastle = undefined"></Castle>
+                            <svg v-else
+                                 :x="item.x - minCastleDistance"
+                                 :y="item.y - minCastleDistance"
+                                 :width="minCastleDistance * 2"
+                                 :height="minCastleDistance * 2"
+                                 @click="onCastleClick(item)">
+                                <circle :cx="minCastleDistance"
+                                        :cy="minCastleDistance"
+                                        :r="35"
+                                        :fill="item.color"
+                                        stroke="none"/>
+                            </svg>
                         </g>
 
                         <g v-else-if="item.isCatapult">
-                            <svg :x="item.x - minCastleDistance"
+                            <svg v-if="!isFarZoom"
+                                 :x="item.x - minCastleDistance"
                                  :y="item.y - minCastleDistance"
                                  :width="minCastleDistance * 2"
                                  :height="minCastleDistance * 2">
@@ -163,13 +192,15 @@
                                         :stroke="item.color"
                                         class="catapult-ring"/>
                             </svg>
-                            <Catapult :catapult="item"
+                            <Catapult v-if="!isFarZoom"
+                                      :catapult="item"
                                       :position="{ x: item.x, y: item.y }"
                                       :color="item.color"></Catapult>
                         </g>
 
                         <g v-else-if="item.isWarehouse">
                             <Warehouse
+                                    v-if="!isFarZoom"
                                     :position="{ x: item.x, y: item.y }"
                                     :dragging="dragging"
                                     :pageOverlayOpen="pageOverlayOpen"
@@ -249,8 +280,6 @@
                @ERROR="error = $event"
                @CLOSE="closePopup"></Popup>
 
-        <ActionLog></ActionLog>
-
         <div v-if="$store.state.progress > 0" class="loading"></div>
 
         <DailyReward></DailyReward>
@@ -286,7 +315,6 @@
     import PageOverlay from "./PageOverlay";
     import Knight from "./inGameElements/Knight";
     import Castle from "./inGameElements/Castle";
-    import ActionLog from "./uiElements/ActionLog";
     import Catapult from "./inGameElements/Catapult";
     import ErrorToast from "./uiElements/ErrorToast";
     import HomeButton from "./uiElements/HomeButton";
@@ -320,7 +348,6 @@
             Catapult,
             InfoView,
             BlockArea,
-            ActionLog,
             Warehouse,
             ErrorToast,
             HomeButton,
@@ -379,6 +406,11 @@
         },
 
         computed: {
+
+            isFarZoom() {
+                const screenWidth = Math.max(this.gameHeight, this.gameWidth) * this.zoomFactor;
+                return screenWidth > 1920;
+            },
 
             roads() {
                 const roads = [];
@@ -953,7 +985,8 @@
             zoom(delta) {
                 window.requestAnimationFrame(() => {
                     const screenWidth = Math.max(this.gameHeight, this.gameWidth) * this.zoomFactor;
-                    if (delta > 0 && screenWidth > 1920) return;
+                    // this.isFarZoom = screenWidth > 1920;
+                    //if (delta > 0 && screenWidth > 1920) return;
                     if (delta < 0 && screenWidth < 200) return;
                     this.zoomFactor = this.zoomFactor + delta;
                     this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
@@ -962,7 +995,7 @@
                     this.zoomLoadTimeout = setTimeout(() => {
                         this.load();
                         this.$util.setUrlParam("zoom", this.zoomFactor.toFixed(2));
-                    }, 500);
+                    }, 300);
                 });
             },
 
