@@ -240,6 +240,16 @@
                         />
                     </svg>
 
+                    <text v-for="label in farZoomUsernameLabels"
+                          :key="label.username"
+                          :x="label.x"
+                          class="username-label"
+                          :y="label.y"
+                          :fill="label.color"
+                          text-anchor="middle">
+                        {{ label.username }}
+                    </text>
+
                 </g>
 
 
@@ -406,6 +416,32 @@
         },
 
         computed: {
+
+            farZoomUsernameLabels() {
+                const usernameLabels = [];
+                if (!this.isFarZoom) return usernameLabels;
+                this.castles.forEach(castle => {
+                    const index = usernameLabels.findIndex(label => label.username === castle.username);
+                    if (index === -1) {
+                        usernameLabels.push({
+                            username: castle.username,
+                            color: castle.color,
+                            count: 1,
+                            x: castle.x,
+                            y: castle.y
+                        });
+                    } else {
+                        usernameLabels[index].x += castle.x;
+                        usernameLabels[index].y += castle.y;
+                        usernameLabels[index].count += 1;
+                    }
+                });
+                return usernameLabels.map(label => {
+                    label.x /= label.count;
+                    label.y /= label.count;
+                    return label;
+                });
+            },
 
             isFarZoom() {
                 const screenWidth = Math.max(this.gameHeight, this.gameWidth) * this.zoomFactor;
@@ -1245,6 +1281,19 @@
         animation-iteration-count: infinite;
         animation-duration: 1s;
         animation-timing-function: ease-in-out;
+    }
+
+    .username-label {
+        font: 100px 'Piazzolla';
+        font-weight: bold;
+        letter-spacing: 5px;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+        text-shadow: 3px 3px 5px white;
     }
 
 </style>
