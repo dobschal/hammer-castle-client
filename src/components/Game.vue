@@ -95,6 +95,7 @@
                     <g v-for="item in renderItems" :key="item._id">
 
                         <BlockArea v-if="item.isBlockArea && !isFarZoom"
+                                   :block-area="item"
                                    :position="{ x: item.x, y: item.y }"></BlockArea>
                         <svg v-else-if="item.isBlockArea && isFarZoom"
                              :x="item.x - 200"
