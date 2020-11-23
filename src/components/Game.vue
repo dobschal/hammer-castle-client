@@ -446,7 +446,7 @@
 
             isFarZoom() {
                 const screenWidth = Math.max(this.gameHeight, this.gameWidth) * this.zoomFactor;
-                return screenWidth > 1920;
+                return screenWidth > 2500;
             },
 
             roads() {
@@ -1022,8 +1022,6 @@
             zoom(delta) {
                 window.requestAnimationFrame(() => {
                     const screenWidth = Math.max(this.gameHeight, this.gameWidth) * this.zoomFactor;
-                    // this.isFarZoom = screenWidth > 1920;
-                    //if (delta > 0 && screenWidth > 1920) return;
                     if (delta < 0 && screenWidth < 200) return;
                     this.zoomFactor = this.zoomFactor + delta;
                     this.viewPosition.x -= Math.round(delta * this.gameWidth / 2);
