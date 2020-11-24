@@ -16,10 +16,12 @@ export default {
     },
     quest: {
         overlay: {
-            title: "Quests"
+            title: "Quests",
+            claimReward: "Get Reward!"
         },
         firstCastle: {
-            title: "Build your first Castle and start your journey..."
+            title: "Build your first Castle and start your journey...",
+            message: "To build a castle just click on the build \"Build castle for ...\" at the bottom of your screen."
         }
     },
     friend: {

@@ -19,11 +19,17 @@
                          class="quest"
                          :class="{ 'can-be-claimed': quest.status === 'SOLVED_NEW' }">
                         <span>{{ $t(quest.titleKey) }}</span>
-                        <button @click="openQuestInfo(quest)">> {{ $t("general.moreInfo") }}</button>
+                        <button v-if="quest.status === 'SOLVED_NEW'" @click="claimReward(quest)">{{
+                            $t("quest.overlay.claimReward") }}
+                        </button>
+                        <button v-else @click="openQuestInfo(quest)">> {{ $t("general.moreInfo") }}</button>
                     </div>
                 </div>
                 <div class="content quest" v-else-if="type === 'QUEST'">
-                    <h3>~ HUHU ~</h3>
+                    <h3>~ Quest Info ~</h3>
+                    <p v-if="selectedQuest">{{ $t(selectedQuest.titleKey) }}</p>
+                    <img :src="'questImages/' + selectedQuest.imageName + '.png'" alt="Quest Image">
+                    <p v-if="selectedQuest">{{ $t(selectedQuest.messageKey) }}</p>
                 </div>
             </div>
             <span class="info-footer" v-if="type === 'OFFLINE_HISTORY'">Click on an item to see where it happened.</span>
@@ -53,7 +59,7 @@
              * @return {Quest[]}
              */
             quests() {
-                return this.$store.state.quests;
+                return this.$store.state.quests.filter(quest => quest.status !== "SOLVED_SEEN");
             },
 
             /**
@@ -93,6 +99,17 @@
             showOnMap(action) {
                 this.$emit('SHOW-ON-MAP', action);
                 this.$emit('CLOSE-OVERLAY');
+            },
+
+            /**
+             * @param {Quest} quest
+             */
+            async claimReward(quest) {
+                await this.$store.dispatch("CLAIM_QUEST_REWARD", quest);
+                this.$emit('CLOSE-OVERLAY');
+
+                // TODO: Add error handling...
+
             }
         }
     };
@@ -123,6 +140,30 @@
                 width: 302px;
                 height: 394px;
                 margin: -1rem auto 0 auto;
+
+                &.QUEST {
+                    .content {
+                        padding: 0 3rem;
+                        font-family: 'Piazzolla', serif;
+                        letter-spacing: 1px;
+                        font-weight: bold;
+
+                        h3 {
+                            text-align: center;
+                        }
+
+                        p {
+                            margin: 0 0 1rem 0;
+                        }
+
+                        img {
+                            width: 100%;
+                            border-radius: 5px;
+                            overflow: hidden;
+                            box-shadow: 0 25px 25px -25px rgba(0, 0, 0, 0.31);
+                        }
+                    }
+                }
 
                 &.QUESTS {
                     background-image: url("../../assets/open-scroll.svg");
@@ -158,6 +199,10 @@
 
                             &.can-be-claimed {
                                 background-image: url("../../assets/icon-scroll-unfurled.svg");
+
+                                button {
+                                    background-image: url("../../assets/button-bg-bright.svg");
+                                }
                             }
 
                             button {
@@ -172,7 +217,7 @@
                                 font-size: 0.8rem;
                                 float: right;
                                 height: 30px;
-                                width: 123px;
+                                width: 124px;
                                 padding: 0;
                                 margin: 1rem -0.5rem 0 0;
                             }

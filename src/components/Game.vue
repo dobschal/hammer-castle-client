@@ -989,6 +989,7 @@
                 this.websocket = this.$websocket.connect();
                 [
                     "UPDATE_USER",
+                    "UPDATE_QUEST",
                     "NEW_ACTION_LOG",
                     "DELETE_CASTLE", "NEW_CASTLE", "UPDATE_CASTLE",
                     "DELETE_KNIGHT", "NEW_KNIGHT", "UPDATE_KNIGHT",
@@ -1030,7 +1031,7 @@
                     this.zoomLoadTimeout = setTimeout(() => {
                         this.load();
                         this.$util.setUrlParam("zoom", this.zoomFactor.toFixed(2));
-                    }, 300);
+                    }, 40);
                 });
             },
 

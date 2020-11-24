@@ -62,8 +62,7 @@
  * @type {object}
  * @property {number} id
  * @property {number} prevQuestId
- * @property {number} isRecurring
- * @property {string} recurringInterval
+ * @property {string} status
  * @property {string} titleKey
  * @property {string} messageKey
  * @property {string} imageName

@@ -16,10 +16,12 @@ export default {
     },
     quest: {
         overlay: {
-            title: "Quests"
+            title: "Quests",
+            claimReward: "Erhalte Bonus"
         },
         firstCastle: {
-            title: "Baue deine erste Burg um die Reise zu beginne..."
+            title: "Baue deine erste Burg um die Reise zu beginne...",
+            message: "Um eine Burg zu bauen klicke einfach auf den Button \"Baue Burg für ...\" am unteren Ende deiner Screens."
         }
     },
     friend: {

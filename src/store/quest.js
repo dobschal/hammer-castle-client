@@ -37,5 +37,17 @@ export const questActions = {
         } finally {
             commit("PROGRESS", -1);
         }
+    },
+    async CLAIM_QUEST_REWARD({commit}, quest) {
+        try {
+            commit("PROGRESS", 1);
+            const response = await axios.post(`/quest/claim`, {questId: quest.id});
+            if (response.data.success) {
+                quest.status = "SOLVED_SEEN";
+                commit("UPDATE_QUEST", quest);
+            }
+        } finally {
+            commit("PROGRESS", -1);
+        }
     }
 };
