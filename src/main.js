@@ -7,15 +7,15 @@ import Vuex from "vuex";
 import store from "./store";
 import VTooltip from "v-tooltip";
 import VueI18n from "vue-i18n";
-import landDe from "./lang/de";
-import landEn from "./lang/en";
+import landDe from "./lang/locale-de";
+import landEn from "./lang/locale-en";
 
 window.onerror = function (msg, url, lineNo, columnNo, error) {
   axios.post("/error", {
     msg, url, lineNo, columnNo, stack: error.stack
   }).then(() => console.log("[main] Reported error."));
   return false;
-}
+};
 
 Vue.config.productionTip = false;
 
