@@ -9,6 +9,7 @@ export const questMutations = {
         state.quests = quests;
     },
     UPDATE_QUEST(state, quest) {
+        console.log("[quest] Got update: ", quest);
         state.quests = [
             ...state.quests.filter(q => q.id !== quest.id),
             quest

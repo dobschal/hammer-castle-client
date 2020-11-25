@@ -22,6 +22,14 @@
     "firstCastle": {
       "title": "Baue deine erste Burg um die Reise zu beginne...",
       "message": "Um eine Burg zu bauen klicke einfach auf den Button \"Baue Burg für ...\" am unteren Ende deiner Screens."
+    },
+    "firstWarehouse": {
+      "title": "Baue dein erstes Warenhaus!",
+      "message": "Klicke auf eine Straße zwischen zwei deiner Burgen, um ein Warehaus zu bauen. (Du brauchst zunächst eine weitere Burg!)"
+    },
+    "fiveCastles": {
+      "title": "Baue 5 Burgen!",
+      "message": "Erobere die Welt und vergrößere deine Ländereien. Je mehr Burgen zu besitzt, desto stärker bist du!"
     }
   },
   "friend": {

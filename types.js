@@ -78,4 +78,14 @@
  * @property {number} maxBeer - 500
  */
 
+/**
+ * @typedef ShortMessage
+ * @type object
+ * @property {string} id
+ * @property {string} message
+ * @property {string} type
+ * @property {number} x
+ * @property {number} y
+ */
+
 export default {};

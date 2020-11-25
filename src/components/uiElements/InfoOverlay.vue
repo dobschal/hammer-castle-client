@@ -105,11 +105,13 @@
              * @param {Quest} quest
              */
             async claimReward(quest) {
-                await this.$store.dispatch("CLAIM_QUEST_REWARD", quest);
-                this.$emit('CLOSE-OVERLAY');
-
-                // TODO: Add error handling...
-
+                try {
+                    await this.$store.dispatch("CLAIM_QUEST_REWARD", quest);
+                    await this.$store.dispatch("GET_QUESTS");
+                    this.$emit('CLOSE-OVERLAY');
+                } catch (e) {
+                    this.$emit("ERROR", e.response.data.message);
+                }
             }
         }
     };
@@ -147,20 +149,31 @@
                         font-family: 'Piazzolla', serif;
                         letter-spacing: 1px;
                         font-weight: bold;
+                        overflow-y: auto;
+                        overflow-x: hidden;
+                        -ms-overflow-style: none; /* IE and Edge */
+                        scrollbar-width: none;
+                        -webkit-overflow-scrolling: touch;
+                        height: 355px;
 
                         h3 {
                             text-align: center;
                         }
 
                         p {
-                            margin: 0 0 1rem 0;
+                            margin: 1rem 0 0 0;
+
+                            &:last-child {
+                                padding-bottom: 3rem;
+                            }
                         }
 
                         img {
-                            width: 100%;
-                            border-radius: 5px;
+                            width: calc(100% + 1rem);
+                            border-radius: 0.5rem;
                             overflow: hidden;
-                            box-shadow: 0 25px 25px -25px rgba(0, 0, 0, 0.31);
+                            box-shadow: 0 25px 25px -5px rgba(0, 0, 0, 0.19);
+                            margin: 1rem -0.5rem 0 -0.5rem;
                         }
                     }
                 }

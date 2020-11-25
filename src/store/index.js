@@ -27,6 +27,7 @@ export default {
   state: {
     progress: 0,
     serverVersion: undefined,
+    shortMessages: [],
     ...userState,
     ...castleState,
     ...blockAreaState,
@@ -44,6 +45,12 @@ export default {
     }
   },
   mutations: {
+    SHORT_MESSAGE(state, message) {
+      state.shortMessages.push(message);
+      setTimeout(() => {
+        state.shortMessages = state.shortMessages.filter(m => m.id !== message.id);
+      }, 5000);
+    },
     PROGRESS(state, counter) {
       state.progress += counter;
     },

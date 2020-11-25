@@ -275,6 +275,7 @@
 
         <InfoOverlay v-if="infoOverlayOpen"
                      :type.sync="infoOverlayType"
+                     @ERROR="error = $event"
                      @SHOW-ON-MAP="showActionOnMap($event)"
                      @CLOSE-OVERLAY="closeInfoOverlay"></InfoOverlay>
 
@@ -298,6 +299,9 @@
         <HomeButton @GO_HOME="goHome"></HomeButton>
         <OpenQuestButton @OPEN="openInfoOverlay('QUESTS')"></OpenQuestButton>
         <OpenFriendsButton @OPEN="openOverlay('friends')"></OpenFriendsButton>
+
+        <ShortMessageView
+                @show-on-map="showActionOnMap($event)"></ShortMessageView>
 
         <ZoomButtons @ZOOM_IN="zoomIn" @ZOOM_OUT="zoomOut"></ZoomButtons>
 
@@ -339,6 +343,7 @@
     import {propsToCamelCase} from "../plugins/axios";
     import OpenQuestButton from "./uiElements/OpenQuestButton";
     import OpenFriendsButton from "./uiElements/OpenFriendsButton";
+    import ShortMessageView from "./uiElements/ShortMessageView";
 
     /**
      * @typedef GameComponent
@@ -351,6 +356,7 @@
         components: {
             OpenFriendsButton,
             InfoOverlay,
+            ShortMessageView,
             Forum,
             Popup,
             Knight,
@@ -988,6 +994,7 @@
             attachWebsocketListener() {
                 this.websocket = this.$websocket.connect();
                 [
+                    "SHORT_MESSAGE",
                     "UPDATE_USER",
                     "UPDATE_QUEST",
                     "NEW_ACTION_LOG",
