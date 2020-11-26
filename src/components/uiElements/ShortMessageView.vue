@@ -47,7 +47,7 @@
 
     @keyframes drive_in {
         0% {
-            transform: translateY(5rem);
+            transform: translateY(-5rem);
             opacity: 0;
         }
         100% {
@@ -59,14 +59,14 @@
     .short-message-container {
         position: fixed;
         top: 3rem;
-        left: 1rem;
-        width: calc(100vw - 2rem);
+        left: 4rem;
+        width: calc(100vw - 8rem);
         height: 100px;
-        z-index: 4;
+        z-index: 1;
 
         .message {
             animation: drive_in;
-            animation-timing-function: ease-out;
+            animation-timing-function: cubic-bezier(.53,1.43,.65,.96);
             animation-iteration-count: 1;
             animation-duration: 0.5s;
             background: rgba(248, 219, 186, 0.85);
