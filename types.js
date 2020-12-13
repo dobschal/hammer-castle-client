@@ -68,6 +68,7 @@
  * @property {string} imageName
  * @property {string} benefitType
  * @property {number} benefitValue
+ * @property {number} autoOpen
  */
 
 /**

@@ -35,6 +35,7 @@ try {
 } catch (e) {
   console.error("[main] Error on getting browser language: ", e);
 }
+console.log("[main] Browser language: ", locale);
 const i18n = new VueI18n({
   locale,
   messages: {

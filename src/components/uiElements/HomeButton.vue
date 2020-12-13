@@ -14,6 +14,7 @@
         position: fixed;
         right: 1rem;
         top: 11.7rem;
+        margin-top: env(safe-area-inset-top, 0);
         z-index: 3;
         background-image: url("../../assets/icon-home.svg");
         background-size: 32px 32px;

@@ -64,6 +64,7 @@
         position: fixed;
         right: 0.6rem;
         top: 26.2rem;
+        margin-top: env(safe-area-inset-top, 0);
         z-index: 3;
         background-image: url("../../assets/icon-gift.png");
         background-size: contain;

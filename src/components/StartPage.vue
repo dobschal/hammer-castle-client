@@ -2,16 +2,18 @@
   <div v-if="!authenticated" class="start-page" ref="start-page">
     <div class="wrapper">
       <div class="container" v-if="!loading">
-        <div class="logo"><img src="../assets/logo.svg" alt="Hammer Castle Logo"></div>
-        <div class="cookie" v-if="showRegistration">This page uses cookies and the local storage of your browser. If you
-          disagree with that, do
-          not create an account and just leave that page. Further information can be found here: <b class="link"
-                                                                                                    @click="openPrivacyPolicy">privacy
-            & cookie policy</b></div>
+        <div class="logo"><img src="../assets/logo.svg"
+                               alt="Hammer Castle Logo"></div>
+        <div class="cookie">
+          {{ $t("startPage.privacyPolicy") }}
+          <b class="link" @click="openPrivacyPolicy">{{
+            $t("startPage.privacyPolicyTitle") }}</b>
+        </div>
         <div v-if="showRegistration">
           <h2>Come in!</h2>
           <p>Hammer Castle is waiting for you!</p>
-          <p>Create an account with username, password and your favorite color and join the game.</p>
+          <p>Create an account with username, password and your favorite color
+            and join the game.</p>
         </div>
         <div v-else>
           <h2>Welcome back!</h2>
@@ -64,9 +66,9 @@
           <h2>Imprint</h2>
           <p>© 2020, Sascha Dobschal. The game Hammer Castle was created and is an idea of Sascha Dobschal.</p>
           <p>Contact: info@hammercastle.de
-            <br> <b class="link" @click="openImprint">Imprint</b> | <b class="link" @click="openPrivacyPolicy">Privacy &
-              Cookie
-              Policy</b></p>
+            <br> <b class="link" @click="openImprint">Imprint</b> |
+            <b class="link" @click="openPrivacyPolicy">{{
+              $t("startPage.privacyPolicyTitle") }}</b></p>
           <br>.
         </div>
       </div>
@@ -179,6 +181,7 @@
           });
           if (this.showRegistration) {
             this.showRegistration = false;
+            this.authenticate();
           }
         } catch (e) {
           console.log("[Authenticator] Login error: ", e);
@@ -246,8 +249,8 @@
     transition: background-position 1s ease-in;
 
     .cookie {
-      font-size: 0.7rem;
-      line-height: 0.9rem;
+      font-size: 0.8rem;
+      line-height: 1rem;
       background-color: rgba(242, 112, 255, 0.41);
       padding: 0.5rem;
       border-radius: 0.5rem;
@@ -258,7 +261,7 @@
       width: 100%;
       height: 100vh;
       padding: 2rem 0;
-      background-color: rgba(255, 255, 255, 0.3);
+      background-color: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(3px);
       overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
@@ -268,7 +271,7 @@
       }
 
       .container {
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(5px);
         width: 100%;
         max-width: 620px;

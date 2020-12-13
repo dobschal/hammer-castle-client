@@ -275,6 +275,7 @@
 
         <InfoOverlay v-if="infoOverlayOpen"
                      :type.sync="infoOverlayType"
+                     ref="infoOverlay"
                      @ERROR="error = $event"
                      @SHOW-ON-MAP="showActionOnMap($event)"
                      @CLOSE-OVERLAY="closeInfoOverlay"></InfoOverlay>
@@ -510,6 +511,14 @@
                 return this.$store.state.knights.map(k => {
                     k.isKnight = true;
                     k._id = "knight-" + k.x + "-" + k.y + "-" + k.id;
+                    if (k.goToX && k.goToY) {
+                        k.viewPosition = {
+                            x: (k.x + k.goToX) / 2,
+                            y: (k.y + k.goToY) / 2
+                        }
+                    } else {
+                        k.viewPosition = {x: k.x, y: k.y}
+                    }
                     return k;
                 });
             },
@@ -569,8 +578,16 @@
                     toX: Math.floor(this.viewPosition.x + this.gameWidthWithZoom) + 200,
                     toY: Math.floor(this.viewPosition.y + this.gameHeightWithZoom) + 200
                 };
+            },
+
+            /**
+             * @return {Quest[]}
+             **/
+            quests() {
+                return this.$store.state.quests;
             }
-        },
+
+        }, // computed end
 
         watch: {
 
@@ -644,8 +661,25 @@
                         }
                     }, 3500);
                 }
+            },
+
+            /**
+             * @param {Quest[]} quests
+             **/
+            quests: {
+                deep: true,
+                handler(quests) {
+                    console.log("[Game] Quests updated: ", quests);
+                    const newUnviewedQuest = quests.find(/** @param {Quest} quest */quest => {
+                        return quest.autoOpen === 1 && quest.status.includes("NEW");
+                    });
+                    if (newUnviewedQuest) {
+                        this.openInfoOverlay("QUESTS");
+                    }
+                }
             }
-        },
+
+        }, // watch end
 
         mounted() {
             const zoomFactor = this.$util.getUrlParam("zoom");
@@ -727,7 +761,18 @@
                         ...this.blockAreas,
                         ...this.catapults,
                         ...this.warehouses
-                    ].sort((i1, i2) => i1.y - i2.y));
+                    ].sort((i1, i2) => {
+                        if (i1.isKnight && !i2.isKnight) {
+                            return i1.viewPosition.y - i2.y;
+                        }
+                        if (!i1.isKnight && i2.isKnight) {
+                            return i1.y - i2.viewPosition.y;
+                        }
+                        if (i1.isKnight && i2.isKnight) {
+                            return i1.viewPosition.y - i2.viewPosition.y;
+                        }
+                        return i1.y - i2.y;
+                    }));
                 }, 40);
             },
 
@@ -850,7 +895,7 @@
 
             openPage($event) {
                 this.closePopup();
-                this.overlayOpen = false;
+                this.closeOverlay();
                 this.pageOverlayOpen = true;
                 this.pageOverlayType = $event;
                 this.$util.setUrlParam("page", $event);
@@ -1174,7 +1219,7 @@
         z-index: 2;
         pointer-events: none;
         background: transparent;
-        box-shadow: inset 0 0 20px 20px #b6e57b;
+        box-shadow: inset 0 0 10px 10px #b6e57b;
         will-change: transform;
     }
 

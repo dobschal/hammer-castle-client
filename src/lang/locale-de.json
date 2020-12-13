@@ -3,9 +3,16 @@
     "cancel": "Abbrechen",
     "for": "für",
     "moreInfo": "Mehr Infos",
+    "buildCastle": "Burg Bauen",
+    "buildIt": "Bauen",
+    "andGo": "Los Gehts!",
     "error": {
       "load": "Konnte die Spieldaten nicht laden. Entweder deine Internetverbindung ist unterbrochen oder der Server ist down :("
     }
+  },
+  "startPage": {
+    "privacyPolicyTitle": "Datenschutzerklärung",
+    "privacyPolicy": "Diese Webseite verwendet Cookies und den lokalen Speicher ihres Browsers. Falls dies nicht möchten, verlassen Sie bitte diese Webseite umgehend. Weitere Informationen finden Sie hier:"
   },
   "knight": {
     "movesIn": "Bewegt sich in",
@@ -16,11 +23,13 @@
   },
   "quest": {
     "overlay": {
-      "title": "Quests",
-      "claimReward": "Erhalte Bonus"
+      "show": "Zur Aufgabe",
+      "title": "Aufgaben",
+      "claimReward": "Erhalte Bonus",
+      "info": "Löse die Aufgaben um das Spiel kennenzulernen und tolle Boni zu erhalten."
     },
     "firstCastle": {
-      "title": "Baue deine erste Burg um die Reise zu beginne...",
+      "title": "Willkommen bei Hammer Castle! Baue deine erste Burg um die Reise zu beginnen...",
       "message": "Um eine Burg zu bauen klicke einfach auf den Button \"Baue Burg für ...\" am unteren Ende deiner Screens."
     },
     "firstWarehouse": {
@@ -28,8 +37,12 @@
       "message": "Klicke auf eine Straße zwischen zwei deiner Burgen, um ein Warehaus zu bauen. (Du brauchst zunächst eine weitere Burg!)"
     },
     "fiveCastles": {
-      "title": "Baue 5 Burgen!",
-      "message": "Erobere die Welt und vergrößere deine Ländereien. Je mehr Burgen zu besitzt, desto stärker bist du!"
+      "title": "Baue fünf Burgen!",
+      "message": "Erobere die Welt und vergrößere deine Ländereien. Je mehr Burgen du besitzt, desto stärker bist du!"
+    },
+    "fiveWarehouses": {
+      "title": "Baue fünf Warenhäuser!",
+      "message": "Warenhäuser lagern dein Hämmer und dein Bier. Wenn dein Imperium wachsen soll, brauchst du mehr Warenhäuser!"
     }
   },
   "friend": {

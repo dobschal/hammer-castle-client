@@ -100,16 +100,16 @@
             </defs>
         </g>
 
-        <svg v-if="countDown" x="75" y="140" width="207" height="80" viewBox="0 0 207 80">
-            <rect width="207" height="80" rx="15" fill="rgba(0,0,0,0.66)"></rect>
+        <svg v-if="countDown" x="75" y="140" width="237" height="80" viewBox="0 0 237 80">
+            <rect width="237" height="80" rx="15" fill="rgba(0,0,0,0.66)"></rect>
             <g x="0" y="0">
-                <text x="103"
+                <text x="118"
                       y="35"
                       class="count-down"
                       fill="white"
                       text-anchor="middle">{{ $t("knight.movesIn") }}
                 </text>
-                <text x="103"
+                <text x="118"
                       y="65"
                       class="count-down"
                       fill="white"

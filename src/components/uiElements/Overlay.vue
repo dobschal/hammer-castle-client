@@ -74,9 +74,12 @@
                         </div>
                     </div>
                     <div v-else-if="type === 'profile'" class="items user">
+                        <template v-if="!isMyProfile">
                         <div class="item profile">
+                            <img src="../../assets/avatar.png" alt="Avatar">
                             <span>Name:</span>{{ selectedPlayer.username }}<br>
                             <span>Level:</span>{{ selectedPlayer.level }}<br>
+                            <span>Castles:</span>{{ selectedPlayer.castles }}<br>
                             <span>Is Friend:</span>{{ isFriend ? "Yes" : "No" }}
                         </div>
                         <div class="item button"
@@ -88,6 +91,22 @@
                              @click="addAsFriend(selectedPlayer.username)">
                             Add As Friend
                         </div>
+                        </template>
+                        <template v-else>
+                            <div class="item profile">
+                                <img src="../../assets/avatar.png" alt="Avatar">
+                                <span>Castles:</span>{{ selectedPlayer.castles }}<br>
+                            </div>
+                            <div class="item button">
+                                Change Email
+                            </div>
+                            <div class="item button">
+                                Change Password
+                            </div>
+                            <div class="item button">
+                               Change Profile Picture
+                            </div>
+                        </template>
                     </div>
                     <div v-else-if="type === 'add-friend'"
                          class="items add-friend" @click.stop>
@@ -188,8 +207,14 @@
              */
             actionLog() {
                 const actionLog = [...this.$store.state.actionLog].sort((a, b) => b.timestamp - a.timestamp);
-                console.log("[Overlay] Action log: ", actionLog);
                 return actionLog;
+            },
+
+            /**
+             * @return {Boolean}
+             */
+            isMyProfile() {
+                return this.selectedPlayer.id === this.user.id;
             }
         },
         watch: {
@@ -521,6 +546,12 @@
                             &.profile {
                                 text-align: left;
                                 padding-left: 1rem;
+
+                                img {
+                                    width: 50%;
+                                    display: block;
+                                    margin: 0 auto 1rem auto;
+                                }
 
                                 span {
                                     display: inline-block;

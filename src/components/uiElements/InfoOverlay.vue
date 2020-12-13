@@ -22,17 +22,28 @@
                         <button v-if="quest.status === 'SOLVED_NEW'" @click="claimReward(quest)">{{
                             $t("quest.overlay.claimReward") }}
                         </button>
-                        <button v-else @click="openQuestInfo(quest)">> {{ $t("general.moreInfo") }}</button>
+                        <button v-else @click="openQuestInfo(quest)">> {{
+                            $t("quest.overlay.show") }}
+                        </button>
                     </div>
                 </div>
                 <div class="content quest" v-else-if="type === 'QUEST'">
                     <h3>~ Quest Info ~</h3>
-                    <p v-if="selectedQuest">{{ $t(selectedQuest.titleKey) }}</p>
-                    <img :src="'questImages/' + selectedQuest.imageName + '.png'" alt="Quest Image">
-                    <p v-if="selectedQuest">{{ $t(selectedQuest.messageKey) }}</p>
+                    <div class="content-inner">
+                        <p v-if="selectedQuest">{{ $t(selectedQuest.titleKey)
+                            }}</p>
+                        <img v-if="selectedQuest"
+                             :src="'questImages/' + selectedQuest.imageName + '.png'"
+                             alt="Quest Image">
+                        <p v-if="selectedQuest">{{ $t(selectedQuest.messageKey)
+                            }}</p>
+                        <button @click="close">{{ $t("general.andGo") }}
+                        </button>
+                    </div>
                 </div>
             </div>
             <span class="info-footer" v-if="type === 'OFFLINE_HISTORY'">Click on an item to see where it happened.</span>
+            <span class="info-footer" v-if="type === 'QUESTS'">{{ $t("quest.overlay.info") }}</span>
         </div>
     </div>
 </template>
@@ -118,6 +129,21 @@
 </script>
 
 <style lang="scss" scoped>
+
+    @keyframes drive_in {
+        0% {
+            transform: translateX(-25vw);
+            opacity: 0;
+        }
+        50% {
+            opacity: 0.5;
+        }
+        100% {
+            transform: translateX(4px);
+            opacity: 1;
+        }
+    }
+
     .overlay-wrapper {
         position: fixed;
         width: 100vw;
@@ -147,33 +173,46 @@
                     .content {
                         padding: 0 3rem;
                         font-family: 'Piazzolla', serif;
-                        letter-spacing: 1px;
-                        font-weight: bold;
-                        overflow-y: auto;
-                        overflow-x: hidden;
-                        -ms-overflow-style: none; /* IE and Edge */
-                        scrollbar-width: none;
-                        -webkit-overflow-scrolling: touch;
+                        letter-spacing: 0.3px;
+                        font-weight: 600;
+                        overflow: hidden;
                         height: 355px;
 
                         h3 {
                             text-align: center;
                         }
 
-                        p {
-                            margin: 1rem 0 0 0;
+                        .content-inner {
+                            overflow-y: auto;
+                            overflow-x: hidden;
+                            -ms-overflow-style: none; /* IE and Edge */
+                            scrollbar-width: none;
+                            -webkit-overflow-scrolling: touch;
+                            height: 300px;
 
-                            &:last-child {
-                                padding-bottom: 3rem;
+                            p {
+                                margin: 0 0 1rem 0;
+                                font-size: 15px;
+                                line-height: 21px;
+                                color: rgba(0, 0, 0, 0.7);
+
+                                &:last-child {
+                                    padding-bottom: 3rem;
+                                }
                             }
-                        }
 
-                        img {
-                            width: calc(100% + 1rem);
-                            border-radius: 0.5rem;
-                            overflow: hidden;
-                            box-shadow: 0 25px 25px -5px rgba(0, 0, 0, 0.19);
-                            margin: 1rem -0.5rem 0 -0.5rem;
+                            img {
+                                width: 100%;
+                                border-radius: 0.5rem;
+                                overflow: hidden;
+                                box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.19), 0 0 1px 1px rgba(0, 0, 0, 0.3);
+                                margin: 0 0 1rem 0;
+                            }
+
+                            button {
+                                margin: 0 0 2rem 0;
+                                width: 100%;
+                            }
                         }
                     }
                 }
@@ -193,6 +232,7 @@
                         -webkit-overflow-scrolling: touch;
                         padding: 0.5rem 0.3rem;
                         box-sizing: border-box;
+                        font-family: 'Piazzolla', serif;
 
                         h3 {
                             color: #BC631C;
@@ -209,6 +249,7 @@
                             font-size: 0.9rem;
                             margin-top: 0.5rem;
                             letter-spacing: 0.5px;
+                            min-height: 40px;
 
                             &.can-be-claimed {
                                 background-image: url("../../assets/icon-scroll-unfurled.svg");
@@ -233,6 +274,7 @@
                                 width: 124px;
                                 padding: 0;
                                 margin: 1rem -0.5rem 0 0;
+                                letter-spacing: 0.3px;
                             }
                         }
                     }
@@ -352,9 +394,9 @@
 
             .info-footer {
                 display: block;
-                height: 20px;
-                line-height: 12px;
-                font-size: 12px;
+                min-height: 21px;
+                line-height: 21px;
+                font-size: 14px;
                 color: white;
                 letter-spacing: 0.66px;
                 font-family: 'Piazzolla', serif;
@@ -362,9 +404,17 @@
                 opacity: 0.9;
                 background-image: url("../../assets/icon-info.svg");
                 background-repeat: no-repeat;
-                background-size: 20px;
-                padding: 4px 0 4px 24px;
+                background-size: 21px;
+                background-position: 0 6px;
+                padding: 4px 0 4px 28px;
                 box-sizing: border-box;
+                width: 80vw;
+                max-width: 280px;
+                transform: translateX(4px);
+                animation: drive_in;
+                animation-iteration-count: 1;
+                animation-duration: 0.5s;
+                animation-timing-function: ease-out;
             }
 
         }

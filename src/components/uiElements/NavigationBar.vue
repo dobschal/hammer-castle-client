@@ -4,13 +4,16 @@
 
     <div class="wrapper">
         <div class="buttons">
-            <button v-if="activeAction === 'BUILD_CASTLE' && isTouchDevice" type="button" @click="buildIt">Build It
+            <button v-if="activeAction === 'BUILD_CASTLE' && isTouchDevice" type="button" @click="buildIt">
+                {{ $t("general.buildIt") }}
             </button>
-            <button v-if="activeAction" type="button" class="negative" @click="cancel">Cancel</button>
+            <button v-if="activeAction" type="button" class="negative" @click="cancel">
+                {{ $t("general.cancel") }}
+            </button>
             <button v-else type="button" @click="buildCastle">
-                Build Castle
+                {{ $t("general.buildCastle") }}
                 <span class="break-on-mobile">
-                    for {{ $store.state.castlePrice }}
+                    {{ $t("general.for") }} {{ $store.state.castlePrice }}
                     <img src="../../assets/icon-hammer.svg" class="hammer-icon" alt="Hammer">
                 </span>
             </button>
@@ -57,6 +60,7 @@
     .wrapper {
         position: fixed;
         bottom: 2rem;
+        margin-bottom: env(safe-area-inset-bottom, 0);
         left: 50%;
         z-index: 2;
         width: 320px;

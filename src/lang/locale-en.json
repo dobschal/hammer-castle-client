@@ -3,9 +3,16 @@
         "cancel": "Cancel",
         "for": "for",
         "moreInfo": "More Info",
+        "buildCastle": "Build Castle",
+        "buildIt": "Build It",
+        "andGo": "And Go!",
         "error": {
             "load": "Could not load data. Please check your internet connection else the server might be down :( ..."
         }
+    },
+    "startPage": {
+        "privacyPolicyTitle": "Privacy & Cookie Policy",
+        "privacyPolicy": "This page uses cookies and the local storage of your browser. If you disagree with that, do not create an account and just leave that page. Further information can be found here:"
     },
     "knight": {
         "movesIn": "Moves in",
@@ -16,20 +23,26 @@
     },
     "quest": {
         "overlay": {
+            "show": "Show Quest",
             "title": "Quests",
-            "claimReward": "Get Reward!"
+            "claimReward": "Get Reward!",
+            "info": "Solve the quests to learn more about the game and get great rewards!"
         },
         "firstCastle": {
-            "title": "Build your first Castle and start your journey...",
+            "title": "Welcome to Hammer Castle! Build your first Castle and start your journey...",
             "message": "To build a castle just click on the build \"Build castle for ...\" at the bottom of your screen."
         },
         "firstWarehouse": {
-            "title": "Build your first Warehouse!",
+            "title": "Build your first warehouse!",
             "message": "Click on a road between two of your castles to build a warehouse. (You need a second castle!)"
         },
         "fiveCastles": {
-            "title": "Build 5 castles!",
+            "title": "Build five castles!",
             "message": "Conquer the world and expand your empire. The more castles you have, the stronger you are!"
+        },
+        "fiveWarehouses": {
+            "title": "Build five warehouses!",
+            "message": "Warehouses do store your hammers and your beer. If your empire shall grow, you need more warehouses!"
         }
     },
     "friend": {

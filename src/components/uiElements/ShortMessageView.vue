@@ -59,6 +59,7 @@
     .short-message-container {
         position: fixed;
         top: 3rem;
+        margin-top: env(safe-area-inset-top, 0);
         left: 4rem;
         width: calc(100vw - 8rem);
         height: 100px;

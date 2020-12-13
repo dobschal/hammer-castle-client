@@ -152,6 +152,7 @@
         text-align: center;
         background: rgba(11, 90, 102, 0.8);
         backdrop-filter: blur(5px);
+        padding-top: env(safe-area-inset-top, 20px);
 
         .buttons {
             display: flex;

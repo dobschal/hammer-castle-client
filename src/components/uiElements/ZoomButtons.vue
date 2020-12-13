@@ -10,11 +10,8 @@
         position: fixed;
         right: 1rem;
         top: 4rem;
+        margin-top: env(safe-area-inset-top, 0);
         z-index: 3;
-        /*background-image: url("../assets/icon-gift.png");*/
-        /*background-size: contain;*/
-        /*background-position: center;*/
-        /*background-repeat: no-repeat;*/
         background-color: rgba(11, 90, 102, 0.5);
         backdrop-filter: blur(5px);
         border-radius: 1rem;
