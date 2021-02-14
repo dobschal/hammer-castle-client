@@ -700,7 +700,6 @@
                 console.log("[game] Error on get user: ", e.response);
                 this.logout();
             });
-            this.$store.dispatch("GET_BLOCK_AREAS");
             this.$store.dispatch("GET_SERVER_VERSION");
             this.gameWidth = this.$refs["game-container"].offsetWidth;
             this.gameHeight = this.$refs["game-container"].offsetHeight;
